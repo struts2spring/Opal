@@ -1,4 +1,3 @@
-from wx.tools.Editra.src.ebmlib.miscutil import Singleton
 
 
 class Workspace(object):
@@ -16,8 +15,8 @@ class Workspace(object):
         return getattr(self.instance, name)
     def __setattr__(self, name):
         return setattr(self.instance, name)
-    
-    
+
+
 if __name__=="__main__":
     x = Workspace()
     x.path = 'sausage'
