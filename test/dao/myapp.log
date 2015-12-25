@@ -1,0 +1,9 @@
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     ()
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     ()
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     BEGIN (implicit)
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     SELECT book.book_name AS book_book_name, book.customer_review AS book_customer_review, book.book_description AS book_book_description, book.edition_no AS book_edition_no, book.book_format AS book_book_format, book.file_size AS book_file_size, book.number_of_pages AS book_number_of_pages, book.in_language AS book_in_language, book.published_on AS book_published_on, book.has_cover AS book_has_cover, book.book_path AS book_book_path, book.created_on AS book_created_on, book.id AS book_id, book.isbn_10 AS book_isbn_10, book.isbn_13 AS book_isbn_13, book.series AS book_series, book.dimension AS book_dimension, book.publisher AS book_publisher, book.rating AS book_rating, book.uuid AS book_uuid 
+FROM book 
+WHERE lower(book.book_name) LIKE lower(?)
+12-05 12:18 sqlalchemy.engine.base.Engine INFO     ('%java%',)
