@@ -22,12 +22,12 @@ from src.static.constant import Workspace
 
 #  def getSession(self):
 print '3--->', os.getcwd()
-Workspace().path='E:\\docs\\books'
+Workspace().path='/docs/books'
 os.chdir(Workspace().path)
 listOfDir = os.listdir(Workspace().path)
 
 
-engine = create_engine('sqlite:///'+Workspace().path+os.sep+'opal.sqlite', echo=True)
+engine = create_engine('sqlite:///'+Workspace().path+os.sep+'_opal.sqlite', echo=True)
 Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
 session = Session()
 
@@ -143,8 +143,8 @@ class CreateDatabase():
                 return books
         except:
             traceback.print_exc()
-            
-            
+
+
     def findByIsbn_13Name(self, isbn_13=None):
         if isbn_13:
             query = session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
