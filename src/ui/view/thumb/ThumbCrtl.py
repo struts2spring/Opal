@@ -1109,10 +1109,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         self.ShowFileNames(True)
 
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_LEFT_DCLICK, self.OnMouseDClick)
-        self.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightMouseDown)
         self.Bind(wx.EVT_RIGHT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMove)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
@@ -2200,7 +2200,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.Refresh()
 
 
-    def OnMouseDown(self, event):
+    def OnRightMouseDown(self, event):
+        print 'OnRightMouseDown'
+
+        print 'printing all _selected',self._selected
+        print 'printing all _selectedarray',self._selectedarray
+        pass
+    def OnLeftMouseDown(self, event):
         """
         Handles the ``wx.EVT_LEFT_DOWN`` and ``wx.EVT_RIGHT_DOWN`` events for L{ThumbnailCtrl}.
 

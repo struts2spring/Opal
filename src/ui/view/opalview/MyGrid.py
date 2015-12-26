@@ -219,7 +219,7 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
     def Draw(self, grid, attr, dc, rect, row, col, isSelected):
         choice = self.table.GetRawValue(row, col)
         bmp= self._choices.get(choice.lower())
-        print 'Draw.choice:',choice
+#         print 'Draw.choice:',choice
         # create the blank bitmap as a draw background
 #         bmp=wx.Bitmap("/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images/pdf.png")
         image = wx.MemoryDC()
@@ -336,6 +336,7 @@ class MegaGrid(Grid.Grid):
         self._plugins = plugins
 
         self.Bind(Grid.EVT_GRID_LABEL_RIGHT_CLICK, self.OnLabelRightClicked)
+        self.Bind(Grid.EVT_GRID_CELL_RIGHT_CLICK, self.showPopupMenu)
 
     def Reset(self):
         """reset the view based on the data in the table.  Call
@@ -411,6 +412,69 @@ class MegaGrid(Grid.Grid):
         menu.Destroy()
         return
 
+    def showPopupMenu(self, event):
+        """
+        Create and display a popup menu on right-click event
+        """
+        self.rowSelected = event.Row
+        if not hasattr(self, "popupID1"):
+            self.popupID1 = wx.NewId()
+            self.popupID2 = wx.NewId()
+            self.popupID3 = wx.NewId()
+            self.popupID4 = wx.NewId()
+            self.popupID5 = wx.NewId()
+            # make a menu
+            self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
+            self.Bind(wx.EVT_MENU, self.OnOpen, id=self.popupID2)
+            self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
+            self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
+            self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
+        menu = wx.Menu()
+        # Show how to put an icon in the menu
+        item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID2, "Open containing folder.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID3, "Search similar books.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID4, "Properties.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID5, "Open Book")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+#         menu.Append(self.popupID2, "Open containing folder.")
+#         menu.Append(self.popupID3, "Search similar books.")
+#         menu.Append(self.popupID4, "Properties.")
+#         menu.Append(self.popupID5, "Open Book")
+
+        # Popup the menu.  If an item is selected then its handler
+        # will be called before PopupMenu returns.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def OnPopupOne(self, event):
+        print ("Popup one\n")
+
+    def OnOpen(self, event):
+        print ("OnOpen \n")
+
+    def OnPopupThree(self, event):
+        print ("OnPopupThree \n")
+
+    def OnPopupFour(self, event):
+        print ("OnPopupFour \n")
+
+    def OpenBook(self, event):
+        print ("OpenBook \n")
 
 class MegaFontRendererFactory:
     def __init__(self, color, font, fontsize):
@@ -474,7 +538,7 @@ class TestFrame(wx.Frame):
         noOfBooks=len(books)
         for i in range(noOfBooks):
 #             colnames=books[i].__dict__.keys()
-            print colnames
+#             print colnames
             d = {}
             data.append((str(i), books[i].__dict__))
             bookId_rowNo_dict[books[i].id]=i
@@ -484,7 +548,7 @@ class TestFrame(wx.Frame):
         grid.SelectRow(row=3)
 
 if __name__=='__main__':
-    app = wx.PySimpleApp()
+    app = wx.App()
     frame = TestFrame(None)
     frame.Show(True)
     app.MainLoop()
