@@ -65,7 +65,7 @@ class MainFrame(wx.Frame):
 #         qmi = wx.MenuItem(file_menu, wx.ID_EXIT, '&Quit\tCtrl+Q')
 #         qmi.SetBitmap(wx.Bitmap('/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images/exit-16.png'))
         switchWorkspaceMenu = wx.Menu()
-        
+
         switchWorkspaceMenu.Append(ID_otherWorkspace, 'Other...')
 #         file_menu.AppendMenu(wx.ID_ANY, 'I&mport', switchWorkspaceMenu)
         file_menu.AppendMenu(ID_switchWorkspace, 'Switch Workspace', switchWorkspaceMenu)
@@ -84,7 +84,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
         self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
-        
+
         self.Bind(wx.EVT_MENU, self.onOtherWorkspace, id=ID_otherWorkspace)
         self.Bind(wx.EVT_MENU, self.onAddBookToWorkspace, id=ID_addBook)
 
@@ -271,7 +271,7 @@ class MainFrame(wx.Frame):
 
 
         return overview
-    
+
     def onAddBookToWorkspace(self, event):
         print 'onAddBookToWorkspace'
         print ("CWD: %s\n" % os.getcwd())
@@ -285,13 +285,13 @@ class MainFrame(wx.Frame):
         # dialog is set up to change the current working directory to the path chosen.
         dlg = wx.FileDialog(
             self, message="Select a book",
-            defaultDir=os.getcwd(), 
+            defaultDir=os.getcwd(),
             defaultFile="",
             wildcard=wildcard,
             style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR
             )
 
-        # Show the dialog and retrieve the user response. If it is the OK response, 
+        # Show the dialog and retrieve the user response. If it is the OK response,
         # process the data.
         if dlg.ShowModal() == wx.ID_OK:
             # This returns a Python list of files that were selected.
@@ -308,7 +308,7 @@ class MainFrame(wx.Frame):
         # Destroy the dialog. Don't do this until you are done with it!
         # BAD things can happen otherwise!
         dlg.Destroy()
-        
+
     def onOtherWorkspace(self, event):
         print 'onOtherWorkspace'
 #         panel = WorkspacePanel(self)
@@ -316,7 +316,7 @@ class MainFrame(wx.Frame):
         win.Show(True)
 
         pass
-    
+
     def LoadingBooks(self):
         createdb = CreateDatabase()
         createdb.addingData()
@@ -328,7 +328,7 @@ wildcard = "All files (*.*)|*.*|"\
             "PDF Books (*.pdf)|*.pdf|"     \
            "EPUB Books (*.epub)|*.epub|" \
            "Text Books (*.txt)|*.txt|"    \
-           "Comics (*.cbz)|*.cbz|"        
+           "Comics (*.cbz)|*.cbz"
 #            "All files (*.*)|*.*"
 
 overview = '''
@@ -365,14 +365,14 @@ overview = '''
     '''
 
 if __name__ == "__main__":
-    
+
     os.chdir(Workspace().path)
     listOfDir = os.listdir(Workspace().path)
     if len(listOfDir)>0:
 #         print len(listOfDir)
         isDatabase=False
         for sName in listOfDir:
-            if "opal.sqlite" in str(sName):
+            if "_opal.sqlite" in str(sName):
                 print sName
                 isDatabase=True
         if not  isDatabase:
