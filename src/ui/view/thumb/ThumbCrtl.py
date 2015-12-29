@@ -30,6 +30,8 @@
 # End Of Comments
 # --------------------------------------------------------------------------- #
 from src.ui.view.opalview.BookInfo import GenerateBookInfo
+import subprocess
+import sys
 
 
 """
@@ -1109,10 +1111,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         self.ShowFileNames(True)
 
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_LEFT_DCLICK, self.OnMouseDClick)
-        self.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightMouseDown)
         self.Bind(wx.EVT_RIGHT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMove)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
@@ -2200,7 +2202,99 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.Refresh()
 
 
-    def OnMouseDown(self, event):
+    def OnRightMouseDown(self, event):
+        print 'OnRightMouseDown'
+
+        print ' previous printing all _selected',self._selected
+        print 'printing all _selectedarray',self._selectedarray
+        x = event.GetX()
+        y = event.GetY()
+        x, y = self.CalcUnscrolledPosition(x, y)
+        # get item number to select
+        lastselected = self._selected
+        self._selected = self.GetItemIndex(x, y)
+        print ' previous printing all _selected',self._selected
+        name=self._items[self._selected].book.bookName
+        id=self._items[self._selected].book.id
+        print 'updating info'
+        page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+        self.popupID1 = wx.NewId()
+        self.popupID2 = wx.NewId()
+        self.popupID3 = wx.NewId()
+        self.popupID4 = wx.NewId()
+        self.popupID5 = wx.NewId()
+        
+        self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
+        self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
+        self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
+        self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
+        self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
+        menu = wx.Menu()
+        # Show how to put an icon in the menu
+        item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID2, "Open containing folder.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID3, "Search similar books.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID4, "Properties.")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID5, "Open Book")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+        self.SetPopupMenu(menu)
+        pass
+    
+
+    def OnPopupOne(self, event):
+        print ("Popup one\n")
+
+    def OnOpenFolderPath(self, event):
+        print ("OnOpenFolderPath \n")
+        print self._selected
+        if self._selected != None:
+            book=self._items[self._selected].book
+            print self._selected
+            file=book.bookPath
+        if sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        elif sys.platform == 'win32':
+            os.startfile(file)
+
+    def OnPopupThree(self, event):
+        print ("OnPopupThree \n")
+
+    def OnPopupFour(self, event):
+        print ("OnPopupFour \n")
+
+    def OpenBook(self, event):
+        print self._selected
+        if self._selected != None:
+            book=self._items[self._selected].book
+            print self._selected
+            bookPath=book.bookPath
+            for name in os.listdir(bookPath):
+                if ".pdf" in name:
+                    print name
+                    file=os.path.join(bookPath,name)
+                elif  ".epub" in name:
+                    file=os.path.join(bookPath,name)
+                    
+        if sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        elif sys.platform == 'win32':
+            os.startfile(file)
+        print ("OpenBook \n")    
+    
+    def OnLeftMouseDown(self, event):
         """
         Handles the ``wx.EVT_LEFT_DOWN`` and ``wx.EVT_RIGHT_DOWN`` events for L{ThumbnailCtrl}.
 

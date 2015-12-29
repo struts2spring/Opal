@@ -7,6 +7,8 @@ import random
 from src.logic.search_book import FindingBook
 from wx.lib.embeddedimage import PyEmbeddedImage
 import os
+import sys
+import subprocess
 
 #---------------------------------------------------------------------------
 
@@ -253,13 +255,13 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
 
 
 class MegaFontRenderer(Grid.PyGridCellRenderer):
-    def __init__(self, table, color="blue", font="ARIAL", fontsize=8):
+    def __init__(self, table, color="light blue", font="ARIAL", fontsize=8):
         """Render data in the specified color and font and fontsize"""
         Grid.PyGridCellRenderer.__init__(self)
         self.table = table
         self.color = color
         self.font = wx.Font(fontsize, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, font)
-        self.selectedBrush = wx.Brush("blue", wx.SOLID)
+        self.selectedBrush = wx.Brush("light blue", wx.SOLID)
         self.normalBrush = wx.Brush(wx.WHITE, wx.SOLID)
         self.colSize = None
         self.rowSize = 50
@@ -274,12 +276,14 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
         # clear the background
         dc.SetBackgroundMode(wx.SOLID)
 
-        if isSelected:
-            dc.SetBrush(wx.Brush(wx.BLUE, wx.SOLID))
-            dc.SetPen(wx.Pen(wx.BLUE, 1, wx.SOLID))
-        else:
-            dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
-            dc.SetPen(wx.Pen(wx.WHITE, 1, wx.SOLID))
+#         if isSelected:
+#             dc.SetBrush(wx.Brush(wx.LIGHT_GREY_BRUSH, wx.SOLID))
+#             dc.SetPen(wx.Pen(wx.LIGHT_GREY_BRUSH, 1, wx.SOLID))
+#         else:
+#             dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
+#             dc.SetPen(wx.Pen(wx.WHITE, 1, wx.SOLID))
+        dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
+        dc.SetPen(wx.Pen(wx.WHITE, 1, wx.SOLID))
         dc.DrawRectangleRect(rect)
 
         text = self.table.GetValue(row, col)
@@ -289,7 +293,7 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
         # or not
         if isSelected:
             dc.SetBrush(self.selectedBrush)
-            dc.SetTextBackground("blue")
+            dc.SetTextBackground("light blue")
         else:
             dc.SetBrush(self.normalBrush)
             dc.SetTextBackground("white")
@@ -425,7 +429,7 @@ class MegaGrid(Grid.Grid):
             self.popupID5 = wx.NewId()
             # make a menu
             self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
-            self.Bind(wx.EVT_MENU, self.OnOpen, id=self.popupID2)
+            self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
             self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
             self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
             self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
@@ -464,8 +468,17 @@ class MegaGrid(Grid.Grid):
     def OnPopupOne(self, event):
         print ("Popup one\n")
 
-    def OnOpen(self, event):
-        print ("OnOpen \n")
+    def OnOpenFolderPath(self, event):
+        print ("OnOpenFolderPath \n")
+        print self.rowSelected
+        if self.rowSelected != None:
+            book=self._table.data[self.rowSelected][1]
+            print self.rowSelected
+            file=book['bookPath']
+        if sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        elif sys.platform == 'win32':
+            os.startfile(file)
 
     def OnPopupThree(self, event):
         print ("OnPopupThree \n")
@@ -474,6 +487,22 @@ class MegaGrid(Grid.Grid):
         print ("OnPopupFour \n")
 
     def OpenBook(self, event):
+        print self.rowSelected
+        if self.rowSelected !=None:
+            book=self._table.data[self.rowSelected][1]
+            print self.rowSelected
+            bookPath=book['bookPath']
+            for name in os.listdir(bookPath):
+                if ".pdf" in name:
+                    print name
+                    file=os.path.join(bookPath,name)
+                elif  ".epub" in name:
+                    file=os.path.join(bookPath,name)
+                    
+        if sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        elif sys.platform == 'win32':
+            os.startfile(file)
         print ("OpenBook \n")
 
 class MegaFontRendererFactory:

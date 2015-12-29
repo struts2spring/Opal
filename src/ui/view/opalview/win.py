@@ -21,7 +21,7 @@ from src.ui.view.opalview.BookInfo import GenerateBookInfo
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 import traceback
 from src.static.constant import Workspace
-
+from PIL import Image
 
 
 #----------------------------------------------------------------------
@@ -32,6 +32,7 @@ ID_Rest_view = wx.NewId()
 ID_switchWorkspace = wx.NewId()
 ID_otherWorkspace = wx.NewId()
 ID_addBook = wx.NewId()
+ID_reLoadDatabase = wx.NewId()
 print '------other id --------',ID_otherWorkspace
 
 
@@ -87,6 +88,7 @@ class MainFrame(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.onOtherWorkspace, id=ID_otherWorkspace)
         self.Bind(wx.EVT_MENU, self.onAddBookToWorkspace, id=ID_addBook)
+        self.Bind(wx.EVT_MENU, self.onReLoadDatabaseToWorkspace, id=ID_reLoadDatabase)
 
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -107,6 +109,7 @@ class MainFrame(wx.Frame):
         tb1.AddSeparator()
         tb1.AddLabelTool(102, "Test", wx.ArtProvider_GetBitmap(wx.ART_QUESTION))
         tb1.AddLabelTool(ID_addBook, "Add book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
+        tb1.AddLabelTool(ID_reLoadDatabase, "Reload database", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
         tb1.Realize()
 
         # add the toolbars to the manager
@@ -272,6 +275,12 @@ class MainFrame(wx.Frame):
 
         return overview
 
+    def onReLoadDatabaseToWorkspace(self, event):
+        print 'onReLoadDatabaseToWorkspace'
+        session = CreateDatabase().creatingDatabase()
+        CreateDatabase().addingData()
+        pass
+        
     def onAddBookToWorkspace(self, event):
         print 'onAddBookToWorkspace'
         print ("CWD: %s\n" % os.getcwd())

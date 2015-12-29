@@ -75,9 +75,9 @@ class CreateDatabase():
 #         sess = session()
         session = Session()
         for sName in listOfDir:
-            one = directory_name + "/" + sName
+            one = os.path.join(directory_name , sName)
             # print one
-            file = open(one + "/book.json", 'r')
+            file = open(os.path.join(one ,'book.json'), 'r')
 
             rep = ''
             for line in file:
