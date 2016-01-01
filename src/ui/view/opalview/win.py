@@ -255,7 +255,7 @@ class MainFrame(wx.Frame):
 #             self.LoadingBooks()
             self.books = FindingBook().findAllBooks()
 #             self.books=FindingBook().findAllBooks()
-            colnames = ['id', 'bookName', 'isbn_13', 'isbn_10', 'rating', 'inLanguage', 'series', 'bookPath', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'authors', 'publisher', 'hasCode', 'createdOn', 'bookFormat', 'dimension', 'bookDescription', 'customerReview']
+            colnames = ['id', 'bookName', 'bookFormat', 'isbn_13', 'isbn_10', 'rating', 'inLanguage', 'series', 'bookPath', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'authors', 'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
             data = []
             noOfBooks = len(self.books)
             bookId_rowNo_dict = {}

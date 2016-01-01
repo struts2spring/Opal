@@ -46,7 +46,7 @@ class MegaTable(Grid.PyGridTableBase):
         return "row %03d" % int(self.data[row][0])
 
     def GetValue(self, row, col):
-        print 'GetValue:', self.GetColLabelValue(col)
+#         print 'GetValue:', self.GetColLabelValue(col)
         value=str(self.data[row][1].get(self.GetColLabelValue(col), ""))
         if 'authors'== self.GetColLabelValue(col):
             author=''
@@ -215,7 +215,7 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
 
 
 
-        self._choices = {'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"pdf32.png"),
+        self._choices = {'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"pdf.png"),
                          'chm': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"chm.png"),
                          'mobi': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"mobi.png"),
                          'epub': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"epub.png"),

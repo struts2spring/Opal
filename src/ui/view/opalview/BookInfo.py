@@ -10,6 +10,7 @@ from src.logic.search_book import FindingBook
 import os
 import wx.html
 from PIL import Image
+from src.dao.BookDao import Workspace
 
 class GenerateBookInfo():
 
@@ -18,33 +19,41 @@ class GenerateBookInfo():
         This function is going to provide book info html.
         '''
 #         os.chdir(book.bookPath)
-        path=os.path.dirname(__file__) + os.sep + "images" + os.sep 
+        path = os.path.dirname(__file__) + os.sep + "images" + os.sep 
 #         path='/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images'
-        listOfIcons=os.listdir(path)
-        iconDict={}
+        listOfIcons = os.listdir(path)
+        iconDict = {}
         for l in listOfIcons:
-            name=l.split('.')[0]
-            iconDict[name]=os.path.join(path, l)
+            name = l.split('.')[0]
+            iconDict[name] = os.path.join(path, l)
 
 
-        lst=os.listdir(book.bookPath)
-        name=None
+        lst = os.listdir(book.bookPath)
+        name = None
         for l in lst:
             if l.endswith('.jpg'):
-                name=l
+                name = l
                 break
-        filepath=os.path.join( book.bookPath, name)
-        im=Image.open(filepath)
+        filepath = os.path.join(book.bookPath, name)
+        im = Image.open(filepath)
         print im.size
 
-        iconPath=iconDict[book.bookFormat.lower()]
+        iconPath = iconDict[book.bookFormat.lower()]
 #         ima= im.resize((200, 250), Image.ANTIALIAS)
 #                 print name
 
-
+        lightGray='#ececec'#'#D3D3D3'
         doc, tag, text = Doc().tagtext()
         doc.asis('<!DOCTYPE html>')
         with tag('html'):
+            with tag('style'):
+                text('''
+                    p.small {
+                        font-style: normal;
+                        font-size:50%;
+                        
+                    }
+                    ''')
             with tag('head'):
                 with tag('title'):
                     text('book info')
@@ -68,11 +77,11 @@ class GenerateBookInfo():
                                     text('Book Description')
                                 with tag('p'):
                                     text(book.bookDescription)
-
-                        with tag('tr'):
+                    with tag('table', width="100%"):
+                        with tag('tr','BGCOLOR="'+lightGray+'"'):
                             with tag('td'):
-                                with tag('p',align="right"):
-                                    text('Publisher')
+                                with tag('p', align="right"):
+                                    text('Publisher:')
                             with tag('td'):
                                 with tag('p'):
                                     text(book.publisher)
@@ -80,21 +89,21 @@ class GenerateBookInfo():
 
                         with tag('tr'):
                             with tag('td'):
-                                with tag('p',align="right"):
-                                    text('by (Authors)')
+                                with tag('p', align="right"):
+                                    text('by (Authors):')
                             with tag('td'):
                                 with tag('p'):
-                                    authors=book.authors
-                                    s=''
+                                    authors = book.authors
+                                    s = ''
                                     for a in authors:
-                                        s=s+','+a.authorName
+                                        s = s + ',' + a.authorName
                                     text(s)
 
                         if book.isbn_13:
-                            with tag('tr'):
+                            with tag('tr','BGCOLOR="'+lightGray+'"'):
                                 with tag('td'):
-                                    with tag('p',align="right"):
-                                        text('isbn 13')
+                                    with tag('p', align="right"):
+                                        text('ISBN 13:')
                                 with tag('td'):
                                     with tag('p'):
                                         text(book.isbn_13)
@@ -109,33 +118,41 @@ class GenerateBookInfo():
 
                         with tag('tr'):
                             with tag('td'):
-                                with tag('p',align="right"):
-                                    text('Pages')
+                                with tag('p', align="right"):
+                                    text('Pages:')
                             with tag('td'):
                                 with tag('p'):
                                     text(book.numberOfPages)
 
-                        with tag('tr'):
+                        with tag('tr','BGCOLOR="'+lightGray+'"'):
                             with tag('td'):
-                                with tag('p',align="right"):
-                                    text('Languages')
+                                with tag('p', align="right"):
+                                    text('Languages:')
                             with tag('td'):
                                 with tag('p'):
                                     text(book.inLanguage)
 
                         with tag('tr'):
                             with tag('td'):
-                                with tag('p',align="right"):
-                                    text('File Format')
+                                with tag('p', align="right"):
+                                    text('File Format:')
                             with tag('td'):
                                 with tag('p'):
-                                    text(book.bookFormat)
+#                                     text(book.bookFormat)
+                                    imagePath = os.path.dirname(__file__) + os.sep + "images" + os.sep +str(book.bookFormat).lower()+'.png'
+                                    print imagePath
+#                                     if book.bookFormat == 'PDF':
+#                                         imagePath = pdfImage
+#                                     elif book.bookFormat == 'PDF':
+                                    doc.stag('img', src=imagePath, border="0")
+
+                                    
 
                         if book.fileSize:
-                            with tag('tr'):
+                            with tag('tr','BGCOLOR="'+lightGray+'"', 'class="small"'):
                                 with tag('td'):
-                                    with tag('p',align="right"):
-                                        text('File Size')
+                                    with tag('p', align="right"):
+                                        text('File Size:')
                                 with tag('td'):
                                     with tag('p'):
                                         text(book.fileSize)
@@ -156,27 +173,30 @@ class GenerateBookInfo():
 if __name__ == '__main__':
 
 #     books=FindingBook().searchingBook('webb')
-    books=FindingBook().searchingBook('java')
-    htmlContent = GenerateBookInfo().getHtmlContent(books[0])
-    soup = BeautifulSoup(htmlContent, "lxml")
-    print soup.prettify()
+    books = FindingBook().findAllBooks()
+    try:
+        htmlContent = GenerateBookInfo().getHtmlContent(books[0])
+        soup = BeautifulSoup(htmlContent, "lxml")
+        print soup.prettify()
+    except:
+        pass 
     # Open a file in witre mode
     app = wx.PySimpleApp()
     # create a window/frame, no parent, -1 is default ID, title, size
     frame = wx.Frame(None, -1, "HtmlWindow()", size=(610, 380))
     # call the derived class, -1 is default ID
 
-    html1 = wx.html.HtmlWindow(frame, -1, pos=(0,30), size=(602,310))
+    html1 = wx.html.HtmlWindow(frame, -1, pos=(0, 30), size=(602, 310))
     html1.SetPage(htmlContent)
 #     html1.bind(wx.EVT_RIGHT_DOWN, id=wx.NewId(), rightClick)
 #     html1.Bind(event, handler, source, id, id2)
 
-    os.chdir('/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview')
-    f = open("info2.html","r") #opens file with name of "test.txt"
+    os.chdir(os.path.dirname(__file__))
+    f = open("info2.html", "r")  # opens file with name of "test.txt"
     lines = f.readlines()
-    s=''
+    s = ''
     for l in lines:
-        s=s+str(l)
+        s = s + str(l)
 
     print s
 
@@ -187,8 +207,8 @@ if __name__ == '__main__':
     app.MainLoop()
 
 
-    os.chdir('/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview')
-    f = open("bookInfo.html","w") #opens file with name of "test.txt"
+    os.chdir(os.path.dirname(__file__))
+    f = open("bookInfo.html", "w")  # opens file with name of "test.txt"
     f.write(soup.prettify())
     f.close()
 
