@@ -46,7 +46,14 @@ class MegaTable(Grid.PyGridTableBase):
         return "row %03d" % int(self.data[row][0])
 
     def GetValue(self, row, col):
-        return str(self.data[row][1].get(self.GetColLabelValue(col), ""))
+        print 'GetValue:', self.GetColLabelValue(col)
+        value=str(self.data[row][1].get(self.GetColLabelValue(col), ""))
+        if 'authors'== self.GetColLabelValue(col):
+            author=''
+            for a in self.data[row][1].get(self.GetColLabelValue(col), ""):
+                author= author+a.authorName+'\n'
+            value=author 
+        return value
 
     def GetRawValue(self, row, col):
         return self.data[row][1].get(self.GetColLabelValue(col), "")

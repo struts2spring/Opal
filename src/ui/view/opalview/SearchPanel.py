@@ -63,8 +63,7 @@ class SearchPanel(wx.Panel):
 #         keyCode= event.GetRawKeyCode()
 #         print keyCode
         text = self.searchCtrl.GetValue()
-        if text:
-            self.doSearch(text)
+        self.doSearch(text)
 
     def doSearch(self, text):
         global searchedBooks

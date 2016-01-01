@@ -1390,12 +1390,28 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         thumbinfo = None
 
         if thumb >= 0:
-            thumbinfo = "Name: " + self._items[thumb].GetFileName() + "\n" \
-                        "Size: " + self._items[thumb].GetFileSize() + "\n" \
-                        "Modified: " + self._items[thumb].GetCreationDate() + "\n" \
-                        "Dimensions: " + str(self._items[thumb].GetOriginalSize()) + "\n" \
-                        "Thumb: " + str(self.GetThumbSize()[0:2])
-
+#             print 'thumb info', self._items[thumb]
+            bookName=str(self._items[thumb].book.bookName)
+            author=''
+            fileSize=''
+            for a in self._items[thumb].book.authors:
+                author=author+a.authorName+'\n'
+                
+            if self._items[thumb].book.fileSize:
+                fileSize=str(self._items[thumb].book.fileSize)
+                
+            thumbinfo = "Name: " + bookName + "\n"\
+                        "Author: " + author + "" \
+                        "Size: " + fileSize + "\n" 
+#                         "Modified: " + self._items[thumb].book. + "\n" \
+#                         "Dimensions: " + str(self._items[thumb].GetOriginalSize()) + "\n" \
+#                         "Thumb: " + str(self.GetThumbSize()[0:2])
+#             thumbinfo = "Name: " + self._items[thumb].GetFileName() + "\n" \
+#                         "Size: " + self._items[thumb].GetFileSize() + "\n" \
+#                         "Modified: " + self._items[thumb].GetCreationDate() + "\n" \
+#                         "Dimensions: " + str(self._items[thumb].GetOriginalSize()) + "\n" \
+#                         "Thumb: " + str(self.GetThumbSize()[0:2])
+#         print thumbinfo
         return thumbinfo
 
 
@@ -2362,7 +2378,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 id=self._items[self._selected].book.id
                 print 'updating info'
                 page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                self.GetTopLevelParent().ctrl.SetPage(page)
+                self.GetTopLevelParent().browser.SetPage(page,"")
 
                 print 'selecting grid'
                 row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]

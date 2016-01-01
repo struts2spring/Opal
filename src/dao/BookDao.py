@@ -23,11 +23,14 @@ from src.static.constant import Workspace
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
 if sys.platform=='win32':
-    Workspace().path='e:\\docs\\books'  
+#     Workspace().path='e:\\docs\\books'  
+    Workspace().path='C:\\new'  
 else:  
     Workspace().path='/docs/books'
 os.chdir(Workspace().path)
 listOfDir = os.listdir(Workspace().path)
+
+
 
 
 engine = create_engine('sqlite:///'+Workspace().path+os.sep+'_opal.sqlite', echo=True)

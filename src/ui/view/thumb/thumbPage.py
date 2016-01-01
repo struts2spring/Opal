@@ -6,6 +6,7 @@ from src.ui.view.thumb import AboutBox
 import wx.lib.agw.aui as aui
 from src.ui.view.thumb.ThumbCrtl import ThumbnailCtrl, NativeImageHandler
 from src.dao.BookDao import CreateDatabase
+from src.static.constant import Workspace
 
 
 class MainWindow(wx.Frame):
@@ -364,18 +365,20 @@ class MainBookTab(aui.AuiNotebook):
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.thumbnail = ThumbnailCtrl(self.gallery, imagehandler=NativeImageHandler)
+        self.thumbnail._scrolled.EnableToolTips(enable=True)
 
-## Todo
-        books=list()
-        print '1.---->',os.getcwd()
-        os.chdir('/home/vijay/Documents/Aptana_Workspace/util/src/dao')
-        print '2.---->',os.getcwd()
+# # Todo
+        books = list()
+        print '1.---->', os.getcwd()
+#         os.chdir('/home/vijay/Documents/Aptana_Workspace/util/src/dao')
+        print '2.---->', os.getcwd()
 #         session = CreateDatabase().creatingDatabase()
 #         CreateDatabase().addingData()
-        books = CreateDatabase().findByBookName("python")
+#         books = CreateDatabase().findByBookName("python")
+        books = CreateDatabase().findAllBook()
 
-
-        self.thumbnail.ShowDir(books)
+        if books != None:
+            self.thumbnail.ShowDir(books)
         self.sizer.Add(self.thumbnail, 1, wx.EXPAND | wx.ALL, 10)
         self.gallery.SetSizer(self.sizer)
 
@@ -454,6 +457,12 @@ def main():
 #     books = CreateDatabase().findAllBook(session)
 #     bookName = 'head'
 #     books = CreateDatabase().findByBookName(session, bookName)
+    if Workspace().path + os.sep + '_opal.sqlite':
+        if os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size == 0:
+            c = CreateDatabase()
+            c.creatingDatabase()
+            c.addingData()
+            print 'data loaded'
     app = wx.App(0)
     frame = MainWindow(None, "My Calibre")
     app.MainLoop()

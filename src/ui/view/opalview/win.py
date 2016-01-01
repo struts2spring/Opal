@@ -22,7 +22,7 @@ from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 import traceback
 from src.static.constant import Workspace
 from PIL import Image
-
+import wx.html2
 
 #----------------------------------------------------------------------
 global searchedBooks
@@ -33,7 +33,7 @@ ID_switchWorkspace = wx.NewId()
 ID_otherWorkspace = wx.NewId()
 ID_addBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
-print '------other id --------',ID_otherWorkspace
+print '------other id --------', ID_otherWorkspace
 
 
 
@@ -93,8 +93,8 @@ class MainFrame(wx.Frame):
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
-        self.statusbar.SetStatusText("Ready", 0)
-        self.statusbar.SetStatusText("books count:" + str(len(self.books)), 1)
+#         self.statusbar.SetStatusText("Ready", 0)
+        
 
         # min size for the frame itself isn't completely done.
         # see the end up FrameManager::Update() for the test
@@ -132,7 +132,7 @@ class MainFrame(wx.Frame):
 #         self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("sizereport_content").CenterPane().Show())
 
 #         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().Name("text_content").CenterPane().Show())
-        html_content = wx.aui.AuiPaneInfo().Name("html_content").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
+        html_content = wx.aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
         self._mgr.AddPane(self.CreateHTMLCtrl(), html_content)
 
         perspective_all = self._mgr.SavePerspective()
@@ -147,6 +147,7 @@ class MainFrame(wx.Frame):
 
         # "commit" all changes made to FrameManager
         self._mgr.Update()
+        self.statusbar.SetStatusText("books count:" + str(len(self.books)), 1)
 
 
         # Show How To Use The Closing Panes Event
@@ -224,6 +225,7 @@ class MainFrame(wx.Frame):
 
         if not self.thumbnail:
             self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
+            self.thumbnail._scrolled.EnableToolTips(enable=True)
         # # Todo
         print 'before', len(self.books)
 #         self.books=list()
@@ -239,11 +241,13 @@ class MainFrame(wx.Frame):
         return wx.TextCtrl(self, -1, text, wx.Point(0, 0), wx.Size(600, 400), wx.NO_BORDER | wx.TE_MULTILINE)
 
     def CreateHTMLCtrl(self):
-        self.ctrl = wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
-        if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
-            self.ctrl.SetStandardFonts()
-        self.ctrl.SetPage(self.GetIntroText())
-        return self.ctrl
+#         self.ctrl = wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
+#         if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
+#             self.ctrl.SetStandardFonts()
+#         self.ctrl.SetPage(self.GetIntroText())
+        self.browser = wx.html2.WebView.New(self) 
+        self.browser.LoadURL("C:\\Users\\vijay\\workspace\\3d_cover_flow\\WebContent\\3D-Cover-Flip-Animations-with-jQuery-CSS3-Transforms-Cover3D\\indexSimpleDemo.html")
+        return self.browser
 
     def CreateGrid(self):
         try:
@@ -377,13 +381,13 @@ if __name__ == "__main__":
 
     os.chdir(Workspace().path)
     listOfDir = os.listdir(Workspace().path)
-    if len(listOfDir)>0:
+    if len(listOfDir) > 0:
 #         print len(listOfDir)
-        isDatabase=False
+        isDatabase = False
         for sName in listOfDir:
-            if "_opal.sqlite" in str(sName):
+            if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size != 0):
                 print sName
-                isDatabase=True
+                isDatabase = True
         if not  isDatabase:
             session = CreateDatabase().creatingDatabase()
             CreateDatabase().addingData()
