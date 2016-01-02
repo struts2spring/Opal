@@ -24,7 +24,7 @@ from src.static.constant import Workspace
 print '3--->', os.getcwd(), os.name, sys.platform
 if sys.platform=='win32':
 #     Workspace().path='e:\\docs\\books'  
-    Workspace().path='C:\\new'  
+    Workspace().path='C:\\new_1'  
 else:  
     Workspace().path='/docs/books'
 os.chdir(Workspace().path)
@@ -184,14 +184,22 @@ class CreateDatabase():
 #         print len(bs)
         pass
 
+    def getMaxBookID(self, book=None):
+        '''
+        This method will find the book in database . It will return true.If book present.
+
+        '''
+        books=None
+        maxBookId = session.query(func.max(Book.id)).one()
+        return maxBookId[0]
 
 if __name__ == '__main__':
 #     session = CreateDatabase().creatingDatabase()
 #     CreateDatabase().addingData()
 
 #     books = CreateDatabase().findByBookName("java")
-#     createdb = CreateDatabase()
-#     createdb.addingData()
+    createdb = CreateDatabase()
+    createdb.getMaxBookID()
 #     for b in books:
 #         print b.isbn_13, b.id
 

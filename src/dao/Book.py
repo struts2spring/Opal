@@ -27,9 +27,9 @@ class Book(Base):
     publisher = Column(String)  # publisher
     bookFormat = Column("book_format", String)  # bookFormat
     fileSize = Column('file_size', String)  # fileSize
-    numberOfPages = Column('number_of_pages', String)  # numberOfPages
+    numberOfPages = Column('number_of_pages', Integer)  # numberOfPages
     inLanguage = Column('in_language', String)  # inLanguage
-    publishedOn = Column('published_on', DateTime, default=func.now())
+    publishedOn = Column('published_on', DateTime)
     hasCover = Column('has_cover', String)  # hasCover
     hasCode = Column('has_code', String)  # hasCode
     bookPath = Column('book_path', String)  # bookPath

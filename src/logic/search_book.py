@@ -29,3 +29,7 @@ class FindingBook():
 #         CreateDatabase().addingData()
         books = CreateDatabase().findAllBook()
         return books
+
+    def getMaxBookId(self):
+        os.chdir(Workspace().path)
+        
