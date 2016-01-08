@@ -51,8 +51,8 @@ class MegaTable(Grid.PyGridTableBase):
         if 'authors'== self.GetColLabelValue(col):
             author=''
             for a in self.data[row][1].get(self.GetColLabelValue(col), ""):
-                author= author+a.authorName+'\n'
-            value=author 
+                author  = author+a.authorName+'\n'
+            value=author
         return value
 
     def GetRawValue(self, row, col):
@@ -505,7 +505,7 @@ class MegaGrid(Grid.Grid):
                     file=os.path.join(bookPath,name)
                 elif  ".epub" in name:
                     file=os.path.join(bookPath,name)
-                    
+
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':

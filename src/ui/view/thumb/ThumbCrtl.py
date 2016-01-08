@@ -1396,13 +1396,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             fileSize=''
             for a in self._items[thumb].book.authors:
                 author=author+a.authorName+'\n'
-                
+
             if self._items[thumb].book.fileSize:
                 fileSize=str(self._items[thumb].book.fileSize)
-                
+
             thumbinfo = "Name: " + bookName + "\n"\
                         "Author: " + author + "" \
-                        "Size: " + fileSize + "\n" 
+                        "Size: " + fileSize + "\n"
 #                         "Modified: " + self._items[thumb].book. + "\n" \
 #                         "Dimensions: " + str(self._items[thumb].GetOriginalSize()) + "\n" \
 #                         "Thumb: " + str(self.GetThumbSize()[0:2])
@@ -1811,6 +1811,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         """
 
         capHeight = 0
+#         print 'GetCaptionHeight',begRow, count,len(self._tCaptionHeight)
         for ii in xrange(begRow, begRow + count):
             if ii < len(self._tCaptionHeight):
                 capHeight = capHeight + self._tCaptionHeight[ii]
@@ -2239,7 +2240,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.popupID3 = wx.NewId()
         self.popupID4 = wx.NewId()
         self.popupID5 = wx.NewId()
-        
+
         self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
         self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
         self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
@@ -2268,7 +2269,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         menu.AppendItem(item)
         self.SetPopupMenu(menu)
         pass
-    
+
 
     def OnPopupOne(self, event):
         print ("Popup one\n")
@@ -2303,13 +2304,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                     file=os.path.join(bookPath,name)
                 elif  ".epub" in name:
                     file=os.path.join(bookPath,name)
-                    
+
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':
             os.startfile(file)
-        print ("OpenBook \n")    
-    
+        print ("OpenBook \n")
+
     def OnLeftMouseDown(self, event):
         """
         Handles the ``wx.EVT_LEFT_DOWN`` and ``wx.EVT_RIGHT_DOWN`` events for L{ThumbnailCtrl}.
@@ -2378,8 +2379,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 id=self._items[self._selected].book.id
                 print 'updating info'
                 page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                self.GetTopLevelParent().browser.SetPage(page,"")
-
+                if sys.platform=='win32':
+                    self.GetTopLevelParent().browser.SetPage(page,"")
+                else:
+                    self.GetTopLevelParent().browser.SetPage(page)
                 print 'selecting grid'
                 row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
                 self.GetTopLevelParent().grid.SelectRow(row=row)

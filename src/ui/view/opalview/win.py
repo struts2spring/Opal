@@ -22,8 +22,12 @@ from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 import traceback
 from src.static.constant import Workspace
 from PIL import Image
-import wx.html2
+import sys
 
+try:
+    import wx.html2
+except:
+    print 'error'
 #----------------------------------------------------------------------
 global searchedBooks
 searchedBooks = list()
@@ -94,7 +98,7 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
 #         self.statusbar.SetStatusText("Ready", 0)
-        
+
 
         # min size for the frame itself isn't completely done.
         # see the end up FrameManager::Update() for the test
@@ -245,8 +249,14 @@ class MainFrame(wx.Frame):
 #         if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
 #             self.ctrl.SetStandardFonts()
 #         self.ctrl.SetPage(self.GetIntroText())
-        self.browser = wx.html2.WebView.New(self) 
-        self.browser.LoadURL("C:\\Users\\vijay\\workspace\\3d_cover_flow\\WebContent\\3D-Cover-Flip-Animations-with-jQuery-CSS3-Transforms-Cover3D\\indexSimpleDemo.html")
+        if sys.platform=='win32':
+            self.browser = wx.html2.WebView.New(self)
+            self.browser.LoadURL("C:\\Users\\vijay\\workspace\\3d_cover_flow\\WebContent\\3D-Cover-Flip-Animations-with-jQuery-CSS3-Transforms-Cover3D\\indexSimpleDemo.html")
+        else:
+            self.browser =  wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
+            if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
+                self.browser.SetStandardFonts()
+
         return self.browser
 
     def CreateGrid(self):
@@ -284,7 +294,7 @@ class MainFrame(wx.Frame):
         session = CreateDatabase().creatingDatabase()
         CreateDatabase().addingData()
         pass
-        
+
     def onAddBookToWorkspace(self, event):
         print 'onAddBookToWorkspace'
         print ("CWD: %s\n" % os.getcwd())
@@ -378,7 +388,6 @@ overview = '''
     '''
 
 if __name__ == "__main__":
-
     os.chdir(Workspace().path)
     listOfDir = os.listdir(Workspace().path)
     if len(listOfDir) > 0:
