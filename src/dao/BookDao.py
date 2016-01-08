@@ -19,6 +19,7 @@ from src.dao.Book import engine
 import shutil
 import traceback
 from src.static.constant import Workspace
+import datetime
 
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
@@ -88,14 +89,34 @@ class CreateDatabase():
             file.close
             # print str(rep)
             b = json.loads(rep)
-
-            book = Book(bookName=b["name"], fileSize=b["fileSize"], hasCover='Y', bookPath=one , bookDescription=b["bookDescription"], publisher=b["publisher"], isbn_13=b["isbn"], numberOfPages=b["numberOfPages"], bookFormat=b["bookFormat"], inLanguage=b["inLanguage"])
+            book=Book()
+            for k in b:
+#                 print b[k]
+                if not isinstance(b[k], list):
+#                     print b[k]
+                    if k in ['publishedOn', 'createdOn']:
+                        if b[k]:
+                            book.__dict__[k]=datetime.datetime.strptime(b[k][0:19],"%Y-%m-%d %H:%M:%S")
+                    else:
+                        book.__dict__[k]=b[k]
+                        
+                else:
+                    authorList = list()
+                    for a in b[k]:
+                        author=Author()
+                        for aKey in a:
+                            author.__dict__[aKey]=a[aKey]
+                            authorList.append(author)
+            book.bookPath=one               
+                
+#             print b.__dict__
+#             book = Book(bookName=b["bookName"], fileSize=b["fileSize"], hasCover='Y', bookPath=one , bookDescription=b["bookDescription"], publisher=b["publisher"], isbn_13=b["isbn_13"], numberOfPages=b["numberOfPages"], bookFormat=b["bookFormat"], inLanguage=b["inLanguage"])
             # book.bookName='one'
-
-            author = Author(authorName=b["author"])
-            authorList = list()
-            authorList.append(author)
-            book.authors = authorList
+#             for a in b["authors"]:
+#                 author = Author(authorName=a["authorName"])
+#             authorList = list()
+#             authorList.append(author)
+#             book.authors = authorList
 
             authorBookLink = AuthorBookLink()
             authorBookLink.author = author
@@ -105,6 +126,16 @@ class CreateDatabase():
         session.commit()
         print 'data loaded'
 
+    def saveAuthorBookLink(self, authorBookLink):
+        session = Session()
+        session.add(authorBookLink)
+        session.commit()
+        
+    def saveBook(self, book):
+        session = Session()
+        session.add(book)
+        session.commit()
+        
     def findAllBook(self):
 #         session=self.getSession()
         bs = session.query(Book).all()
@@ -198,8 +229,11 @@ if __name__ == '__main__':
 #     CreateDatabase().addingData()
 
 #     books = CreateDatabase().findByBookName("java")
-    createdb = CreateDatabase()
-    createdb.getMaxBookID()
+    try:
+        createdb = CreateDatabase()
+        createdb.addingData()
+    except:
+        print traceback.print_exc()
 #     for b in books:
 #         print b.isbn_13, b.id
 

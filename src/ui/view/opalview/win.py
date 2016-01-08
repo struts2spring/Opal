@@ -23,6 +23,7 @@ import traceback
 from src.static.constant import Workspace
 from PIL import Image
 import sys
+from src.logic.AddingBook import AddBook
 
 try:
     import wx.html2
@@ -187,10 +188,10 @@ class MainFrame(wx.Frame):
         self._mgr.LoadPerspective(self.perspective_default)
 
     def searchCtrl(self):
-        self.searchCtrl = SearchPanel(self)
+        self.searchCtrlPanel = SearchPanel(self)
 #         self.searchCtrl.SetToolTip(wx.ToolTip('Search'))
 #         self.searchCtrl.Bind(wx.EVT_TEXT, self.OnTextEntered)
-        return self.searchCtrl
+        return self.searchCtrlPanel
 #     def OnTextEntered(self, event):
 #         text = self.searchCtrl.GetValue()
 # #         self.doSearch(text)
@@ -293,6 +294,8 @@ class MainFrame(wx.Frame):
         print 'onReLoadDatabaseToWorkspace'
         session = CreateDatabase().creatingDatabase()
         CreateDatabase().addingData()
+        text = self.searchCtrlPanel.searchCtrl.GetValue()
+        self.searchCtrlPanel.doSearch(text)
         pass
 
     def onAddBookToWorkspace(self, event):
@@ -323,8 +326,12 @@ class MainFrame(wx.Frame):
             print ('You selected %d files:' % len(paths))
 
             for path in paths:
+                self.selectedFilePath=path
                 print ('           %s\n' % path)
-
+                AddBook().addingBookToWorkspace(path)
+                text = self.searchCtrlPanel.searchCtrl.GetValue()
+                self.searchCtrlPanel.doSearch(text)
+                
         # Compare this with the debug above; did we change working dirs?
         print ("CWD: %s\n" % os.getcwd())
 

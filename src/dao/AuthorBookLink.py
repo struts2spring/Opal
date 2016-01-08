@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base, declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from src.dao.Book import Base, Book
 from src.dao.Author import Author
+from sqlalchemy.sql.schema import UniqueConstraint
 
 
 
@@ -20,3 +21,4 @@ class AuthorBookLink(Base):
     extra_data = Column(String(256))
     author = relationship(Author, backref=backref("book_assoc", cascade="all, delete-orphan"))
     book = relationship(Book, backref=backref("book_assoc", cascade="all, delete-orphan"))
+    UniqueConstraint('book_id', 'author_id', name='uix_1')

@@ -32,6 +32,7 @@
 from src.ui.view.opalview.BookInfo import GenerateBookInfo
 import subprocess
 import sys
+import traceback
 
 
 """
