@@ -2241,12 +2241,14 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.popupID3 = wx.NewId()
         self.popupID4 = wx.NewId()
         self.popupID5 = wx.NewId()
+        self.popupID6 = wx.NewId()
 
         self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
         self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
         self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
         self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
         self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
+        self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
         menu = wx.Menu()
         # Show how to put an icon in the menu
         item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
@@ -2268,12 +2270,21 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         item = wx.MenuItem(menu, self.popupID5, "Open Book")
         item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
         menu.AppendItem(item)
+
+        item = wx.MenuItem(menu, self.popupID6, "Delete Book")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
+
         self.SetPopupMenu(menu)
         pass
 
 
     def OnPopupOne(self, event):
         print ("Popup one\n")
+
+    def deleteBook(self, event):
+        print ("delete book\n")
 
     def OnOpenFolderPath(self, event):
         print ("OnOpenFolderPath \n")

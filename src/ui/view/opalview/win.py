@@ -37,6 +37,7 @@ ID_Rest_view = wx.NewId()
 ID_switchWorkspace = wx.NewId()
 ID_otherWorkspace = wx.NewId()
 ID_addBook = wx.NewId()
+ID_deleteBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
@@ -93,6 +94,7 @@ class MainFrame(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.onOtherWorkspace, id=ID_otherWorkspace)
         self.Bind(wx.EVT_MENU, self.onAddBookToWorkspace, id=ID_addBook)
+        self.Bind(wx.EVT_MENU, self.onDeleteBookToWorkspace, id=ID_deleteBook)
         self.Bind(wx.EVT_MENU, self.onReLoadDatabaseToWorkspace, id=ID_reLoadDatabase)
 
 
@@ -114,6 +116,7 @@ class MainFrame(wx.Frame):
         tb1.AddSeparator()
         tb1.AddLabelTool(102, "Test", wx.ArtProvider_GetBitmap(wx.ART_QUESTION))
         tb1.AddLabelTool(ID_addBook, "Add book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
+        tb1.AddLabelTool(ID_deleteBook, "Delete book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
         tb1.AddLabelTool(ID_reLoadDatabase, "Reload database", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
         tb1.Realize()
 
@@ -298,6 +301,9 @@ class MainFrame(wx.Frame):
         self.searchCtrlPanel.doSearch(text)
         pass
 
+    def onDeleteBookToWorkspace(self, event):
+        print 'onDeleteBookToWorkspace'
+        pass
     def onAddBookToWorkspace(self, event):
         print 'onAddBookToWorkspace'
         print ("CWD: %s\n" % os.getcwd())
@@ -331,7 +337,7 @@ class MainFrame(wx.Frame):
                 AddBook().addingBookToWorkspace(path)
                 text = self.searchCtrlPanel.searchCtrl.GetValue()
                 self.searchCtrlPanel.doSearch(text)
-                
+
         # Compare this with the debug above; did we change working dirs?
         print ("CWD: %s\n" % os.getcwd())
 
@@ -340,12 +346,16 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def onOtherWorkspace(self, event):
+        '''
+        This method need to be called in following scenario.
+        1. if there is no opal_start.json.
+        2. if file present and no valid path.
+        '''
         print 'onOtherWorkspace'
 #         panel = WorkspacePanel(self)
         win = WorkspaceFrame(self, -1, "Workspace Launcher", size=(470, 290), style=wx.DEFAULT_FRAME_STYLE)
         win.Show(True)
 
-        pass
 
     def LoadingBooks(self):
         createdb = CreateDatabase()

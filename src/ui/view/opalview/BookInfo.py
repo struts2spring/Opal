@@ -19,7 +19,7 @@ class GenerateBookInfo():
         This function is going to provide book info html.
         '''
 #         os.chdir(book.bookPath)
-        path = os.path.dirname(__file__) + os.sep + "images" + os.sep 
+        path = os.path.dirname(__file__) + os.sep + "images" + os.sep
 #         path='/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images'
         listOfIcons = os.listdir(path)
         iconDict = {}
@@ -51,7 +51,7 @@ class GenerateBookInfo():
                     p.small {
                         font-style: normal;
                         font-size:50%;
-                        
+
                     }
                     ''')
             with tag('head'):
@@ -76,7 +76,8 @@ class GenerateBookInfo():
                                 with tag('h4'):
                                     text('Book Description')
                                 with tag('p'):
-                                    text(book.bookDescription)
+                                    if book.bookDescription!=None:
+                                        text(book.bookDescription)
                     with tag('table', width="100%"):
                         with tag('tr','BGCOLOR="'+lightGray+'"'):
                             with tag('td'):
@@ -84,7 +85,8 @@ class GenerateBookInfo():
                                     text('Publisher:')
                             with tag('td'):
                                 with tag('p'):
-                                    text(book.publisher)
+                                    if book.publisher!=None:
+                                        text(book.publisher)
 
 
                         with tag('tr'):
@@ -130,7 +132,8 @@ class GenerateBookInfo():
                                     text('Languages:')
                             with tag('td'):
                                 with tag('p'):
-                                    text(book.inLanguage)
+                                    if book.inLanguage!=None:
+                                        text(book.inLanguage)
 
                         with tag('tr'):
                             with tag('td'):
@@ -146,7 +149,7 @@ class GenerateBookInfo():
 #                                     elif book.bookFormat == 'PDF':
                                     doc.stag('img', src=imagePath, border="0")
 
-                                    
+
 
                         if book.fileSize:
                             with tag('tr','BGCOLOR="'+lightGray+'"', 'class="small"'):
@@ -179,7 +182,7 @@ if __name__ == '__main__':
         soup = BeautifulSoup(htmlContent, "lxml")
         print soup.prettify()
     except:
-        pass 
+        pass
     # Open a file in witre mode
     app = wx.PySimpleApp()
     # create a window/frame, no parent, -1 is default ID, title, size

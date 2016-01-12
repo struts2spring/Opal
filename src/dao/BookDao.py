@@ -23,11 +23,11 @@ import datetime
 
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
-if sys.platform=='win32':
-#     Workspace().path='e:\\docs\\books'  
-    Workspace().path='C:\\new_1'  
-else:  
-    Workspace().path='/docs/books'
+# if sys.platform=='win32':
+# #     Workspace().path='e:\\docs\\books'
+#     Workspace().path='C:\\new_1'
+# else:
+#     Workspace().path='/docs/books'
 os.chdir(Workspace().path)
 listOfDir = os.listdir(Workspace().path)
 
@@ -99,7 +99,7 @@ class CreateDatabase():
                             book.__dict__[k]=datetime.datetime.strptime(b[k][0:19],"%Y-%m-%d %H:%M:%S")
                     else:
                         book.__dict__[k]=b[k]
-                        
+
                 else:
                     authorList = list()
                     for a in b[k]:
@@ -107,8 +107,8 @@ class CreateDatabase():
                         for aKey in a:
                             author.__dict__[aKey]=a[aKey]
                             authorList.append(author)
-            book.bookPath=one               
-                
+            book.bookPath=one
+
 #             print b.__dict__
 #             book = Book(bookName=b["bookName"], fileSize=b["fileSize"], hasCover='Y', bookPath=one , bookDescription=b["bookDescription"], publisher=b["publisher"], isbn_13=b["isbn_13"], numberOfPages=b["numberOfPages"], bookFormat=b["bookFormat"], inLanguage=b["inLanguage"])
             # book.bookName='one'
@@ -130,12 +130,12 @@ class CreateDatabase():
         session = Session()
         session.add(authorBookLink)
         session.commit()
-        
+
     def saveBook(self, book):
         session = Session()
         session.add(book)
         session.commit()
-        
+
     def findAllBook(self):
 #         session=self.getSession()
         bs = session.query(Book).all()

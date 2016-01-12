@@ -434,12 +434,14 @@ class MegaGrid(Grid.Grid):
             self.popupID3 = wx.NewId()
             self.popupID4 = wx.NewId()
             self.popupID5 = wx.NewId()
+            self.popupID6 = wx.NewId()
             # make a menu
             self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
             self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
             self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
             self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
             self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
+            self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
         menu = wx.Menu()
         # Show how to put an icon in the menu
         item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
@@ -462,6 +464,10 @@ class MegaGrid(Grid.Grid):
         item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
         menu.AppendItem(item)
 
+        item = wx.MenuItem(menu, self.popupID6, "Delete Book")
+        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU, (16, 16)))
+        menu.AppendItem(item)
+
 #         menu.Append(self.popupID2, "Open containing folder.")
 #         menu.Append(self.popupID3, "Search similar books.")
 #         menu.Append(self.popupID4, "Properties.")
@@ -474,6 +480,8 @@ class MegaGrid(Grid.Grid):
 
     def OnPopupOne(self, event):
         print ("Popup one\n")
+    def deleteBook(self, event):
+        print ("delete Book\n")
 
     def OnOpenFolderPath(self, event):
         print ("OnOpenFolderPath \n")
