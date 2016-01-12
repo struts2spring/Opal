@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 
 class BookImage():
@@ -20,9 +21,14 @@ class BookImage():
 
 
 if __name__ == "__main__":
-    filePath = '/docs/new/3'
+    filePath=None
+    if sys.platform=='win32':
+        filePath = 'c://new_1//3'
+    else:
+        filePath = '/docs/new_1/3'
+        
 
-    name = 'ST-52900095-16911'
+    name = 'Java Test-Driven Development'
     print 'started'
 #     pdfFilePath=os.path.join(filePath, name+'.pdf')
 #     imageFilePath=os.path.join(filePath, name+'.jpg')
