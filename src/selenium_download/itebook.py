@@ -236,7 +236,7 @@ class ItEbook(object):
                 for k in time_dic_files[i-3]:
                     if 'part' in k:
                         size.add(time_dic_files[i-3][k])
-                print len(list(size))
+#                 print len(list(size))
                 if len(list(size)) > 1:
                     isDownloading=False
             checkFlagForSize=False

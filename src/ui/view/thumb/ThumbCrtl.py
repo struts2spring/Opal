@@ -1814,10 +1814,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         capHeight = 0
 #         print 'GetCaptionHeight',begRow, count,len(self._tCaptionHeight)
 
-        print 'len(self._tCaptionHeight)---->', len(self._tCaptionHeight)
         for ii in xrange(begRow, begRow + count):
-            
-            if ii < len(self._tCaptionHeight) and len(self._tCaptionHeight)!=0:
+            if ii < len(self._tCaptionHeight) and len(self._tCaptionHeight) >0:
                 capHeight = capHeight + self._tCaptionHeight[ii]
 
         return capHeight*self._tTextHeight
@@ -2533,7 +2531,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+#         print '------------------------------------>OnMouseLeave'
         if self._pointed != -1:
 
             self._pointed = -1
