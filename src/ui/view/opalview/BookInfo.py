@@ -34,9 +34,13 @@ class GenerateBookInfo():
             if l.endswith('.jpg'):
                 name = l
                 break
-        filepath = os.path.join(book.bookPath, name)
-        im = Image.open(filepath)
-        print im.size
+        print book.bookPath, name
+        filepath=os.path.join(path, 'noCover.png')
+        print '--->',filepath
+        if name!=None and book.bookName!=None: 
+            filepath = os.path.join(book.bookPath, name)
+            im = Image.open(filepath)
+            print im.size
 
         iconPath = iconDict[book.bookFormat.lower()]
 #         ima= im.resize((200, 250), Image.ANTIALIAS)

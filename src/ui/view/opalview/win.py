@@ -41,7 +41,33 @@ ID_deleteBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
-
+# Define File Drop Target class
+class FileDropTarget(wx.FileDropTarget):
+    """ This object implements Drop Target functionality for Files """
+    def __init__(self, obj):
+        """ Initialize the Drop Target, passing in the Object Reference to
+            indicate what should receive the dropped files """
+        # Initialize the wxFileDropTarget Object
+        wx.FileDropTarget.__init__(self)
+        # Store the Object Reference for dropped files
+        self.obj = obj
+    
+    def OnDropFiles(self, x, y, filenames):
+        """ Implement File Drop """
+        # For Demo purposes, this function appends a list of the files dropped at the end of the widget's text
+        # Move Insertion Point to the end of the widget's text
+        print 'OnDropFiles'
+#         self.obj.SetInsertionPointEnd()
+        # append a list of the file names dropped
+        print ("%d file(s) dropped at %d, %d:\n" % (len(filenames), x, y))
+        for file in filenames:
+            self.selectedFilePath=file
+            print ('           %s\n' % file)
+            AddBook().addingBookToWorkspace(file)
+            print self
+#             text = self.searchCtrlPanel.searchCtrl.GetValue()
+#             self.searchCtrlPanel.doSearch(text)
+#         self.obj.WriteText('\n')
 
 
 class MainFrame(wx.Frame):
@@ -54,6 +80,7 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
         self.books = list()
         self.thumbnail = None
+        self.fileDropTarget = FileDropTarget(self)
 #         self.grid = wx.grid.Grid(self, -1, wx.Point(0, 0), wx.Size(150, 250),wx.NO_BORDER | wx.WANTS_CHARS)
 
         self._mgr = wx.aui.AuiManager()
@@ -234,13 +261,16 @@ class MainFrame(wx.Frame):
         if not self.thumbnail:
             self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
             self.thumbnail._scrolled.EnableToolTips(enable=True)
+
         # # Todo
-        print 'before', len(self.books)
+#         print 'before', len(self.books)
 #         self.books=list()
 #         findingBook=FindingBook()
 #         books=findingBook.searchingBook(text)
+#         self.fileDropTarget = FileDropTarget(self)
+        self.thumbnail.SetDropTarget(self.fileDropTarget)
+#         print 'CreateThumbCtrl', len(self.books)
 
-        print 'CreateThumbCtrl', len(self.books)
         self.thumbnail.ShowDir(self.books)
         return self.thumbnail
 
@@ -260,7 +290,7 @@ class MainFrame(wx.Frame):
             self.browser =  wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
             if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
                 self.browser.SetStandardFonts()
-
+        self.browser.SetDropTarget(self.fileDropTarget)
         return self.browser
 
     def CreateGrid(self):
@@ -273,6 +303,7 @@ class MainFrame(wx.Frame):
             data = []
             noOfBooks = len(self.books)
             bookId_rowNo_dict = {}
+            
             print 'CreateGrid: noOfBooks:', noOfBooks
             for i in range(noOfBooks):
                 d = {}
@@ -285,6 +316,7 @@ class MainFrame(wx.Frame):
             print 'error in grid', traceback.print_exc()
 #         self.grid.books=self.books
 
+        self.grid.SetDropTarget(self.fileDropTarget)
         return self.grid
 
     def GetIntroText(self):

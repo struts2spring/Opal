@@ -1813,13 +1813,14 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         capHeight = 0
 #         print 'GetCaptionHeight',begRow, count,len(self._tCaptionHeight)
+
         for ii in xrange(begRow, begRow + count):
-            if ii < len(self._tCaptionHeight):
+            if ii < len(self._tCaptionHeight) and len(self._tCaptionHeight) >0:
                 capHeight = capHeight + self._tCaptionHeight[ii]
 
         return capHeight*self._tTextHeight
 
-
+ 
     def GetItemIndex(self, x, y):
         """
         Returns the thumbnail index at position (x, y).
@@ -2171,8 +2172,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             col = ii%self._cols
             if col == 0:
                 row = row + 1
-
-            xwhite = ((w - self._cols*(self._tWidth + self._tBorder)))/(self._cols+1)
+            
+            print self._cols
+            if self._cols != -1:
+                xwhite = ((w - self._cols*(self._tWidth + self._tBorder)))/(self._cols+1)
             tx = xwhite + col*(self._tWidth + self._tBorder)
 
             ty = self._tBorder/2 + row*(self._tHeight + self._tBorder) + \
@@ -2528,7 +2531,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+#         print '------------------------------------>OnMouseLeave'
         if self._pointed != -1:
 
             self._pointed = -1
