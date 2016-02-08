@@ -24,6 +24,7 @@ from src.static.constant import Workspace
 from PIL import Image
 import sys
 from src.logic.AddingBook import AddBook
+from src.ui.view.thumb.search import SearchFrame
 
 try:
     import wx.html2
@@ -39,6 +40,7 @@ ID_otherWorkspace = wx.NewId()
 ID_addBook = wx.NewId()
 ID_deleteBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
+ID_search = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
 # Define File Drop Target class
@@ -123,6 +125,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onAddBookToWorkspace, id=ID_addBook)
         self.Bind(wx.EVT_MENU, self.onDeleteBookToWorkspace, id=ID_deleteBook)
         self.Bind(wx.EVT_MENU, self.onReLoadDatabaseToWorkspace, id=ID_reLoadDatabase)
+        self.Bind(wx.EVT_MENU, self.onSearch, id=ID_search)
 
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -138,10 +141,10 @@ class MainFrame(wx.Frame):
         # create some toolbars
         self.SetMenuBar(mb)
         tb1 = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT | wx.TB_NODIVIDER)
-        tb1.SetToolBitmapSize(wx.Size(48, 48))
+        tb1.SetToolBitmapSize(wx.Size(24,24))
         tb1.AddLabelTool(ID_otherWorkspace, "Workspace Home", wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
-        tb1.AddLabelTool(102, "Test", wx.ArtProvider_GetBitmap(wx.ART_QUESTION))
+        tb1.AddLabelTool(ID_search, "Search", wx.ArtProvider_GetBitmap(wx.ART_FIND))
         tb1.AddLabelTool(ID_addBook, "Add book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
         tb1.AddLabelTool(ID_deleteBook, "Delete book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
         tb1.AddLabelTool(ID_reLoadDatabase, "Reload database", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
@@ -191,6 +194,10 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
+    def onSearch(self, event):
+        print 'onSearch'
+        frame = SearchFrame(parent=None)
+        
     def OnClose(self, event):
         print 'OnClose'
         self._mgr.UnInit()

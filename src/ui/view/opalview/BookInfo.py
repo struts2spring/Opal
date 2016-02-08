@@ -28,7 +28,7 @@ class GenerateBookInfo():
             iconDict[name] = os.path.join(path, l)
 
 
-        lst = os.listdir(book.bookPath)
+            lst = os.listdir(book.bookPath)
         name = None
         for l in lst:
             if l.endswith('.jpg'):

@@ -56,7 +56,7 @@ class AddBook():
                 # reading pdf metadata.
                 self.getPdfMetadata(sourcePath)
                 if not self.book.bookName:
-                    self.book.bookName = tail.split(".")[:1]
+                    self.book.bookName = tail.split(".")[:1][0]
 
             print tail, 'file extension:', tail.split(".")[-1:][0]
             if not os.path.exists(newDirPath):
@@ -64,8 +64,8 @@ class AddBook():
                 dest = os.path.join(newDirPath, tail)
                 print sourcePath, '==>', dest
                 shutil.copy (sourcePath, dest)
-
-                BookImage().getBookImage(newDirPath, head)
+                name=tail.split(".")[:1][0]
+                BookImage().getBookImage(newDirPath, name)
                 self.book.inLanguage = 'English'
                 self.book.hasCover = 'Y'
 

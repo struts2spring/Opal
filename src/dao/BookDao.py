@@ -232,6 +232,7 @@ if __name__ == '__main__':
     try:
         createdb = CreateDatabase()
         createdb.addingData()
+        createdb.findAllBook()
     except:
         print traceback.print_exc()
 #     for b in books:

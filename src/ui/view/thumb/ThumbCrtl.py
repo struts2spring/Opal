@@ -1607,13 +1607,19 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 #         folder3='/home/vijay/Documents/Aptana_Workspace/Better/seleniumone/books/3'
 #         thumbs.append(Thumb(self, folder2, file2, file2, size, lastmod))
         for book in books:
-            self._dir=book.bookPath
-            imagePath=book.bookPath
+            
             imageName=''
+            if book.bookPath:
+                self._dir=book.bookPath
+                imagePath=book.bookPath
+                filenames = self.ListDirectory(imagePath, extensions)
+                if filenames:
+                    imageName=filenames[0]
+            else:
+                imagePath=book.localImagePath
+                self._dir=book.localImagePath
+                imageName=book.imageFileName
             bookName=book.bookName
-            filenames = self.ListDirectory(imagePath, extensions)
-            if filenames:
-                imageName=filenames[0]
 #                 imagePath=os.path.join(book.bookPath,imageName);
             stats = os.stat(imagePath)
             size = stats[6]
@@ -2173,7 +2179,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             if col == 0:
                 row = row + 1
             
-            print self._cols
+#             print self._cols
             if self._cols != -1:
                 xwhite = ((w - self._cols*(self._tWidth + self._tBorder)))/(self._cols+1)
             tx = xwhite + col*(self._tWidth + self._tBorder)
@@ -2238,51 +2244,73 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         name=self._items[self._selected].book.bookName
         id=self._items[self._selected].book.id
         print 'updating info'
-        page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-        self.popupID1 = wx.NewId()
-        self.popupID2 = wx.NewId()
-        self.popupID3 = wx.NewId()
-        self.popupID4 = wx.NewId()
-        self.popupID5 = wx.NewId()
-        self.popupID6 = wx.NewId()
-
-        self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
-        self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
-        self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
-        self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
-        self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
-        self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
         menu = wx.Menu()
-        # Show how to put an icon in the menu
-        item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
-
-        item = wx.MenuItem(menu, self.popupID2, "Open containing folder.")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
-
-        item = wx.MenuItem(menu, self.popupID3, "Search similar books.")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
-
-        item = wx.MenuItem(menu, self.popupID4, "Properties.")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
-
-        item = wx.MenuItem(menu, self.popupID5, "Open Book")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
-
-        item = wx.MenuItem(menu, self.popupID6, "Delete Book")
-        item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU, (16, 16)))
-        menu.AppendItem(item)
+        # checking if it is not an internte searched book.
+        if not type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
+            page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+            self.popupID1 = wx.NewId()
+            self.popupID2 = wx.NewId()
+            self.popupID3 = wx.NewId()
+            self.popupID4 = wx.NewId()
+            self.popupID5 = wx.NewId()
+            self.popupID6 = wx.NewId()
+    
+            self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
+            self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
+            self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
+            self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
+            self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
+            self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
+        
+            # Show how to put an icon in the menu
+            item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+    
+            item = wx.MenuItem(menu, self.popupID2, "Open containing folder.")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+    
+            item = wx.MenuItem(menu, self.popupID3, "Search similar books.")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+    
+            item = wx.MenuItem(menu, self.popupID4, "Properties.")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+    
+            item = wx.MenuItem(menu, self.popupID5, "Open Book")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_HELP_BOOK, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+    
+            item = wx.MenuItem(menu, self.popupID6, "Delete Book")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+        elif type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
+            self.addToLibrary = wx.NewId()
+            self.downloadToLibrary = wx.NewId()
+            
+            self.Bind(wx.EVT_MENU, self.onAddToLibrary, id=self.addToLibrary)
+            self.Bind(wx.EVT_MENU, self.onDownloadToLibrary, id=self.downloadToLibrary)
+            
+            item = wx.MenuItem(menu, self.addToLibrary, "Add book(s) detail to library.")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+            
+            item = wx.MenuItem(menu, self.downloadToLibrary, "Download book to library.")
+            print '------------->', os.getcwd()
+            item.SetBitmap(wx.Bitmap('download.png'))
+            menu.AppendItem(item)
 
 
         self.SetPopupMenu(menu)
         pass
 
-
+    def onAddToLibrary(self, event):
+        print 'onAddToLibrary'
+    def onDownloadToLibrary(self, event):
+        print 'onDownloadToLibrary'
+    
     def OnPopupOne(self, event):
         print ("Popup one\n")
 
@@ -2390,18 +2418,20 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.GetEventHandler().ProcessEvent(eventOut)
             print 'printing all selected',self._selectedarray
             if len(self._selectedarray)==1:
-                name=self._items[self._selected].book.bookName
-                id=self._items[self._selected].book.id
-                print 'updating info'
-                page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                if sys.platform=='win32':
-                    self.GetTopLevelParent().browser.SetPage(page,"")
-                else:
-                    self.GetTopLevelParent().browser.SetPage(page)
-                print 'selecting grid'
-                row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
-                self.GetTopLevelParent().grid.SelectRow(row=row)
-                self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
+                # checking if it is not an internte searched book.
+                if not type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
+                    name=self._items[self._selected].book.bookName
+                    id=self._items[self._selected].book.id
+                    print 'updating info'
+                    page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+                    if sys.platform=='win32':
+                        self.GetTopLevelParent().browser.SetPage(page,"")
+                    else:
+                        self.GetTopLevelParent().browser.SetPage(page)
+                    print 'selecting grid'
+                    row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
+                    self.GetTopLevelParent().grid.SelectRow(row=row)
+                    self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
 
 
 
@@ -2414,7 +2444,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+        print 'thumbcrtl OnMouseUp'
         # get item number to select
         x = event.GetX()
         y = event.GetY()
