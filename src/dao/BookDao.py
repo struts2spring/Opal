@@ -28,15 +28,16 @@ print '3--->', os.getcwd(), os.name, sys.platform
 #     Workspace().path='C:\\new_1'
 # else:
 #     Workspace().path='/docs/books'
-os.chdir(Workspace().path)
-listOfDir = os.listdir(Workspace().path)
-
-
-
-
-engine = create_engine('sqlite:///'+Workspace().path+os.sep+'_opal.sqlite', echo=True)
-Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
-session = Session()
+if os.path.exists(Workspace().path):
+    os.chdir(Workspace().path)
+    listOfDir = os.listdir(Workspace().path)
+    
+    
+    
+    
+    engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
+    Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
+    session = Session()
 
 # os.chdir(Workspace().path)
 # if len(listOfDir)>0:
@@ -54,7 +55,16 @@ session = Session()
 
 class CreateDatabase():
 
-
+    def __init__(self):
+        engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
+        Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
+        self.session = Session()
+        database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
+        if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
+#             print '---------------------------',os.path.getsize(database_fileName)
+#             self.creatingDatabase()
+            print Base.metadata.drop_all(engine)
+            print Base.metadata.create_all(engine)
 
 
     def creatingDatabase(self):
@@ -77,11 +87,12 @@ class CreateDatabase():
         one = ''
         # create a Session
 #         sess = session()
-        session = Session()
+       
+            
         for sName in listOfDir:
             one = os.path.join(directory_name , sName)
             # print one
-            file = open(os.path.join(one ,'book.json'), 'r')
+            file = open(os.path.join(one , 'book.json'), 'r')
 
             rep = ''
             for line in file:
@@ -89,25 +100,25 @@ class CreateDatabase():
             file.close
             # print str(rep)
             b = json.loads(rep)
-            book=Book()
+            book = Book()
             for k in b:
 #                 print b[k]
                 if not isinstance(b[k], list):
 #                     print b[k]
                     if k in ['publishedOn', 'createdOn']:
                         if b[k]:
-                            book.__dict__[k]=datetime.datetime.strptime(b[k][0:19],"%Y-%m-%d %H:%M:%S")
+                            book.__dict__[k] = datetime.datetime.strptime(b[k][0:19], "%Y-%m-%d %H:%M:%S")
                     else:
-                        book.__dict__[k]=b[k]
+                        book.__dict__[k] = b[k]
 
                 else:
                     authorList = list()
                     for a in b[k]:
-                        author=Author()
+                        author = Author()
                         for aKey in a:
-                            author.__dict__[aKey]=a[aKey]
+                            author.__dict__[aKey] = a[aKey]
                             authorList.append(author)
-            book.bookPath=one
+            book.bookPath = one
 
 #             print b.__dict__
 #             book = Book(bookName=b["bookName"], fileSize=b["fileSize"], hasCover='Y', bookPath=one , bookDescription=b["bookDescription"], publisher=b["publisher"], isbn_13=b["isbn_13"], numberOfPages=b["numberOfPages"], bookFormat=b["bookFormat"], inLanguage=b["inLanguage"])
@@ -121,9 +132,9 @@ class CreateDatabase():
             authorBookLink = AuthorBookLink()
             authorBookLink.author = author
             authorBookLink.book = book
-            session.add(authorBookLink)
+            self.session.add(authorBookLink)
 
-        session.commit()
+        self.session.commit()
         print 'data loaded'
 
     def saveAuthorBookLink(self, authorBookLink):
@@ -138,7 +149,7 @@ class CreateDatabase():
 
     def findAllBook(self):
 #         session=self.getSession()
-        bs = session.query(Book).all()
+        bs = self.session.query(Book).all()
 #         for b in bs:
 #             print b
 
@@ -201,7 +212,7 @@ class CreateDatabase():
         This method will find the book in database . It will return true.If book present.
 
         '''
-        books=None
+        books = None
         if book.isbn_13:
             query = session.query(Book).filter(Book.isbn_13.ilike('%' + book.isbn_13 + '%'))
             books = query.all()
@@ -220,7 +231,7 @@ class CreateDatabase():
         This method will find the book in database . It will return true.If book present.
 
         '''
-        books=None
+        books = None
         maxBookId = session.query(func.max(Book.id)).one()
         return maxBookId[0]
 
@@ -229,6 +240,9 @@ if __name__ == '__main__':
 #     CreateDatabase().addingData()
 
 #     books = CreateDatabase().findByBookName("java")
+    if not os.path.exists(Workspace().path):
+        print 'no workspace'
+        
     try:
         createdb = CreateDatabase()
         createdb.addingData()

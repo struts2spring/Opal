@@ -3,28 +3,37 @@ Created on 05-Dec-2015
 
 @author: vijay
 '''
+from PIL import Image
+import cStringIO
+import os
+import sys
+import traceback
 import wx
 import wx.aui
-import wx.html
 import wx.grid
-import cStringIO
-from src.ui.view.SizeReportCtrl import SizeReportCtrl
-from src.ui.view.SettingPanel import SettingsPanel
-from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
-import os
-from src.dao.BookDao import CreateDatabase
-from src.ui.view.opalview.SearchPanel import SearchPanel
+import wx.html
+from wx.wizard import WizardPageSimple, Wizard
+from wx.lib.filebrowsebutton import DirBrowseButton
+try:
+    from src.dao.BookDao import CreateDatabase
+except:
+    print 'creating database error.'
+from src.logic.AddingBook import AddBook
 from src.logic.search_book import FindingBook
-from src.ui.view.opalview.MyGrid import MegaGrid
+from src.static.constant import Workspace
+from src.ui.view.SettingPanel import SettingsPanel
+from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.ui.view.opalview import BookInfo
 from src.ui.view.opalview.BookInfo import GenerateBookInfo
+from src.ui.view.opalview.MyGrid import MegaGrid
+from src.ui.view.opalview.SearchPanel import SearchPanel
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
-import traceback
-from src.static.constant import Workspace
-from PIL import Image
-import sys
-from src.logic.AddingBook import AddBook
+from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
 from src.ui.view.thumb.search import SearchFrame
+
+
+
+
 
 try:
     import wx.html2
@@ -63,7 +72,7 @@ class FileDropTarget(wx.FileDropTarget):
         # append a list of the file names dropped
         print ("%d file(s) dropped at %d, %d:\n" % (len(filenames), x, y))
         for file in filenames:
-            self.selectedFilePath=file
+            self.selectedFilePath = file
             print ('           %s\n' % file)
             AddBook().addingBookToWorkspace(file)
             print self
@@ -75,11 +84,14 @@ class FileDropTarget(wx.FileDropTarget):
 class MainFrame(wx.Frame):
 
     def __init__(self, parent):
-        os.chdir(Workspace().path)
         title = "Opal"
         style = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
 #         wx.Frame.__init__(self, parent, wx.ID_ANY, title, pos, size, style)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
+        if not os.path.exists(Workspace().path):
+            self.createWizard()
+        self.creatingDatabase()
+        
         self.books = list()
         self.thumbnail = None
         self.fileDropTarget = FileDropTarget(self)
@@ -141,7 +153,7 @@ class MainFrame(wx.Frame):
         # create some toolbars
         self.SetMenuBar(mb)
         tb1 = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT | wx.TB_NODIVIDER)
-        tb1.SetToolBitmapSize(wx.Size(24,24))
+        tb1.SetToolBitmapSize(wx.Size(24, 24))
         tb1.AddLabelTool(ID_otherWorkspace, "Workspace Home", wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
         tb1.AddLabelTool(ID_search, "Search", wx.ArtProvider_GetBitmap(wx.ART_FIND))
@@ -193,6 +205,19 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
+
+    def creatingDatabase(self):
+        os.chdir(Workspace().path)
+        listOfDir = os.listdir(Workspace().path)
+        isDatabase = False
+        for sName in listOfDir:
+            if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size != 0):
+                print sName
+                isDatabase = True
+        if not  isDatabase:
+            session = CreateDatabase()
+            CreateDatabase().addingData()
+     
 
     def onSearch(self, event):
         print 'onSearch'
@@ -290,11 +315,11 @@ class MainFrame(wx.Frame):
 #         if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
 #             self.ctrl.SetStandardFonts()
 #         self.ctrl.SetPage(self.GetIntroText())
-        if sys.platform=='win32':
+        if sys.platform == 'win32':
             self.browser = wx.html2.WebView.New(self)
             self.browser.LoadURL("C:\\Users\\vijay\\workspace\\3d_cover_flow\\WebContent\\3D-Cover-Flip-Animations-with-jQuery-CSS3-Transforms-Cover3D\\indexSimpleDemo.html")
         else:
-            self.browser =  wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
+            self.browser = wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
             if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
                 self.browser.SetStandardFonts()
         self.browser.SetDropTarget(self.fileDropTarget)
@@ -371,7 +396,7 @@ class MainFrame(wx.Frame):
             print ('You selected %d files:' % len(paths))
 
             for path in paths:
-                self.selectedFilePath=path
+                self.selectedFilePath = path
                 print ('           %s\n' % path)
                 AddBook().addingBookToWorkspace(path)
                 text = self.searchCtrlPanel.searchCtrl.GetValue()
@@ -399,6 +424,80 @@ class MainFrame(wx.Frame):
     def LoadingBooks(self):
         createdb = CreateDatabase()
         createdb.addingData()
+        
+        
+    def createWizard(self):
+        # Create the wizard and the pages
+        wizard = Wizard(self, -1, "Opal welcome wizard", wx.EmptyBitmap(200, 200))
+        page1 = TitledPage(wizard, "Welcome to Opal")
+        page2 = TitledPage(wizard, "Page 2")
+        page3 = TitledPage(wizard, "Page 3")
+        page4 = TitledPage(wizard, "Page 4")
+        self.page1 = page1
+        self.page1 = page1
+
+
+        
+        vbox = wx.BoxSizer(wx.HORIZONTAL)
+        lable = wx.StaticText(page1, -1, "Choose your language:")
+        choice = wx.Choice(page1, -1, (0, 0), choices=['English'])
+        choice.SetSelection(0)
+        vbox.Add(lable, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        vbox.Add(choice, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        
+        page1.sizer.Add(vbox)
+#         vbox = wx.BoxSizer(wx.HORIZONTAL)
+#         t1 = wx.TextCtrl(page1, -1, "Test it out and see", size=(125, -1))
+#         vbox.Add(t1, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+#         page1.sizer.Add(vbox)
+
+        page1.sizer.Add(wx.StaticText(page1, -1, """
+            Choose a location of your workspace. 
+            When you add books to Opal, they will be copied here. 
+            Use an empty folder for a new Opal workspace."""), 0, wx.ALIGN_LEFT | wx.ALL, 1)
+        dbb = DirBrowseButton(page1, -1, size=(450, -1), changeCallback=self.dbbCallback)
+        page1.sizer.Add(dbb , 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        
+        wizard.FitToPage(page1)
+
+        # Use the convenience Chain function to connect the pages
+        WizardPageSimple.Chain(page1, page2)
+#         WizardPageSimple.Chain(page2, page3)
+#         WizardPageSimple.Chain(page3, page4)
+
+        wizard.GetPageAreaSizer().Add(page1)
+        if wizard.RunWizard(page1):
+            wx.MessageBox("Wizard completed successfully", "That's all folks!")
+        else:
+            wx.MessageBox("Wizard was cancelled", "That's all folks!")
+
+    def dbbCallback(self, evt):
+        print('DirBrowseButton: %s\n' % evt.GetString())
+        if evt.GetString():  
+            Workspace().path = evt.GetString()  
+
+#----------------------------------------------------------------------
+
+
+
+class TitledPage(WizardPageSimple):
+    def __init__(self, parent, title):
+        WizardPageSimple.__init__(self, parent)
+        self.sizer = self.makePageTitle(title)        
+
+    def makePageTitle(self, header=None):
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(sizer)
+        title = wx.StaticText(self, -1, header)
+        title.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
+        
+        subTitle = wx.StaticText(self, -1, "World's easiest way to organize ebook.")
+        
+        sizer.Add(title, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        sizer.Add(subTitle, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND | wx.ALL, 5)
+        return sizer    
+        
 #---------------------------------------------------------------------------
 
 # This is how you pre-establish a file filter so that the dialog
@@ -444,20 +543,7 @@ overview = '''
     '''
 
 if __name__ == "__main__":
-    os.chdir(Workspace().path)
-    listOfDir = os.listdir(Workspace().path)
-    if len(listOfDir) > 0:
-#         print len(listOfDir)
-        isDatabase = False
-        for sName in listOfDir:
-            if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size != 0):
-                print sName
-                isDatabase = True
-        if not  isDatabase:
-            session = CreateDatabase().creatingDatabase()
-            CreateDatabase().addingData()
 
-            pass
     app = wx.App()
     frame = MainFrame(None)
     frame.Show()
