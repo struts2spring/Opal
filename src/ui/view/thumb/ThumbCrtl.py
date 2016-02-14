@@ -1621,7 +1621,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 imageName=book.imageFileName
             bookName=book.bookName
 #                 imagePath=os.path.join(book.bookPath,imageName);
-            stats = os.stat(imagePath)
+            print '----------------------->',imagePath
+            stats = os.stat(os.path.join(imagePath,imageName))
             size = stats[6]
 
             if size < 1000:
@@ -2241,8 +2242,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         lastselected = self._selected
         self._selected = self.GetItemIndex(x, y)
         print ' previous printing all _selected',self._selected
-        name=self._items[self._selected].book.bookName
-        id=self._items[self._selected].book.id
+        if self._selected!=-1:
+            name=self._items[self._selected].book.bookName
+            id=self._items[self._selected].book.id
         print 'updating info'
         menu = wx.Menu()
         # checking if it is not an internte searched book.

@@ -138,14 +138,14 @@ class CreateDatabase():
         print 'data loaded'
 
     def saveAuthorBookLink(self, authorBookLink):
-        session = Session()
-        session.add(authorBookLink)
-        session.commit()
+#         session = Session()
+        self.session.add(authorBookLink)
+        self.session.commit()
 
     def saveBook(self, book):
-        session = Session()
-        session.add(book)
-        session.commit()
+#         session = Session()
+        self.session.add(book)
+        self.session.commit()
 
     def findAllBook(self):
 #         session=self.getSession()
@@ -164,12 +164,12 @@ class CreateDatabase():
     #             for author in book.authors:
     #                 session.delete(author)
 
-                author_book = session.query(AuthorBookLink).filter(AuthorBookLink.book == book).all()
+                author_book = self.session.query(AuthorBookLink).filter(AuthorBookLink.book == book).all()
                 if author_book and len(author_book) > 0:
                     print author_book[0].bookId
-                    session.delete(author_book[0])
+                    self.session.delete(author_book[0])
                 for author in book.authors:
-                    session.delete(author)
+                    self.session.delete(author)
 
 #                 session.delete(book)
 #                 session.commit()
@@ -186,7 +186,7 @@ class CreateDatabase():
     def findByBookName(self, bookName=None):
         try:
             if bookName:
-                query = session.query(Book).filter(Book.bookName.ilike('%' + bookName + '%')).order_by(Book.id.desc())
+                query = self.session.query(Book).filter(Book.bookName.ilike('%' + bookName + '%')).order_by(Book.id.desc())
                 books = query.all()
                 return books
         except:
@@ -195,13 +195,13 @@ class CreateDatabase():
 
     def findByIsbn_13Name(self, isbn_13=None):
         if isbn_13:
-            query = session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
+            query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
             books = query.all()
             return books
 
     def findDuplicateBook(self):
 #         session=self.getSession()
-        books = session.query(Book).group_by(Book.isbn_13).having(func.count(Book.isbn_13) > 1).order_by(Book.isbn_13.desc())
+        books = self.session.query(Book).group_by(Book.isbn_13).having(func.count(Book.isbn_13) > 1).order_by(Book.isbn_13.desc())
 #         print len(bs)
 #         for b in bs:
 #             print b.isbn_13,b.id
@@ -214,10 +214,10 @@ class CreateDatabase():
         '''
         books = None
         if book.isbn_13:
-            query = session.query(Book).filter(Book.isbn_13.ilike('%' + book.isbn_13 + '%'))
+            query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + book.isbn_13 + '%'))
             books = query.all()
         if book.bookName:
-            query = session.query(Book).filter(Book.bookName.ilike('%' + book.bookName + '%'))
+            query = self.session.query(Book).filter(Book.bookName.ilike('%' + book.bookName + '%'))
             books = query.all()
 
 #         uniqueBookSet=set()
@@ -232,7 +232,7 @@ class CreateDatabase():
 
         '''
         books = None
-        maxBookId = session.query(func.max(Book.id)).one()
+        maxBookId = self.session.query(func.max(Book.id)).one()
         return maxBookId[0]
 
 if __name__ == '__main__':

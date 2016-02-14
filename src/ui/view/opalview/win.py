@@ -207,6 +207,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     def creatingDatabase(self):
+        if not os.path.exists(Workspace().path):
+            os.mkdir(Workspace().path)
         os.chdir(Workspace().path)
         listOfDir = os.listdir(Workspace().path)
         isDatabase = False
@@ -467,14 +469,16 @@ class MainFrame(wx.Frame):
 
         wizard.GetPageAreaSizer().Add(page1)
         if wizard.RunWizard(page1):
-            wx.MessageBox("Wizard completed successfully", "That's all folks!")
-        else:
-            wx.MessageBox("Wizard was cancelled", "That's all folks!")
+            pass
+#             print '------------',wx.MessageBox("Wizard completed successfully", "That's all folks!")
+#         else:
+#             print '------------',wx.MessageBox("Wizard was cancelled", "That's all folks!")
 
     def dbbCallback(self, evt):
         print('DirBrowseButton: %s\n' % evt.GetString())
         if evt.GetString():  
-            Workspace().path = evt.GetString()  
+            Workspace().path = evt.GetString() 
+             
 
 #----------------------------------------------------------------------
 
