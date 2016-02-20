@@ -17,3 +17,7 @@ Create metadata window updation . It should be properties of the book.
 add multiple books
 
 
+
+##Feature need to be implemented
+
+read metatadata of file type djvu, 

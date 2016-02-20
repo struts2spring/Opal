@@ -3,6 +3,9 @@ Created on 05-Dec-2015
 
 @author: vijay
 '''
+
+__version__ = "1.0"
+
 from PIL import Image
 import cStringIO
 import os
@@ -74,10 +77,13 @@ class FileDropTarget(wx.FileDropTarget):
         for file in filenames:
             self.selectedFilePath = file
             print ('           %s\n' % file)
-            AddBook().addingBookToWorkspace(file)
+            if file:
+                AddBook().addingBookToWorkspace(file)
             print self
-#             text = self.searchCtrlPanel.searchCtrl.GetValue()
-#             self.searchCtrlPanel.doSearch(text)
+        print 'drop book completed.'
+        print self
+        text = self.obj.searchCtrlPanel.searchCtrl.GetValue()
+        self.obj.searchCtrlPanel.doSearch(text)
 #         self.obj.WriteText('\n')
 
 
@@ -90,7 +96,8 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
         if not os.path.exists(Workspace().path):
             self.createWizard()
-        self.creatingDatabase()
+        self.createDatabase = CreateDatabase()
+#         self.creatingDatabase()
         
         self.books = list()
         self.thumbnail = None
@@ -217,8 +224,7 @@ class MainFrame(wx.Frame):
                 print sName
                 isDatabase = True
         if not  isDatabase:
-            session = CreateDatabase()
-            CreateDatabase().addingData()
+            self.createDatabase .addingData()
      
 
     def onSearch(self, event):
@@ -295,6 +301,7 @@ class MainFrame(wx.Frame):
         if not self.thumbnail:
             self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
             self.thumbnail._scrolled.EnableToolTips(enable=True)
+            self.thumbnail.SetDropTarget(self.fileDropTarget)
 
         # # Todo
 #         print 'before', len(self.books)
@@ -302,7 +309,7 @@ class MainFrame(wx.Frame):
 #         findingBook=FindingBook()
 #         books=findingBook.searchingBook(text)
 #         self.fileDropTarget = FileDropTarget(self)
-        self.thumbnail.SetDropTarget(self.fileDropTarget)
+        
 #         print 'CreateThumbCtrl', len(self.books)
 
         self.thumbnail.ShowDir(self.books)
@@ -361,8 +368,8 @@ class MainFrame(wx.Frame):
 
     def onReLoadDatabaseToWorkspace(self, event):
         print 'onReLoadDatabaseToWorkspace'
-        session = CreateDatabase().creatingDatabase()
-        CreateDatabase().addingData()
+        self.createDatabase.creatingDatabase()
+        self.createDatabase.addingData()
         text = self.searchCtrlPanel.searchCtrl.GetValue()
         self.searchCtrlPanel.doSearch(text)
         pass
@@ -424,8 +431,7 @@ class MainFrame(wx.Frame):
 
 
     def LoadingBooks(self):
-        createdb = CreateDatabase()
-        createdb.addingData()
+        self.createDatabase.addingData()
         
         
     def createWizard(self):

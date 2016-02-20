@@ -17,13 +17,20 @@ from src.dao.BookDao import CreateDatabase
 from src.logic.BookImage import BookImage
 from src.static.constant import Workspace
 from src.util.remove import Util
+import traceback
 
 
 class AddBook():
     '''
     This class have been written to add book to Opal workspace.
     '''
-
+    
+    def __init__(self):
+        self.book = Book()
+        self.book.tag = None
+        self.book.authors = list()
+        self.createDatabase =CreateDatabase()
+        
 
     def addingBookToWorkspace(self, sourcePath=None):
 
@@ -32,7 +39,7 @@ class AddBook():
         @param sourcePath: This is the path of selected book.
         -1. Check if database present in workspace. There is possibility of a new workspace.
         0. Check if book already present in workspace.
-        1. Create a folder with max_book_id+1 .
+        1. Create a folder with max_book_id+1 . 
         2. Copy the book file in the directory.
         3. Create metadata i.e. (book.json)
         4. Make an entry in database.
@@ -40,8 +47,8 @@ class AddBook():
 
         '''
         if sourcePath:
-            createDatabase = CreateDatabase()
-            maxBookId = createDatabase.getMaxBookID()
+#             createDatabase = CreateDatabase()
+            maxBookId = self.createDatabase.getMaxBookID()
             if maxBookId == None:
                 maxBookId = 0
             workspacePath = Workspace().path
@@ -50,7 +57,7 @@ class AddBook():
             # exatract file name from path.
 
             head, tail = os.path.split(sourcePath)
-            self.book = Book()
+#             self.book = Book()
             self.book.bookPath = newDirPath
             if tail.split(".")[-1:][0] == 'pdf':
                 # reading pdf metadata.
@@ -58,13 +65,19 @@ class AddBook():
                 if not self.book.bookName:
                     self.book.bookName = tail.split(".")[:1][0]
 
-            print tail, 'file extension:', tail.split(".")[-1:][0]
             if not os.path.exists(newDirPath):
                 os.makedirs(newDirPath)
                 dest = os.path.join(newDirPath, tail)
-                print sourcePath, '==>', dest
                 shutil.copy (sourcePath, dest)
-                name=tail.split(".")[:1][0]
+                self.book.wishListed='No'
+                
+                
+                splited_name=tail.split(".")
+                if 'pdf'==splited_name[-1:][0]:
+                    splited_name.remove('pdf')
+                name='.'.join(splited_name)
+                
+                
                 BookImage().getBookImage(newDirPath, name)
                 self.book.inLanguage = 'English'
                 self.book.hasCover = 'Y'
@@ -79,38 +92,37 @@ class AddBook():
                 '''
                 say dir exist to the database by making an entry. And call itself.
             1. Check dir if it has book.
-            2. remove dir if it does not contain any book (file).
+            2. remove dir if it does not contain any book (file). Why to remove directory?
             3. make an entry in database if it has book.
             4. go to the next directory
             '''
-            os.chdir(newDirPath)
-            print 'number of files:', len(os.listdir(newDirPath))
-            if len(os.listdir(newDirPath)) > 0:
-                for sName in os.listdir(newDirPath):
-                    if os.path.isfile(os.path.join(newDirPath, sName)):
-                        print sName
-            else:
-                os.chdir("..")
-                os.removedirs(newDirPath)
-#                     lst.append(sName.split('.')[-1:][0])
-#                     files.append(os.path.join(directory_name, sName))
-#             self.addingBookToWorkspace()
+                os.chdir(newDirPath)
+                print 'number of files:', len(os.listdir(newDirPath))
+                name = tail.split(".")[:1][0]
+                if len(os.listdir(newDirPath)) > 0:
+                    for sName in os.listdir(newDirPath):
+                        if os.path.isfile(os.path.join(newDirPath, sName)):
+                            print sName
+                            
+                    splited_name=tail.split(".")
+                    if 'pdf'==splited_name[-1:][0]:
+                        splited_name.remove('pdf')
+                    name='.'.join(splited_name)
+                    BookImage().getBookImage(newDirPath, name)
+                    
+                    book_copy1 = copy.deepcopy(self.book)
+                    self.writeBookJson(newDirPath, book_copy1)
+                    self.addingBookInfoInDatabase(self.book)
+                else:
+                    os.chdir("..")
+                    os.removedirs(newDirPath)
 
     def addingBookInfoInDatabase(self, book):
         '''
         This method will add new book info in database.
         '''
-        createDatabase = CreateDatabase()
-#         authorBookLink = AuthorBookLink()
-#         author=Author()
-#         book1=Book()
-#         for b in book.__dict__:
-#             if b not in ['_sa_instance_state','book_assoc']:
-#                 print b
-#
-#         authorBookLink.author = book.authors
-#         authorBookLink.book = book
-        createDatabase.saveBook(book)
+        self.createDatabase.saveBook(book)
+
 
     def writeBookJson(self, newDirPath, book):
         '''
@@ -154,8 +166,11 @@ class AddBook():
             print str(pdf_info)
             print 'Pages:', pdf_toread.getNumPages()
 #             book = Book()
-            if pdf_info.title != None:
-                self.book.bookName = str(pdf_info.title)
+            try:
+                if pdf_info.title != None:
+                    self.book.bookName = str(pdf_info.title)
+            except:
+                print 'unable to set bookName', traceback.print_exc()
 
             if pdf_info.creator:
                 self.book.publisher = str(pdf_info.creator.encode('utf-8'))
@@ -172,22 +187,32 @@ class AddBook():
             self.book.fileSize = Util().convert_bytes(os.path.getsize(path))
             self.book.numberOfPages = pdf_toread.getNumPages()
 
-            value = pdf_info.subject
+#             value = pdf_info.subject
             if type(pdf_info.subject) == str:
                 # Ignore errors even if the string is not proper UTF-8 or has
                 # broken marker bytes.
                 # Python built-in function unicode() can do this.
                 value = unicode(pdf_info.subject, "utf-8", errors="ignore")
+                
             else:
                 # Assume the value object has proper __unicode__() method
                 value = unicode(pdf_info.subject)
                 print 'else'
+            if not self.book.tag :
+                self.book.tag=value
+            else:
+                self.book.tag = self.book.tag + '' + value
 
 #             if 'ISBN'.lower() in str(pdf_info['/Subject']).lower():
 #                 self.book.isbn_13 = str(pdf_info['/Subject'])[6:]
 
             author = Author()
-            author.authorName = str(pdf_info.author)
+            val = pdf_info.author
+            if val:
+                val = val.encode("utf8", "ignore")
+            else :
+                val='Unknown'
+            author.authorName = val
 
             authorList = list()
             authorList.append(author)
@@ -205,6 +230,14 @@ if __name__ == '__main__':
 #     sourcePath='C:\\Users\\vijay\\Downloads\\ST-52900095-16911.pdf'
 #     sourcePath = 'C:\\Users\\vijay\\Downloads\\Head First Rails.pdf'
 #     sys.set
-    sourcePath = '/home/vijay/Downloads/1389095365492.pdf'
-    AddBook().addingBookToWorkspace(sourcePath)
+#     sourcePath = '/home/vijay/Downloads/1389095365492.pdf'
+#     AddBook().addingBookToWorkspace(sourcePath)
+    path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/70+ English grammar and writing books (individual files)/Advanced English CAE Grammar Practice.pdf"
+    addBook = AddBook()
+#     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/English Grammar - A function-based introduction/English Grammar - A function-based introduction. Volume I.pdf"
+#     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/Apress.Venture.Capitalists.at.Work.Nov.2011/Apress.Venture.Capitalists.at.Work.Nov.2011.pdf"
+     
+    addBook.getPdfMetadata(path)
+    newDirPath = '/docs/new/1'
+    addBook.writeBookJson(newDirPath, addBook.book)
     pass

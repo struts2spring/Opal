@@ -35,6 +35,8 @@ class Book(Base):
     bookPath = Column('book_path', String)  # bookPath
     rating = Column('rating', String)  # rating
     uuid = Column('uuid', String)  # uuid
+    tag = Column('tag', String) # a comma separated list of subjects
+    wishListed=Column('wish_listed', String) # this is an indicator that book is not available in workspace.
     createdOn = Column('created_on', DateTime, default=func.now())
     authors = relationship(
         'Author',

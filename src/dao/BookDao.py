@@ -59,6 +59,11 @@ class CreateDatabase():
         engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
         self.session = Session()
+        
+        if not os.path.exists(Workspace().path):
+            os.mkdir(Workspace().path)
+        os.chdir(Workspace().path)
+        
         database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
         if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
 #             print '---------------------------',os.path.getsize(database_fileName)

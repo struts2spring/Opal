@@ -117,8 +117,9 @@ class WorkspacePanel(wx.Panel):
                     print sName
                     isDatabase=True
             if not  isDatabase:
-                session = CreateDatabase().creatingDatabase()
-                CreateDatabase().addingData()
+                createDatabase=CreateDatabase()
+                session = createDatabase.creatingDatabase()
+                createDatabase.addingData()
 
 
 
