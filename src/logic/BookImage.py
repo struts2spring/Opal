@@ -8,15 +8,18 @@ class BookImage():
     def __init__(self):
         pass
 
-    def getBookImage(self, filePath=None, name=None):
+    def getBookImage(self, filePath=None, name=None, bookFormat=None):
 
         '''
         convert -thumbnail x300 -background white -alpha remove input_file.pdf[0] output_thumbnail.png
         '''
         os.chdir(filePath)
-        cmd = 'convert -thumbnail x300 -background white -alpha remove "' + name + '.pdf[0]" "' + name + '.jpg"'
-        print cmd
-        print subprocess.call(cmd, shell=True)
+        if 'pdf'==bookFormat:
+            cmd = 'convert -thumbnail x300 -background white -alpha remove "' + name + '.pdf[0]" "' + name + '.jpg"'
+            print cmd
+            print subprocess.call(cmd, shell=True)
+        elif 'mobi'==bookFormat:
+            print 'work in progress'
         print 'getBookImage completed'
 
 

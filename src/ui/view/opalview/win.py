@@ -155,7 +155,7 @@ class MainFrame(wx.Frame):
         # min size for the frame itself isn't completely done.
         # see the end up FrameManager::Update() for the test
         # code. For now, just hard code a frame minimum size
-        self.SetMinSize(wx.Size(400, 300))
+        self.SetMinSize(wx.Size(500, 400))
 
         # create some toolbars
         self.SetMenuBar(mb)

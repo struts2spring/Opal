@@ -29,7 +29,7 @@ class AddBook():
         self.book = Book()
         self.book.tag = None
         self.book.authors = list()
-        self.createDatabase =CreateDatabase()
+        self.createDatabase = CreateDatabase()
         
 
     def addingBookToWorkspace(self, sourcePath=None):
@@ -52,70 +52,35 @@ class AddBook():
             if maxBookId == None:
                 maxBookId = 0
             workspacePath = Workspace().path
-            newDirPath = os.path.join(workspacePath, str(maxBookId + 1))
-
-            # exatract file name from path.
+            self.book.bookPath = os.path.join(workspacePath, str(maxBookId + 1))
 
             head, tail = os.path.split(sourcePath)
-#             self.book = Book()
-            self.book.bookPath = newDirPath
-            if tail.split(".")[-1:][0] == 'pdf':
-                # reading pdf metadata.
+            
+            self.book.inLanguage = 'English'
+            self.book.hasCover = 'Y'
+            
+            splited_name = tail.split(".")
+            self.book.bookFormat = splited_name[-1:][0]
+            splited_name.remove(self.book.bookFormat)
+            book_file_name='.'.join(splited_name)
+            self.book.bookName= book_file_name
+            if not os.path.exists(self.book.bookPath):
+                os.makedirs(self.book.bookPath)
+            
+            if 'pdf' == self.book.bookFormat :
                 self.getPdfMetadata(sourcePath)
-                if not self.book.bookName:
-                    self.book.bookName = tail.split(".")[:1][0]
-
-            if not os.path.exists(newDirPath):
-                os.makedirs(newDirPath)
-                dest = os.path.join(newDirPath, tail)
+                
+            dest = os.path.join(self.book.bookPath, tail)
+            if sourcePath != dest:
                 shutil.copy (sourcePath, dest)
-                self.book.wishListed='No'
-                
-                
-                splited_name=tail.split(".")
-                if 'pdf'==splited_name[-1:][0]:
-                    splited_name.remove('pdf')
-                name='.'.join(splited_name)
-                
-                
-                BookImage().getBookImage(newDirPath, name)
-                self.book.inLanguage = 'English'
-                self.book.hasCover = 'Y'
+            self.book.wishListed = 'No'
+            os.chdir(self.book.bookPath)
+            BookImage().getBookImage(self.book.bookPath,  book_file_name, self.book.bookFormat )
+            
+            book_copy1 = copy.deepcopy(self.book)
+            self.writeBookJson(self.book.bookPath, book_copy1)
+            self.addingBookInfoInDatabase(self.book)
 
-                book_copy1 = copy.deepcopy(self.book)
-                book_copy2 = copy.deepcopy(self.book)
-                self.writeBookJson(newDirPath, book_copy1)
-                self.addingBookInfoInDatabase(self.book)
-
-
-            else:
-                '''
-                say dir exist to the database by making an entry. And call itself.
-            1. Check dir if it has book.
-            2. remove dir if it does not contain any book (file). Why to remove directory?
-            3. make an entry in database if it has book.
-            4. go to the next directory
-            '''
-                os.chdir(newDirPath)
-                print 'number of files:', len(os.listdir(newDirPath))
-                name = tail.split(".")[:1][0]
-                if len(os.listdir(newDirPath)) > 0:
-                    for sName in os.listdir(newDirPath):
-                        if os.path.isfile(os.path.join(newDirPath, sName)):
-                            print sName
-                            
-                    splited_name=tail.split(".")
-                    if 'pdf'==splited_name[-1:][0]:
-                        splited_name.remove('pdf')
-                    name='.'.join(splited_name)
-                    BookImage().getBookImage(newDirPath, name)
-                    
-                    book_copy1 = copy.deepcopy(self.book)
-                    self.writeBookJson(newDirPath, book_copy1)
-                    self.addingBookInfoInDatabase(self.book)
-                else:
-                    os.chdir("..")
-                    os.removedirs(newDirPath)
 
     def addingBookInfoInDatabase(self, book):
         '''
@@ -124,26 +89,30 @@ class AddBook():
         self.createDatabase.saveBook(book)
 
 
-    def writeBookJson(self, newDirPath, book):
+    def writeBookJson(self, newDirPath=None, book=None):
         '''
         This function will write book.json (metadata) of the newly added book in workspace.
         '''
         f = open(os.path.join(newDirPath , 'book.json'), 'w')
         row2dict = book.__dict__
         authors = []
-        for a in row2dict['authors']:
-            author = {}
-            author = a.__dict__
-            del author['_sa_instance_state']
-            del author['book_assoc']
-            authors.append(author)
-        del row2dict['_sa_instance_state']
-        del row2dict['authors']
-        del row2dict['book_assoc']
-
-        row2dict['authors'] = authors
-        row2dict['publishedOn'] = str(datetime.now())
-        row2dict['createdOn'] = str(datetime.now())
+        try:
+            for a in row2dict['authors']:
+                author = {}
+                author = a.__dict__
+                del author['_sa_instance_state']
+                del author['book_assoc']
+                authors.append(author)
+            del row2dict['_sa_instance_state']
+            del row2dict['authors']
+            del row2dict['book_assoc']
+    
+            row2dict['authors'] = authors
+            row2dict['publishedOn'] = str(datetime.now())
+            row2dict['createdOn'] = str(datetime.now())
+        except:
+            print newDirPath
+            print row2dict
         f.write(json.dumps(row2dict, sort_keys=True, indent=4))
 
         f.close()
@@ -181,7 +150,7 @@ class AddBook():
                 self.book.publishedOn = date
             except:
                 print 'CreationDate not found'
-            self.book.bookFormat = 'pdf'
+            
             print path
             print Util().convert_bytes(os.path.getsize(path))
             self.book.fileSize = Util().convert_bytes(os.path.getsize(path))
@@ -199,7 +168,7 @@ class AddBook():
                 value = unicode(pdf_info.subject)
                 print 'else'
             if not self.book.tag :
-                self.book.tag=value
+                self.book.tag = value
             else:
                 self.book.tag = self.book.tag + '' + value
 
@@ -211,7 +180,7 @@ class AddBook():
             if val:
                 val = val.encode("utf8", "ignore")
             else :
-                val='Unknown'
+                val = 'Unknown'
             author.authorName = val
 
             authorList = list()
