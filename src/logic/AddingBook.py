@@ -18,6 +18,7 @@ from src.logic.BookImage import BookImage
 from src.static.constant import Workspace
 from src.util.remove import Util
 import traceback
+from src.ui.view.epub.opal_epub_worker import EpubBook
 
 
 class AddBook():
@@ -67,12 +68,17 @@ class AddBook():
             if not os.path.exists(self.book.bookPath):
                 os.makedirs(self.book.bookPath)
             
-            if 'pdf' == self.book.bookFormat :
-                self.getPdfMetadata(sourcePath)
-                
             dest = os.path.join(self.book.bookPath, tail)
             if sourcePath != dest:
                 shutil.copy (sourcePath, dest)
+            
+            if 'pdf' == self.book.bookFormat :
+                self.getPdfMetadata(sourcePath)
+            if 'epub'==self.book.bookFormat:
+                self.getEpubMetadata(sourcePath)
+                pass
+                
+           
             self.book.wishListed = 'No'
             os.chdir(self.book.bookPath)
             BookImage().getBookImage(self.book.bookPath,  book_file_name, self.book.bookFormat )
@@ -99,24 +105,57 @@ class AddBook():
         try:
             for a in row2dict['authors']:
                 author = {}
-                author = a.__dict__
-                del author['_sa_instance_state']
-                del author['book_assoc']
+                if type(a)==str:
+                    author['authorName']=a
+                else:
+                    author = a.__dict__
+                if author.has_key('_sa_instance_state'):
+                    del author['_sa_instance_state']
+                if author.has_key('book_assoc'):
+                    del author['book_assoc']
                 authors.append(author)
-            del row2dict['_sa_instance_state']
-            del row2dict['authors']
-            del row2dict['book_assoc']
+            if row2dict.has_key('_sa_instance_state'):
+                del row2dict['_sa_instance_state']
+            if row2dict.has_key('authors'):   
+                del row2dict['authors']
+            if row2dict.has_key('book_assoc'):  
+                del row2dict['book_assoc']
     
             row2dict['authors'] = authors
             row2dict['publishedOn'] = str(datetime.now())
             row2dict['createdOn'] = str(datetime.now())
         except:
+            traceback.print_exc()
             print newDirPath
             print row2dict
         f.write(json.dumps(row2dict, sort_keys=True, indent=4))
 
         f.close()
 
+    def getEpubMetadata(self, path=None):
+        os.chdir(self.book.bookPath)
+        file_name=self.book.bookName+'.epub'
+        epubBook = EpubBook()
+        epubBook.open(file_name)
+    
+        epubBook.parse_contents()
+        
+        authorList = list()
+        for authorName in epubBook.get_authors():
+            
+            author = Author()
+            author.authorName = authorName
+            authorList.append(author)
+        self.book.authors=authorList
+        
+        self.book.tag=epubBook.subjectTag
+        epubBook.extract_cover_image(outdir='.')
+        self.book.createdOn = datetime.now()
+#         authorBookLink = AuthorBookLink()
+#         authorBookLink.author = author
+#         authorBookLink.book = self.book
+        
+    
     def getPdfMetadata(self, path=None):
         '''
         This method will get the pdf metadata and return book object.

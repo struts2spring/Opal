@@ -47,12 +47,12 @@ class MegaTable(Grid.PyGridTableBase):
 
     def GetValue(self, row, col):
 #         print 'GetValue:', self.GetColLabelValue(col)
-        value=str(self.data[row][1].get(self.GetColLabelValue(col), ""))
-        if 'authors'== self.GetColLabelValue(col):
-            author=''
+        value = str(self.data[row][1].get(self.GetColLabelValue(col), ""))
+        if 'authors' == self.GetColLabelValue(col):
+            author = ''
             for a in self.data[row][1].get(self.GetColLabelValue(col), ""):
-                author  = author+a.authorName+'\n'
-            value=author
+                author = author + a.authorName + '\n'
+            value = author
         return value
 
     def GetRawValue(self, row, col):
@@ -74,10 +74,10 @@ class MegaTable(Grid.PyGridTableBase):
         ]:
 
             if new < current:
-                msg = Grid.GridTableMessage(self,delmsg,new,current-new)
+                msg = Grid.GridTableMessage(self, delmsg, new, current - new)
                 grid.ProcessTableMessage(msg)
             elif new > current:
-                msg = Grid.GridTableMessage(self,addmsg,new-current)
+                msg = Grid.GridTableMessage(self, addmsg, new - current)
                 grid.ProcessTableMessage(msg)
                 self.UpdateValues(grid)
 
@@ -132,16 +132,16 @@ class MegaTable(Grid.PyGridTableBase):
     # ------------------------------------------------------
     # begin the added code to manipulate the table (non wx related)
     def AppendRow(self, row):
-        #print 'append'
+        # print 'append'
         entry = {}
 
         for name in self.colnames:
-            entry[name] = "Appended_%i"%row
+            entry[name] = "Appended_%i" % row
 
         # XXX Hack
         # entry["A"] can only be between 1..4
         entry["A"] = random.choice(range(4))
-        self.data.insert(row, ["Append_%i"%row, entry])
+        self.data.insert(row, ["Append_%i" % row, entry])
 
     def DeleteCols(self, cols):
         """
@@ -156,7 +156,7 @@ class MegaTable(Grid.PyGridTableBase):
         cols.sort()
 
         for i in cols:
-            self.colnames.pop(i-deleteCount)
+            self.colnames.pop(i - deleteCount)
             # we need to advance the delete count
             # to make sure we delete the right columns
             deleteCount += 1
@@ -174,7 +174,7 @@ class MegaTable(Grid.PyGridTableBase):
         rows.sort()
 
         for i in rows:
-            self.data.pop(i-deleteCount)
+            self.data.pop(i - deleteCount)
             # we need to advance the delete count
             # to make sure we delete the right rows
             deleteCount += 1
@@ -215,11 +215,11 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
 
 
 
-        self._choices = {'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"pdf.png"),
-                         'chm': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"chm.png"),
-                         'mobi': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"mobi.png"),
-                         'epub': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"epub.png"),
-                         'doc': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep +"doc.png")
+        self._choices = {'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "pdf.png"),
+                         'chm': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "chm.png"),
+                         'mobi': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "mobi.png"),
+                         'epub': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "epub.png"),
+                         'doc': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "doc.png")
                          }
 
         self.colSize = None
@@ -227,12 +227,24 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
 
     def Draw(self, grid, attr, dc, rect, row, col, isSelected):
         choice = self.table.GetRawValue(row, col)
-        bmp= self._choices.get(choice.lower())
+        bmp = self._choices.get(choice.lower())
 #         print 'Draw.choice:',choice
         # create the blank bitmap as a draw background
 #         bmp=wx.Bitmap("/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images/pdf.png")
         image = wx.MemoryDC()
-        image.SelectObject(bmp)
+        if bmp:
+            image.SelectObject(bmp)
+            # copy the image but only to the size of the grid cell
+    #         width, height = bmp.GetWidth(), bmp.GetHeight()
+            width, height = bmp.GetWidth(), bmp.GetHeight()
+    
+            if width > rect.width - 2:
+                width = rect.width - 2
+    
+            if height > rect.height - 2:
+                height = rect.height - 2
+    
+            dc.Blit(rect.x + 1, rect.y + 1, width, height, image, 0, 0, wx.COPY, True)
 
         # clear the background
         dc.SetBackgroundMode(wx.SOLID)
@@ -246,19 +258,7 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
         dc.DrawRectangleRect(rect)
 
 
-        # copy the image but only to the size of the grid cell
-#         width, height = bmp.GetWidth(), bmp.GetHeight()
-        width, height = bmp.GetWidth(),bmp.GetHeight()
 
-        if width > rect.width-2:
-            width = rect.width-2
-
-        if height > rect.height-2:
-            height = rect.height-2
-
-        dc.Blit(rect.x+1, rect.y+1, width, height,
-                image,
-                0, 0, wx.COPY, True)
 
 
 class MegaFontRenderer(Grid.PyGridCellRenderer):
@@ -307,7 +307,7 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
 
         dc.SetTextForeground(self.color)
         dc.SetFont(self.font)
-        dc.DrawText(text, rect.x+1, rect.y+1)
+        dc.DrawText(text, rect.x + 1, rect.y + 1)
 
         # Okay, now for the advanced class :)
         # Let's add three dots "..."
@@ -316,11 +316,11 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
 
         width, height = dc.GetTextExtent(text)
 
-        if width > rect.width-2:
+        if width > rect.width - 2:
             width, height = dc.GetTextExtent("...")
-            x = rect.x+1 + rect.width-2 - width
-            dc.DrawRectangle(x, rect.y+1, width+1, height)
-            dc.DrawText("...", x, rect.y+1)
+            x = rect.x + 1 + rect.width - 2 - width
+            dc.DrawRectangle(x, rect.y + 1, width + 1, height)
+            dc.DrawText("...", x, rect.y + 1)
 
         dc.DestroyClippingRegion()
 
@@ -331,9 +331,9 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
 
 class MegaGrid(Grid.Grid):
     def __init__(self, parent, data, colnames):
-        plugins={"bookName":MegaFontRendererFactory("red", "ARIAL", 8),
+        plugins = {"bookName":MegaFontRendererFactory("red", "ARIAL", 8),
                                         "bookFormat":MegaImageRenderer,
-                                        "Test":MegaFontRendererFactory("orange", "TIMES", 24),}
+                                        "Test":MegaFontRendererFactory("orange", "TIMES", 24), }
         """parent, data, colnames, plugins=None
         Initialize a grid using the data defined in data and colnames
         (see MegaTable for a description of the data format)
@@ -364,7 +364,7 @@ class MegaGrid(Grid.Grid):
         """(row, evt) -> display a popup menu when a row label is right clicked"""
         appendID = wx.NewId()
         deleteID = wx.NewId()
-        x = self.GetRowSize(row)/2
+        x = self.GetRowSize(row) / 2
 
         if not self.GetSelectedRows():
             self.SelectRow(row)
@@ -393,7 +393,7 @@ class MegaGrid(Grid.Grid):
     def colPopup(self, col, evt):
         """(col, evt) -> display a popup menu when a column label is
         right clicked"""
-        x = self.GetColSize(col)/2
+        x = self.GetColSize(col) / 2
         menu = wx.Menu()
         id1 = wx.NewId()
         sortID = wx.NewId()
@@ -487,9 +487,9 @@ class MegaGrid(Grid.Grid):
         print ("OnOpenFolderPath \n")
         print self.rowSelected
         if self.rowSelected != None:
-            book=self._table.data[self.rowSelected][1]
+            book = self._table.data[self.rowSelected][1]
             print self.rowSelected
-            file=book['bookPath']
+            file = book['bookPath']
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':
@@ -503,16 +503,16 @@ class MegaGrid(Grid.Grid):
 
     def OpenBook(self, event):
         print self.rowSelected
-        if self.rowSelected !=None:
-            book=self._table.data[self.rowSelected][1]
+        if self.rowSelected != None:
+            book = self._table.data[self.rowSelected][1]
             print self.rowSelected
-            bookPath=book['bookPath']
+            bookPath = book['bookPath']
             for name in os.listdir(bookPath):
                 if ".pdf" in name:
                     print name
-                    file=os.path.join(bookPath,name)
+                    file = os.path.join(bookPath, name)
                 elif  ".epub" in name:
-                    file=os.path.join(bookPath,name)
+                    file = os.path.join(bookPath, name)
 
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
@@ -565,12 +565,12 @@ class MegaFontRendererFactory:
 class TestFrame(wx.Frame):
     def __init__(self, parent,):
         wx.Frame.__init__(self, parent, -1,
-                         "Test Frame", size=(640,480))
+                         "Test Frame", size=(640, 480))
         import random
 
-        books=FindingBook().searchingBook('flex')
+        books = FindingBook().searchingBook('flex')
 
-        colnames = [ 'id','bookName', 'bookFormat']
+        colnames = [ 'id', 'bookName', 'bookFormat']
         # for b in books:
         #     colnames=b.__dict__.keys()
         #     break
@@ -578,20 +578,20 @@ class TestFrame(wx.Frame):
 
 
         data = []
-        bookId_rowNo_dict={}
-        noOfBooks=len(books)
+        bookId_rowNo_dict = {}
+        noOfBooks = len(books)
         for i in range(noOfBooks):
 #             colnames=books[i].__dict__.keys()
 #             print colnames
             d = {}
             data.append((str(i), books[i].__dict__))
-            bookId_rowNo_dict[books[i].id]=i
+            bookId_rowNo_dict[books[i].id] = i
         grid = MegaGrid(self, data, colnames)
-        grid.bookId_rowNo_dict=bookId_rowNo_dict
+        grid.bookId_rowNo_dict = bookId_rowNo_dict
         grid.Reset()
         grid.SelectRow(row=3)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     app = wx.App()
     frame = TestFrame(None)
     frame.Show(True)
