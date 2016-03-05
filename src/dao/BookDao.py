@@ -20,6 +20,7 @@ import shutil
 import traceback
 from src.static.constant import Workspace
 import datetime
+from src.static.SessionUtil import SingletonSession
 
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
@@ -35,41 +36,27 @@ if os.path.exists(Workspace().path):
     
     
     
-    engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
-    Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
-    session = Session()
+    
 
-# os.chdir(Workspace().path)
-# if len(listOfDir)>0:
-#     print len(listOfDir)
-#     for sName in listOfDir:
-#         pass
-# else:
-#     os.chdir(Workspace().path)
-#     print '3--->', os.getcwd()
-#     session = CreateDatabase().creatingDatabase()
-#     CreateDatabase().addingData()
 
-#     Base.metadata.drop_all(engine)
-#     Base.metadata.create_all(engine)
 
 class CreateDatabase():
 
     def __init__(self):
         engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
-        self.session = Session()
+        self.session = SingletonSession().session
         
         if not os.path.exists(Workspace().path):
             os.mkdir(Workspace().path)
         os.chdir(Workspace().path)
         
-        database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
-        if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
-#             print '---------------------------',os.path.getsize(database_fileName)
-#             self.creatingDatabase()
-            print Base.metadata.drop_all(engine)
-            print Base.metadata.create_all(engine)
+#         database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
+#         if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
+# #             print '---------------------------',os.path.getsize(database_fileName)
+# #             self.creatingDatabase()
+#             print Base.metadata.drop_all(engine)
+#             print Base.metadata.create_all(engine)
 
 
     def creatingDatabase(self):
@@ -151,6 +138,7 @@ class CreateDatabase():
 #         session = Session()
         self.session.add(book)
         self.session.commit()
+        self.session.flush()
 
     def findAllBook(self):
 #         session=self.getSession()
@@ -163,28 +151,38 @@ class CreateDatabase():
 
     def removeBook(self, book=None):
 #         session=self.getSession()
+        print 'removeBook'
         try:
             if book:
-
-    #             for author in book.authors:
-    #                 session.delete(author)
-
-                author_book = self.session.query(AuthorBookLink).filter(AuthorBookLink.book == book).all()
-                if author_book and len(author_book) > 0:
-                    print author_book[0].bookId
-                    self.session.delete(author_book[0])
+                path = book.bookPath
+                query = self.session.query(Book).filter(Book.id == book.id)
+                books = query.all()
+                book=books[0]
+                
+                author_id_lst=[]
                 for author in book.authors:
+                    author_id_lst.append(author.id)
+                
+                self.session.delete(book)
+                self.session.commit()
+                self.session.flush()
+                
+                query = self.session.query(Author).filter(Author.id.in_( author_id_lst))
+                authors = query.all()
+                for author in authors:
                     self.session.delete(author)
-
-#                 session.delete(book)
-#                 session.commit()
-
+                self.session.commit()
+                self.session.flush()                    
+                
                 path = book.bookPath
                 if path and os.path.exists(path):
                     shutil.rmtree(path)
                     print 'deleting path'
         except:
             traceback.print_exc()
+            self.session.flush()
+            self.session.close()
+            
 
 
 

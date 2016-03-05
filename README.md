@@ -21,3 +21,5 @@ add multiple books
 ##Feature need to be implemented
 
 read metatadata of file type djvu, 
+adding delete functionality
+finding book that already present.

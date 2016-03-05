@@ -481,6 +481,12 @@ class MegaGrid(Grid.Grid):
     def OnPopupOne(self, event):
         print ("Popup one\n")
     def deleteBook(self, event):
+        print self.rowSelected
+        if self.rowSelected != None:
+            book = self._table.data[self.rowSelected][1]
+            bookPath = book['bookPath']
+            print bookPath 
+            FindingBook().deleteBook(book)
         print ("delete Book\n")
 
     def OnOpenFolderPath(self, event):

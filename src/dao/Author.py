@@ -11,7 +11,7 @@ class Author(Base):
 
     __tablename__ = 'author'
     id = Column(Integer, primary_key=True)
-    authorName = Column('author_name', String(46), nullable=False, autoincrement=True)
+    authorName = Column('author_name', String(46), nullable=False)
     aboutAuthor = Column('about_author', String)
     email = Column(String, unique=True)
     created_on = Column(DateTime, default=func.now())

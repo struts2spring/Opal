@@ -33,6 +33,8 @@ from src.ui.view.opalview.BookInfo import GenerateBookInfo
 import subprocess
 import sys
 import traceback
+from src.logic import search_book
+from src.logic.search_book import FindingBook
 
 
 """
@@ -2317,6 +2319,14 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("Popup one\n")
 
     def deleteBook(self, event):
+        print ("OnOpenFolderPath \n")
+        if self._selected != None:
+            book=self._items[self._selected].book
+            file=book.bookPath
+#             print self._selected, file
+            FindingBook().deleteBook(book)
+            text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
+            self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
         print ("delete book\n")
 
     def OnOpenFolderPath(self, event):

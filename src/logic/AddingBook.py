@@ -56,6 +56,7 @@ class AddBook():
             self.book.bookPath = os.path.join(workspacePath, str(maxBookId + 1))
 
             head, tail = os.path.split(sourcePath)
+            self.book.bookFileName=tail
             
             self.book.inLanguage = 'English'
             self.book.hasCover = 'Y'
@@ -226,9 +227,9 @@ class AddBook():
             authorList.append(author)
             self.book.authors = authorList
 
-            authorBookLink = AuthorBookLink()
-            authorBookLink.author = author
-            authorBookLink.book = self.book
+#             authorBookLink = AuthorBookLink()
+#             authorBookLink.author = author
+#             authorBookLink.book = self.book
 
 
 

@@ -36,11 +36,12 @@ class Book(Base):
     rating = Column('rating', String)  # rating
     uuid = Column('uuid', String)  # uuid
     tag = Column('tag', String) # a comma separated list of subjects
+    bookFileName= Column('book_file_name', String)
     wishListed=Column('wish_listed', String) # this is an indicator that book is not available in workspace.
     createdOn = Column('created_on', DateTime, default=func.now())
     authors = relationship(
         'Author',
-        secondary='author_book_link', lazy='joined', cascade="all"
+        secondary='author_book_link'
     )
 
 
