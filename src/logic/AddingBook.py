@@ -19,6 +19,7 @@ from src.static.constant import Workspace
 from src.util.remove import Util
 import traceback
 from src.ui.view.epub.opal_epub_worker import EpubBook
+import uuid
 
 
 class AddBook():
@@ -28,6 +29,7 @@ class AddBook():
     
     def __init__(self):
         self.book = Book()
+        self.book.uuid=str(uuid.uuid4())
         self.book.tag = None
         self.book.authors = list()
         self.createDatabase = CreateDatabase()

@@ -179,7 +179,7 @@ class MainFrame(wx.Frame):
         self._mgr.AddPane(self.CreateTextCtrl(), bookInfoPan)
 #         self._mgr.AddPane(SettingsPanel(self, self), wx.aui.AuiPaneInfo().Name("settings").Caption("Dock Manager Settings").Dockable(True).Float().Hide().CloseButton(True).MaximizeButton(True))
 
-        self._mgr.AddPane(self.searchCtrl(), wx.aui.AuiPaneInfo().Name("searchCtrl").Top().Show())
+        self._mgr.AddPane(self.searchCtrl(), wx.aui.AuiPaneInfo().Name("searchCtrl").Top().CaptionVisible(False).CloseButton(False).Show())
 #         self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").CenterPane().CloseButton(True).Show())
         self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").Caption("Grid").Center().CloseButton(True).MaximizeButton(True).Show())
         thumbInfo = wx.aui.AuiPaneInfo().Name("test1").Caption("Pane Caption").Center().Dockable(True).Movable(True).MaximizeButton(True).MinimizeButton(True).PinButton(True).LeftDockable(True).CloseButton(True).MaximizeButton(True).Position(0)

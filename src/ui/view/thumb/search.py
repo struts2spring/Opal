@@ -10,7 +10,7 @@ import urllib
 import shutil
 
 #----------------------------------------------------------------------
-sampleList = ['gooble book', 'amazon book', 'IT ebook', 'Tubebl', 'Lit2go', 'Project Gutenberg',
+sampleList = ['google book', 'amazon book', 'IT ebook', 'Tubebl', 'Lit2go', 'Project Gutenberg',
                       'ePubBud', 'Scribd', 'ManyBooks', 'Obooko', 'Wattpad', 'Ebookee',
                       'ShareBookFree', 'FreeBookSpot', 'Bookyards', 'FreeBooks4Doctors', 'Smashwords',
                       'BookBoon', 'Dailylit', 'Free-eBooks', 'PDFGeni', 'E-Books Directory', 'issuu', 'WikiBooks']
@@ -91,6 +91,12 @@ class TestPanel(wx.Panel):
 
     def OnDoSearch(self, evt):
         print("OnDoSearch: " + self.search.GetValue())
+        listOfBooks = self.doGoogleSearch()
+        print len(listOfBooks)
+        
+        self.thumbnail.ShowDir(listOfBooks)
+        
+    def doGoogleSearch(self):
         r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + self.search.GetValue())
         json_data = r.json()
         items = json_data['items']
@@ -99,12 +105,14 @@ class TestPanel(wx.Panel):
         #     print x.keys()
             b = Book(x)
             volumeInfo = VolumeInfo(b['volumeInfo'])
-            volumeInfo.imageLinks['thumbnail']
+            b.bookName = volumeInfo.title
+#                volumeInfo.imageLinks['thumbnail']
             
-#             with open('picture.png', 'rb') as f:
-#                 data = f.read()
-#             imgData = urllib2.urlopen(volumeInfo.imageLinks['thumbnail'])
-            url = str(volumeInfo.imageLinks['thumbnail'])
+            if volumeInfo.has_key('imageLinks'):
+                url = str(volumeInfo.imageLinks['thumbnail'])
+            else:
+                url = "https://books.google.co.in/googlebooks/images/no_cover_thumb.gif"
+                
             path = os.path.join('/tmp', 'img')
 #             os.mkdir(tmp_path)
 #             path = os.path.dirname(__file__) + os.sep + 'tmp'
@@ -113,9 +121,8 @@ class TestPanel(wx.Panel):
                 os.mkdir(path)
             b.localImagePath = path 
 #             + os.sep + b.id + '.jpeg'
-            b.bookName = volumeInfo.title
             b.imageFileName = b.id + '.jpeg'
-            if not os.path.exists(os.path.join(b.localImagePath,b.imageFileName)):
+            if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
                 os.chdir(path)
                 print 'writing file'
                 with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
@@ -123,10 +130,7 @@ class TestPanel(wx.Panel):
             b.volumeInfo = volumeInfo
             b.bookPath = None
             listOfBooks.append(b)
-        print len(listOfBooks)
-        
-        self.thumbnail.ShowDir(listOfBooks)
-        
+        return listOfBooks
 
     def MakeMenu(self):
         menu = wx.Menu()

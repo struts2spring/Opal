@@ -1623,7 +1623,6 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 imageName=book.imageFileName
             bookName=book.bookName
 #                 imagePath=os.path.join(book.bookPath,imageName);
-            print '----------------------->',imagePath
             stats = os.stat(os.path.join(imagePath,imageName))
             size = stats[6]
 
@@ -2303,7 +2302,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             
             item = wx.MenuItem(menu, self.downloadToLibrary, "Download book to library.")
             print '------------->', os.getcwd()
-            item.SetBitmap(wx.Bitmap('download.png'))
+#             item.SetBitmap(wx.Bitmap('download.png'))
+            item.SetBitmap(wx.ArtProvider_GetBitmap(wx.ART_FILE_SAVE))
             menu.AppendItem(item)
 
 
@@ -2311,7 +2311,11 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         pass
 
     def onAddToLibrary(self, event):
+        
         print 'onAddToLibrary'
+        
+        
+        
     def onDownloadToLibrary(self, event):
         print 'onDownloadToLibrary'
     
@@ -2320,13 +2324,19 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def deleteBook(self, event):
         print ("OnOpenFolderPath \n")
-        if self._selected != None:
-            book=self._items[self._selected].book
-            file=book.bookPath
-#             print self._selected, file
-            FindingBook().deleteBook(book)
-            text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
-            self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
+        deleteBooks=[]
+        for selectedBookIndex in self._selectedarray:
+            book=self._items[selectedBookIndex].book
+            deleteBooks.append(book)
+        for book in deleteBooks:
+            try:
+                FindingBook().deleteBook(book)
+                text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
+                self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
+            except :
+                
+                traceback.print_exc()
+                print selectedBookIndex, len(self._items)
         print ("delete book\n")
 
     def OnOpenFolderPath(self, event):
