@@ -6,6 +6,7 @@ Created on 05-Dec-2015
 
 __version__ = "1.0"
 
+
 from PIL import Image
 import cStringIO
 import os

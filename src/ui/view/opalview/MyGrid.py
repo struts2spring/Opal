@@ -43,7 +43,8 @@ class MegaTable(Grid.PyGridTableBase):
         return self.colnames[col]
 
     def GetRowLabelValue(self, row):
-        return "row %03d" % int(self.data[row][0])
+#         return "row %03d" % int(self.data[row][0])
+        return " %d" % int(self.data[row][0])
 
     def GetValue(self, row, col):
 #         print 'GetValue:', self.GetColLabelValue(col)
@@ -247,15 +248,15 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
             dc.Blit(rect.x + 1, rect.y + 1, width, height, image, 0, 0, wx.COPY, True)
 
         # clear the background
-        dc.SetBackgroundMode(wx.SOLID)
+#         dc.SetBackgroundMode(wx.SOLID)
 
 #         if isSelected:
 #             dc.SetBrush(wx.Brush(wx.BLUE, wx.SOLID))
 #             dc.SetPen(wx.Pen(wx.BLUE, 1, wx.SOLID))
 #         else:
-        dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
-        dc.SetPen(wx.Pen(wx.WHITE, 1, wx.SOLID))
-        dc.DrawRectangleRect(rect)
+#         dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
+#         dc.SetPen(wx.Pen(wx.WHITE, 1, wx.SOLID))
+#         dc.DrawRectangleRect(rect)
 
 
 
@@ -271,7 +272,7 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
         self.selectedBrush = wx.Brush("light blue", wx.SOLID)
         self.normalBrush = wx.Brush(wx.WHITE, wx.SOLID)
         self.colSize = None
-        self.rowSize = 50
+        self.rowSize = 30 # defining the row size
 
     def Draw(self, grid, attr, dc, rect, row, col, isSelected):
         # Here we draw text in a grid cell using various fonts
@@ -572,9 +573,8 @@ class TestFrame(wx.Frame):
     def __init__(self, parent,):
         wx.Frame.__init__(self, parent, -1,
                          "Test Frame", size=(640, 480))
-        import random
 
-        books = FindingBook().searchingBook('flex')
+        books = FindingBook().searchingBook('lua')
 
         colnames = [ 'id', 'bookName', 'bookFormat']
         # for b in books:
