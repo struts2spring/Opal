@@ -2320,13 +2320,19 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def deleteBook(self, event):
         print ("OnOpenFolderPath \n")
-        if self._selected != None:
-            book=self._items[self._selected].book
-            file=book.bookPath
-#             print self._selected, file
-            FindingBook().deleteBook(book)
-            text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
-            self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
+        deleteBooks=[]
+        for selectedBookIndex in self._selectedarray:
+            book=self._items[selectedBookIndex].book
+            deleteBooks.append(book)
+        for book in deleteBooks:
+            try:
+                FindingBook().deleteBook(book)
+                text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
+                self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
+            except :
+                
+                traceback.print_exc()
+                print selectedBookIndex, len(self._items)
         print ("delete book\n")
 
     def OnOpenFolderPath(self, event):

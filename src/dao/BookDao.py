@@ -43,8 +43,8 @@ if os.path.exists(Workspace().path):
 class CreateDatabase():
 
     def __init__(self):
-        engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
-        Session = sessionmaker(autoflush=True, autocommit=False, bind=engine)
+        self.engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
+        Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = SingletonSession().session
         
         if not os.path.exists(Workspace().path):
@@ -61,8 +61,8 @@ class CreateDatabase():
 
     def creatingDatabase(self):
         os.chdir(Workspace().path)
-        print Base.metadata.drop_all(engine)
-        print Base.metadata.create_all(engine)
+        print Base.metadata.drop_all(self.engine)
+        print Base.metadata.create_all(self.engine)
         pass
 #         self.getSession()
 
