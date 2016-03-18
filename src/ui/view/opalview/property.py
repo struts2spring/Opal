@@ -3,6 +3,8 @@ import sys, time, math, os, os.path
 
 import wx
 from src.logic.search_book import FindingBook
+import datetime
+
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
 
@@ -670,8 +672,11 @@ class BookPropertyPanel(wx.Panel):
         self.panel = panel = wx.Panel(self, wx.ID_ANY)
         
         self.photoPanel = wx.Panel(self, wx.ID_ANY)
+        img1=wx.Image(os.path.join(book.bookPath, book.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+#         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         img = wx.EmptyImage(240, 240)
-        self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
+#         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
+        self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1)
         
         
         topsizer = wx.BoxSizer(wx.VERTICAL)
@@ -771,12 +776,34 @@ class BookPropertyPanel(wx.Panel):
                                          "Text Not in List"))
         
         pg.Append(wxpg.FileProperty("File Location", value=book.bookPath))
-        pg.Append(wxpg.ImageFileProperty("Book image"))
         
-        pg.Append(wxpg.DateProperty("Published Date", value=wx.DateTime_Now()))
+        imgPath=os.path.join(book.bookPath,book.bookImgName)
+        pg.Append(wxpg.ImageFileProperty(label="Book image",value=imgPath))
+        pg.Append(wxpg.StringProperty("Publisher", value=book.publisher))
+        
+        
+        pg.Append(wxpg.DateProperty("Published Date", value=self.pydate2wxdate(book.publishedOn)))
        
         
         return pg
+
+    import datetime
+    import wx
+     
+    def pydate2wxdate(self,date):
+        assert isinstance(date, (datetime.datetime, datetime.date))
+        tt = date.timetuple()
+        dmy = (tt[2], tt[1]-1, tt[0])
+        return wx.DateTimeFromDMY(*dmy)
+     
+    def wxdate2pydate(self,date):
+        assert isinstance(date, wx.DateTime)
+        if date.IsValid():
+            ymd = map(int, date.FormatISODate().split('-'))
+            return datetime.date(*ymd)
+        else:
+            return None
+
 
     def OnPropGridChange(self, event):
         p = event.GetProperty()

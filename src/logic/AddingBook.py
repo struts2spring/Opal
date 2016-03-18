@@ -87,6 +87,7 @@ class AddBook():
                
                 
                 os.chdir(self.book.bookPath)
+                self.book.bookImgName=book_file_name+'.jpg'
                 BookImage().getBookImage(self.book.bookPath, book_file_name, self.book.bookFormat)
                 
                 book_copy1 = copy.deepcopy(self.book)

@@ -18,7 +18,7 @@ class Book(Base):
     bookName = Column('book_name', String(46), nullable=False)  # bookName
     subTitle = Column('sub_title', String)  # Title
     isbn_10 = Column(String)  # isbn_10
-    isbn_13 = Column(String,unique=True)  # isbn_13
+    isbn_13 = Column(String, unique=True)  # isbn_13
     series = Column(String)  # series
     dimension = Column(String)  # dimension
     customerReview = Column('customer_review', String)  # customerReview
@@ -35,9 +35,10 @@ class Book(Base):
     bookPath = Column('book_path', String)  # bookPath
     rating = Column('rating', String)  # rating
     uuid = Column('uuid', String)  # uuid
-    tag = Column('tag', String) # a comma separated list of subjects
-    bookFileName= Column('book_file_name', String)
-    wishListed=Column('wish_listed', String) # this is an indicator that book is not available in workspace.
+    tag = Column('tag', String)  # a comma separated list of subjects
+    bookFileName = Column('book_file_name', String)
+    bookImgName = Column('book_img_name', String) # a comma separated list of images for the book
+    wishListed = Column('wish_listed', String)  # this is an indicator that book is not available in workspace.
     createdOn = Column('created_on', DateTime, default=func.now())
     authors = relationship(
         'Author',

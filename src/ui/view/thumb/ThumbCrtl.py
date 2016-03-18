@@ -35,6 +35,7 @@ import sys
 import traceback
 from src.logic import search_book
 from src.logic.search_book import FindingBook
+from src.ui.view.opalview.property import BookPropertyFrame
 
 
 """
@@ -2356,6 +2357,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def showBookProperties(self, event):
         print ("showBookProperties \n")
+        if self._selected != None:
+            book=self._items[self._selected].book
+#             frame = BookPropertyFrame(parent=None,book)
+            frame = BookPropertyFrame(None, book)
         
 
     def OpenBook(self, event):
