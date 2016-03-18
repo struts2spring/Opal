@@ -465,6 +465,11 @@ class MainFrame(wx.Frame):
             When you add books to Opal, they will be copied here. 
             Use an empty folder for a new Opal workspace."""), 0, wx.ALIGN_LEFT | wx.ALL, 1)
         dbb = DirBrowseButton(page1, -1, size=(450, -1), changeCallback=self.dbbCallback)
+        dbb.SetFocus()
+        dbb.SetLabel("Book Library Location")
+        dbb.SetHelpText('Please set your default workspace location.')
+        dbb.textControl.SetValue( Workspace().path)
+        
         page1.sizer.Add(dbb , 0, wx.ALIGN_CENTRE | wx.ALL, 5)
         
         wizard.FitToPage(page1)

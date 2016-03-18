@@ -2261,7 +2261,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
             self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
             self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
-            self.Bind(wx.EVT_MENU, self.OnPopupFour, id=self.popupID4)
+            self.Bind(wx.EVT_MENU, self.showBookProperties, id=self.popupID4)
             self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
             self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
         
@@ -2354,8 +2354,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def OnPopupThree(self, event):
         print ("OnPopupThree \n")
 
-    def OnPopupFour(self, event):
-        print ("OnPopupFour \n")
+    def showBookProperties(self, event):
+        print ("showBookProperties \n")
+        
 
     def OpenBook(self, event):
         print self._selected

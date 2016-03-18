@@ -8,6 +8,10 @@ class FindingBook():
         pass
 
     def searchingBook(self, searchText=None):
+        '''
+        This method return list of books matching with search text.
+        @param searchText: may be a book name 
+        '''
         books = list()
         if searchText != None and searchText != '':
             os.chdir(Workspace().path)
@@ -17,6 +21,9 @@ class FindingBook():
         return books
 
     def findAllBooks(self):
+        '''
+        This method will give all the books list in book library.
+        '''
         books = list()
         os.chdir(Workspace().path)
         books = self.createDatabase.findAllBook()
@@ -26,6 +33,10 @@ class FindingBook():
         os.chdir(Workspace().path)
     
     def deleteBook(self, book):
+        '''
+        removing book from database and files.
+        @param book: book object 
+        '''
         self.createDatabase.removeBook(book)
         print 'deletingBook'
         
