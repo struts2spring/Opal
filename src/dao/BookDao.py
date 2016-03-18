@@ -24,22 +24,12 @@ from src.static.SessionUtil import SingletonSession
 
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
-# if sys.platform=='win32':
-# #     Workspace().path='e:\\docs\\books'
-#     Workspace().path='C:\\new_1'
-# else:
-#     Workspace().path='/docs/books'
+
 if os.path.exists(Workspace().path):
     os.chdir(Workspace().path)
     listOfDir = os.listdir(Workspace().path)
     
-    
-    
-    
-    
-
-
-
+ 
 class CreateDatabase():
 
     def __init__(self):
@@ -51,52 +41,35 @@ class CreateDatabase():
             os.mkdir(Workspace().path)
         os.chdir(Workspace().path)
         
-#         database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
-#         if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
-# #             print '---------------------------',os.path.getsize(database_fileName)
-# #             self.creatingDatabase()
-#             print Base.metadata.drop_all(engine)
-#             print Base.metadata.create_all(engine)
-
 
     def creatingDatabase(self):
         os.chdir(Workspace().path)
-        print Base.metadata.drop_all(self.engine)
-        print Base.metadata.create_all(self.engine)
-        pass
-#         self.getSession()
+        Base.metadata.drop_all(self.engine)
+        Base.metadata.create_all(self.engine)
 
 
     def addingData(self):
-#         session=self.getSession()
-#         directory_name = '/home/vijay/Documents/Aptana_Workspace/Better/seleniumone/books'
+
         directory_name = Workspace().path
-#         directory_name = os.getcwd()
         os.chdir(directory_name)
         listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
         if listOfDir:
             listOfDir.sort(key=int)
         one = ''
-        # create a Session
-#         sess = session()
        
             
         for sName in listOfDir:
             one = os.path.join(directory_name , sName)
-            # print one
             file = open(os.path.join(one , 'book.json'), 'r')
 
             rep = ''
             for line in file:
                 rep = rep + line
             file.close
-            # print str(rep)
             b = json.loads(rep)
             book = Book()
             for k in b:
-#                 print b[k]
                 if not isinstance(b[k], list):
-#                     print b[k]
                     if k in ['publishedOn', 'createdOn']:
                         if b[k]:
                             book.__dict__[k] = datetime.datetime.strptime(b[k][0:19], "%Y-%m-%d %H:%M:%S")
@@ -112,15 +85,6 @@ class CreateDatabase():
                             authorList.append(author)
             book.bookPath = one
 
-#             print b.__dict__
-#             book = Book(bookName=b["bookName"], fileSize=b["fileSize"], hasCover='Y', bookPath=one , bookDescription=b["bookDescription"], publisher=b["publisher"], isbn_13=b["isbn_13"], numberOfPages=b["numberOfPages"], bookFormat=b["bookFormat"], inLanguage=b["inLanguage"])
-            # book.bookName='one'
-#             for a in b["authors"]:
-#                 author = Author(authorName=a["authorName"])
-#             authorList = list()
-#             authorList.append(author)
-#             book.authors = authorList
-
             authorBookLink = AuthorBookLink()
             authorBookLink.author = author
             authorBookLink.book = book
@@ -130,27 +94,20 @@ class CreateDatabase():
         print 'data loaded'
 
     def saveAuthorBookLink(self, authorBookLink):
-#         session = Session()
         self.session.add(authorBookLink)
         self.session.commit()
 
     def saveBook(self, book):
-#         session = Session()
         self.session.add(book)
         self.session.commit()
         self.session.flush()
 
     def findAllBook(self):
-#         session=self.getSession()
         bs = self.session.query(Book).all()
-#         for b in bs:
-#             print b
-
         print 'completed'
         return bs
 
     def removeBook(self, book=None):
-#         session=self.getSession()
         print 'removeBook'
         try:
             if book:
@@ -203,13 +160,14 @@ class CreateDatabase():
             return books
 
     def findDuplicateBook(self):
-#         session=self.getSession()
         books = self.session.query(Book).group_by(Book.isbn_13).having(func.count(Book.isbn_13) > 1).order_by(Book.isbn_13.desc())
-#         print len(bs)
-#         for b in bs:
-#             print b.isbn_13,b.id
         return books
-
+    
+    def findBookByFileName(self,bookFileName):
+        if bookFileName:
+            query = self.session.query(Book).filter(Book.bookFileName.ilike('%' + bookFileName + '%'))
+            books = query.all()
+            return books
     def findBook(self, book=None):
         '''
         This method will find the book in database . It will return true.If book present.
@@ -222,12 +180,7 @@ class CreateDatabase():
         if book.bookName:
             query = self.session.query(Book).filter(Book.bookName.ilike('%' + book.bookName + '%'))
             books = query.all()
-
-#         uniqueBookSet=set()
-#         uniqueBookSet.add(books)
         return books
-#         print len(bs)
-        pass
 
     def getMaxBookID(self, book=None):
         '''

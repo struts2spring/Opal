@@ -46,11 +46,9 @@ class AddBook():
         2. Copy the book file in the directory.
         3. Create metadata i.e. (book.json)
         4. Make an entry in database.
-
-
         '''
+
         if sourcePath:
-#             createDatabase = CreateDatabase()
             maxBookId = self.createDatabase.getMaxBookID()
             if maxBookId == None:
                 maxBookId = 0
@@ -58,7 +56,7 @@ class AddBook():
             self.book.bookPath = os.path.join(workspacePath, str(maxBookId + 1))
 
             head, tail = os.path.split(sourcePath)
-            self.book.bookFileName=tail
+            self.book.bookFileName = tail
             
             self.book.inLanguage = 'English'
             self.book.hasCover = 'Y'
@@ -66,36 +64,57 @@ class AddBook():
             splited_name = tail.split(".")
             self.book.bookFormat = splited_name[-1:][0]
             splited_name.remove(self.book.bookFormat)
-            book_file_name='.'.join(splited_name)
-            self.book.bookName= book_file_name
-            if not os.path.exists(self.book.bookPath):
-                os.makedirs(self.book.bookPath)
-            
-            dest = os.path.join(self.book.bookPath, tail)
-            if sourcePath != dest:
-                shutil.copy (sourcePath, dest)
-            
-            if 'pdf' == self.book.bookFormat :
-                self.getPdfMetadata(sourcePath)
-            if 'epub'==self.book.bookFormat:
-                self.getEpubMetadata(sourcePath)
-                pass
-                
-           
+            book_file_name = '.'.join(splited_name)
+            self.book.bookName = book_file_name
             self.book.wishListed = 'No'
-            os.chdir(self.book.bookPath)
-            BookImage().getBookImage(self.book.bookPath,  book_file_name, self.book.bookFormat )
             
-            book_copy1 = copy.deepcopy(self.book)
-            self.writeBookJson(self.book.bookPath, book_copy1)
-            self.addingBookInfoInDatabase(self.book)
+            if not self.findingSameBook():
+            
+                self.book.bookPath = os.path.join(workspacePath, str(maxBookId + 1))
+                if not os.path.exists(self.book.bookPath):
+                    os.makedirs(self.book.bookPath)
+                
+                dest = os.path.join(self.book.bookPath, tail)
+                if sourcePath != dest:
+                    shutil.copy (sourcePath, dest)
+                
+                if 'pdf' == self.book.bookFormat :
+                    self.getPdfMetadata(sourcePath)
+                if 'epub' == self.book.bookFormat:
+                    self.getEpubMetadata(sourcePath)
+                    pass
+                    
+               
+                
+                os.chdir(self.book.bookPath)
+                BookImage().getBookImage(self.book.bookPath, book_file_name, self.book.bookFormat)
+                
+                book_copy1 = copy.deepcopy(self.book)
+                self.writeBookJson(self.book.bookPath, book_copy1)
+                self.addingBookInfoInDatabase(self.book)
 
+    def findingSameBook(self):
+        '''
+        This method will allow you to find the same book available in workspace already.
+        1. check for same book name.
+        2. check for isbn.
+        
+        '''
+        isSameBookPresent = False
+        books = self.createDatabase.findBookByFileName(self.book.bookFileName)
+        print 'findingSameBook--->', len(books)
+        if len(books) > 0:
+            isSameBookPresent = True
+        return isSameBookPresent
+        
 
     def addingBookInfoInDatabase(self, book):
         '''
         This method will add new book info in database.
         '''
         self.createDatabase.saveBook(book)
+
+
 
 
     def writeBookJson(self, newDirPath=None, book=None):
@@ -154,10 +173,6 @@ class AddBook():
         self.book.tag=epubBook.subjectTag
         epubBook.extract_cover_image(outdir='.')
         self.book.createdOn = datetime.now()
-#         authorBookLink = AuthorBookLink()
-#         authorBookLink.author = author
-#         authorBookLink.book = self.book
-        
     
     def getPdfMetadata(self, path=None):
         '''
@@ -176,7 +191,6 @@ class AddBook():
             pdf_info = pdf_toread.getDocumentInfo()
             print str(pdf_info)
             print 'Pages:', pdf_toread.getNumPages()
-#             book = Book()
             try:
                 if pdf_info.title != None:
                     self.book.bookName = str(pdf_info.title)
@@ -228,14 +242,6 @@ class AddBook():
             authorList = list()
             authorList.append(author)
             self.book.authors = authorList
-
-#             authorBookLink = AuthorBookLink()
-#             authorBookLink.author = author
-#             authorBookLink.book = self.book
-
-
-
-
 
 if __name__ == '__main__':
 #     sourcePath='C:\\Users\\vijay\\Downloads\\ST-52900095-16911.pdf'
