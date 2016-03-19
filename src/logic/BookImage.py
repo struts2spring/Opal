@@ -17,7 +17,7 @@ class BookImage():
         '''
         os.chdir(filePath)
         if 'pdf'==bookFormat:
-            cmd = 'convert -thumbnail x300 -background white -alpha remove "' + name + '.pdf[0]" "' + name + '.jpg"'
+            cmd = 'convert -background white -alpha remove "' + name + '.pdf[0]" "' + name + '.jpg"'
             print cmd
             print subprocess.call(cmd, shell=True)
         elif 'epub'==bookFormat:
