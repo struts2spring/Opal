@@ -730,13 +730,43 @@ class BookPropertyPanel(wx.Panel):
         bookId=self.currentBook.id
         self.previousBook=self.currentBook
         self.currentBook=FindingBook().findBookByNextMaxId(bookId)
-        self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
-
-        self.pg = self.createPropetyGrid(self.currentBook)
-        self.Layout()
+        self.setValuesToPropetyGrid()
+        
+        
         
     def onPrevious(self, event):
         print 'onPrevious'
+        
+    def setValuesToPropetyGrid(self):
+        '''
+        This method is used to set values in property grid.
+        '''
+        self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
+        props = self.pg.GetPropertyValues(inc_attributes=True)
+        props['id']=self.currentBook.id
+        
+        props['id']=self.currentBook.id
+        props['Book name']=str(self.currentBook.bookName or '')
+        props['Book description']=str(self.currentBook.bookDescription or '')
+        props['Number of pages']=str(self.currentBook.numberOfPages or '')
+        
+        authorName = ''
+        for a in book.authors:
+            authorName = ',' + a.authorName
+        props['Author(s) name']=authorName
+        props['Rating']=str(self.currentBook.rating or 0)
+        props['Tag']=str(self.currentBook.id or '')
+        props['File location']=str(self.currentBook.bookPath or '')
+        props['File size']=str(self.currentBook.fileSize or '')
+        props['fileFormat']=str(self.currentBook.bookFormat or '')
+        
+        imgPath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
+        props['Book image']=imgPath
+        props['Publisher']=str(self.currentBook.publisher or '')
+        props['ISBN']=str(self.currentBook.isbn_13 or '')
+        
+        self.pg.SetPropertyValues(props)
+        self.Layout()
         
     def onImageClick(self, event):
         """"""
