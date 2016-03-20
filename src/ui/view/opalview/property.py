@@ -729,9 +729,9 @@ class BookPropertyPanel(wx.Panel):
         print 'onNext'
         bookId = self.currentBook.id
         self.previousBook = self.currentBook
-        book = FindingBook().findBookByNextMaxId(bookId)
-        if book:
-            self.currentBook=book
+        b = FindingBook().findBookByNextMaxId(bookId)
+        if b:
+            self.currentBook=b
             self.setValuesToPropetyGrid()
         
         
@@ -740,9 +740,9 @@ class BookPropertyPanel(wx.Panel):
         print 'onPrevious'
         bookId = self.currentBook.id
         self.previousBook = self.currentBook
-        book = FindingBook().findBookByPreviousMaxId(bookId)
-        if book:
-            self.currentBook=book
+        b = FindingBook().findBookByPreviousMaxId(bookId)
+        if b:
+            self.currentBook=b
             self.setValuesToPropetyGrid()
         
     def setValuesToPropetyGrid(self):
@@ -759,7 +759,7 @@ class BookPropertyPanel(wx.Panel):
         props['Number of pages'] = str(self.currentBook.numberOfPages or '')
         
         authorName = ''
-        for a in book.authors:
+        for a in self.currentBook.authors:
             authorName = ',' + a.authorName
         props['Author(s) name'] = authorName
         props['Rating'] = str(self.currentBook.rating or 0)
