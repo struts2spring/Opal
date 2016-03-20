@@ -14,17 +14,14 @@ class ImageUtil():
             self.icons[x] = os.path.join(path,l)
         pass
     
-    def getBitmap(self, iconName=None):
-        return wx.Bitmap(self.icons.get(iconName))
-            
-#         self._choices = {
-#             'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "pdf.png"),
-#             'chm': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "chm.png"),
-#             'mobi': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "mobi.png"),
-#             'epub': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "epub.png"),
-#             'doc': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "doc.png")
-#             }
-        
+    def getBitmap(self, iconName=None, size=None):
+        image = wx.ImageFromBitmap(wx.Bitmap(self.icons.get(iconName)))
+        if size:
+            width, height=size
+            image = image.Scale(width, height, wx.IMAGE_QUALITY_HIGH)
+        result = wx.BitmapFromImage(image)
+        return result
+
 if __name__ == "__main__":
     x = ImageUtil()
     

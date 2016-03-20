@@ -106,7 +106,11 @@ class CreateDatabase():
         bs = self.session.query(Book).all()
         print 'completed'
         return bs
-
+    def findBookByNextMaxId(self, bookId):
+        bs = self.session.query(Book).filter(Book.id > bookId).first()
+        print 'completed'
+        return bs
+            
     def removeBook(self, book=None):
         print 'removeBook'
         try:

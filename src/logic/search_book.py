@@ -19,6 +19,9 @@ class FindingBook():
         else:
             books = self.findAllBooks()
         return books
+    
+    def findBookByNextMaxId(self, bookId=None):
+        return self.createDatabase.findBookByNextMaxId(bookId)
 
     def findAllBooks(self):
         '''

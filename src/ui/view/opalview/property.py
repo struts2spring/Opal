@@ -309,8 +309,8 @@ class SampleMultiButtonEditor(wxpg.PyTextCtrlEditor):
         buttons.AddButton("...")
         buttons.AddButton("A")
         # Add a bitmap button
-        x=ImageUtil()
-        buttons.AddBitmapButton(x.getBitmap(iconName='pdf'))
+        x = ImageUtil()
+        buttons.AddBitmapButton(x.getBitmap(iconName='pdf', size=(10, 10)))
         
         # Create the 'primary' editor control (textctrl in this case)
         wnd = self.CallSuperMethod("CreateControls",
@@ -671,10 +671,11 @@ class BookPropertyPanel(wx.Panel):
     def __init__(self, parent, book):
         wx.Panel.__init__(self, parent)
 
-        self.panel = panel = wx.Panel(self, wx.ID_ANY)
+        self.panel = wx.Panel(self, wx.ID_ANY)
+        self.currentBook = book
         
         self.photoPanel = wx.Panel(self, wx.ID_ANY)
-        img1 = wx.Image(os.path.join(book.bookPath, book.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         img = wx.EmptyImage(240, 240)
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
@@ -684,20 +685,26 @@ class BookPropertyPanel(wx.Panel):
         
         topsizer = wx.BoxSizer(wx.VERTICAL)
         hBox = wx.BoxSizer(wx.HORIZONTAL)
-        pg = self.createPropetyGrid(book)
+        self.pg = self.createPropetyGrid(self.currentBook)
 
-        hBox.Add(pg, 5, wx.EXPAND, 2)
+        hBox.Add(self.pg, 5, wx.EXPAND, 2)
         hBox.Add(self.photoPanel, 1, wx.EXPAND, 5)
         
         topsizer.Add(hBox, 3, wx.EXPAND)
         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
-        next = wx.Button(panel, -1, "Next")
-        previous = wx.Button(panel, -1, "Previous")
-        cancel = wx.Button(panel, -1, "Cancel")
-        ok = wx.Button(panel, -1, "Ok")
-        downloadMetadata = wx.Button(panel, -1, "Download metadata")
-        downloadCover = wx.Button(panel, -1, "Download cover")
-        generateCover = wx.Button(panel, -1, "Generate cover")
+        
+        next = wx.Button(self.panel, -1, "Next")
+        previous = wx.Button(self.panel, -1, "Previous")
+        cancel = wx.Button(self.panel, -1, "Cancel")
+        ok = wx.Button(self.panel, -1, "Ok")
+        downloadMetadata = wx.Button(self.panel, -1, "Download metadata")
+        downloadCover = wx.Button(self.panel, -1, "Download cover")
+        generateCover = wx.Button(self.panel, -1, "Generate cover")
+        
+        next.Bind(wx.EVT_BUTTON, self.onNext)
+        previous.Bind(wx.EVT_BUTTON, self.onPrevious)
+        
+        
         rowsizer.Add(previous, 1)
         rowsizer.Add(next, 1)
         rowsizer.Add(cancel, 1)
@@ -707,45 +714,30 @@ class BookPropertyPanel(wx.Panel):
         rowsizer.Add(generateCover, 1)
         topsizer.Add(rowsizer, 0, wx.EXPAND)
 
-#         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
-#         but = wx.Button(panel, -1, "SetPropertyValues")
-#         but.Bind(wx.EVT_BUTTON, self.OnSetPropertyValues)
-#         rowsizer.Add(but, 1)
-#         but = wx.Button(panel, -1, "GetPropertyValues")
-#         but.Bind(wx.EVT_BUTTON, self.OnGetPropertyValues)
-#         rowsizer.Add(but, 1)
-#         
-#         topsizer.Add(rowsizer, 0, wx.EXPAND)
-#         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
-#         but = wx.Button(panel, -1, "GetPropertyValues(as_strings=True)")
-#         but.Bind(wx.EVT_BUTTON, self.OnGetPropertyValues2)
-#         rowsizer.Add(but, 1)
-#         
-#         
-#         but = wx.Button(panel, -1, "AutoFill")
-#         but.Bind(wx.EVT_BUTTON, self.OnAutoFill)
-#         rowsizer.Add(but, 1)
-#         
-#         topsizer.Add(rowsizer, 0, wx.EXPAND)
-#         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
-#         but = wx.Button(panel, -1, "Delete")
-#         but.Bind(wx.EVT_BUTTON, self.OnDeleteProperty)
-#         rowsizer.Add(but, 1)
-#         but = wx.Button(panel, -1, "Run Tests")
-#         but.Bind(wx.EVT_BUTTON, self.RunTests)
-#         rowsizer.Add(but, 1)
-#         topsizer.Add(rowsizer, 0, wx.EXPAND)
 
-        panel.SetSizer(topsizer)
-        topsizer.SetSizeHints(panel)
+        self.panel.SetSizer(topsizer)
+        topsizer.SetSizeHints(self.panel)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(panel, 1, wx.EXPAND)
-        sizer.Fit(self)
-        self.SetSizer(sizer)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.panel, 1, wx.EXPAND)
+        self.sizer.Fit(self)
+        self.SetSizer(self.sizer)
 #         self.SetAutoLayout(True)
 
     #----------------------------------------------------------------------
+    def onNext(self, event):
+        print 'onNext'
+        bookId=self.currentBook.id
+        self.previousBook=self.currentBook
+        self.currentBook=FindingBook().findBookByNextMaxId(bookId)
+        self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
+
+        self.pg = self.createPropetyGrid(self.currentBook)
+        self.Layout()
+        
+    def onPrevious(self, event):
+        print 'onPrevious'
+        
     def onImageClick(self, event):
         """"""
         print event.GetPosition(), 'onImageClick'
@@ -755,7 +747,7 @@ class BookPropertyPanel(wx.Panel):
     def createPropetyGrid(self, book):
         # Difference between using PropertyGridManager vs PropertyGrid is that
         # the manager supports multiple pages and a description box.
-        self.pg = pg = wxpg.PropertyGridManager(self.panel,
+        self.pg  = wxpg.PropertyGridManager(self.panel,
                         style=wxpg.PG_SPLITTER_AUTO_CENTER | 
 #                               wxpg.PG_AUTO_SORT | 
                               wxpg.PG_TOOLBAR)
@@ -763,10 +755,10 @@ class BookPropertyPanel(wx.Panel):
         # Show help as tooltips
 #         pg.SetExtraStyle(wxpg.PG_EX_HELP_AS_TOOLTIPS)
 
-        pg.Bind(wxpg.EVT_PG_CHANGED, self.OnPropGridChange)
-        pg.Bind(wxpg.EVT_PG_PAGE_CHANGED, self.OnPropGridPageChange)
-        pg.Bind(wxpg.EVT_PG_SELECTED, self.OnPropGridSelect)
-        pg.Bind(wxpg.EVT_PG_RIGHT_CLICK, self.OnPropGridRightClick)
+        self.pg.Bind(wxpg.EVT_PG_CHANGED, self.OnPropGridChange)
+        self.pg.Bind(wxpg.EVT_PG_PAGE_CHANGED, self.OnPropGridPageChange)
+        self.pg.Bind(wxpg.EVT_PG_SELECTED, self.OnPropGridSelect)
+        self.pg.Bind(wxpg.EVT_PG_RIGHT_CLICK, self.OnPropGridRightClick)
 
 
         #
@@ -775,9 +767,9 @@ class BookPropertyPanel(wx.Panel):
         # NOTE: Editor must be registered *before* adding a property that
         # uses it.
         if not getattr(sys, '_PropGridEditorsRegistered', False):
-            pg.RegisterEditor(TrivialPropertyEditor)
-            pg.RegisterEditor(SampleMultiButtonEditor)
-            pg.RegisterEditor(LargeImageEditor)
+            self.pg.RegisterEditor(TrivialPropertyEditor)
+            self.pg.RegisterEditor(SampleMultiButtonEditor)
+            self.pg.RegisterEditor(LargeImageEditor)
             # ensure we only do it once
             sys._PropGridEditorsRegistered = True
 
@@ -785,45 +777,45 @@ class BookPropertyPanel(wx.Panel):
         # Add properties
         #
 
-        pg.AddPage("Page 1 - Testing All")
+        self.pg.AddPage("Page 1 - Testing All")
 
-        pg.Append(wxpg.PropertyCategory("1 - Basic Properties"))
+        self.pg.Append(wxpg.PropertyCategory("1 - Basic Properties"))
         
-        pg.Append( wxpg.IntProperty("id",value=book.id) )
-        pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
-        pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
-        pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
+        self.pg.Append(wxpg.IntProperty("id", value=book.id))
+        self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
+        self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
+        self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
         authorName = ''
         for a in book.authors:
             authorName = ',' + a.authorName
         
-        pg.Append(wxpg.StringProperty("Author(s) name", value=authorName))
+        self.pg.Append(wxpg.StringProperty("Author(s) name", value=authorName))
         
-        pg.Append(wxpg.IntProperty("Rating", value=long(book.rating or 0)))
-        pg.SetPropertyEditor("Rating", "SpinCtrl")
+        self.pg.Append(wxpg.IntProperty("Rating", value=long(book.rating or 0)))
+        self.pg.SetPropertyEditor("Rating", "SpinCtrl")
         
-        pg.Append(wxpg.EditEnumProperty("Tag", "EditEnumProperty",
+        self.pg.Append(wxpg.EditEnumProperty("Tag", "EditEnumProperty",
                                          ['A', 'B', 'C'],
                                          [0, 1, 2],
                                          "Text Not in List"))
         
-        pg.Append(wxpg.DirProperty("File location", value=book.bookPath))
-        pg.Append(wxpg.StringProperty("File size", value=book.fileSize))
+        self.pg.Append(wxpg.DirProperty("File location", value=book.bookPath))
+        self.pg.Append(wxpg.StringProperty("File size", value=str(book.fileSize or '')))
         
-        pg.Append( wxpg.LongStringProperty("MultipleButtons") );
-        pg.SetPropertyEditor("MultipleButtons", "SampleMultiButtonEditor");
+        self.pg.Append(wxpg.LongStringProperty("MultipleButtons"));
+        self.pg.SetPropertyEditor("MultipleButtons", "SampleMultiButtonEditor");
         
         imgPath = os.path.join(book.bookPath, book.bookImgName)
-        pg.Append(wxpg.ImageFileProperty(label="Book image", value=imgPath))
-        pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
+        self.pg.Append(wxpg.ImageFileProperty(label="Book image", value=imgPath))
+        self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
         
-        pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
+        self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
         
         
-        pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
+#         self.pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
        
         
-        return pg
+        return self.pg
 
 
     def pydate2wxdate(self, date):
