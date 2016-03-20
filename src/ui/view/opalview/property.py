@@ -727,15 +727,23 @@ class BookPropertyPanel(wx.Panel):
     #----------------------------------------------------------------------
     def onNext(self, event):
         print 'onNext'
-        bookId=self.currentBook.id
-        self.previousBook=self.currentBook
-        self.currentBook=FindingBook().findBookByNextMaxId(bookId)
-        self.setValuesToPropetyGrid()
+        bookId = self.currentBook.id
+        self.previousBook = self.currentBook
+        book = FindingBook().findBookByNextMaxId(bookId)
+        if book:
+            self.currentBook=book
+            self.setValuesToPropetyGrid()
         
         
         
     def onPrevious(self, event):
         print 'onPrevious'
+        bookId = self.currentBook.id
+        self.previousBook = self.currentBook
+        book = FindingBook().findBookByPreviousMaxId(bookId)
+        if book:
+            self.currentBook=book
+            self.setValuesToPropetyGrid()
         
     def setValuesToPropetyGrid(self):
         '''
@@ -743,27 +751,27 @@ class BookPropertyPanel(wx.Panel):
         '''
         self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
         props = self.pg.GetPropertyValues(inc_attributes=True)
-        props['id']=self.currentBook.id
+        props['id'] = self.currentBook.id
         
-        props['id']=self.currentBook.id
-        props['Book name']=str(self.currentBook.bookName or '')
-        props['Book description']=str(self.currentBook.bookDescription or '')
-        props['Number of pages']=str(self.currentBook.numberOfPages or '')
+        props['id'] = self.currentBook.id
+        props['Book name'] = str(self.currentBook.bookName or '')
+        props['Book description'] = str(self.currentBook.bookDescription or '')
+        props['Number of pages'] = str(self.currentBook.numberOfPages or '')
         
         authorName = ''
         for a in book.authors:
             authorName = ',' + a.authorName
-        props['Author(s) name']=authorName
-        props['Rating']=str(self.currentBook.rating or 0)
-        props['Tag']=str(self.currentBook.id or '')
-        props['File location']=str(self.currentBook.bookPath or '')
-        props['File size']=str(self.currentBook.fileSize or '')
-        props['fileFormat']=str(self.currentBook.bookFormat or '')
+        props['Author(s) name'] = authorName
+        props['Rating'] = str(self.currentBook.rating or 0)
+        props['Tag'] = str(self.currentBook.id or '')
+        props['File location'] = str(self.currentBook.bookPath or '')
+        props['File size'] = str(self.currentBook.fileSize or '')
+        props['fileFormat'] = str(self.currentBook.bookFormat or '')
         
         imgPath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
-        props['Book image']=imgPath
-        props['Publisher']=str(self.currentBook.publisher or '')
-        props['ISBN']=str(self.currentBook.isbn_13 or '')
+        props['Book image'] = imgPath
+        props['Publisher'] = str(self.currentBook.publisher or '')
+        props['ISBN'] = str(self.currentBook.isbn_13 or '')
         
         self.pg.SetPropertyValues(props)
         self.Layout()
@@ -777,7 +785,7 @@ class BookPropertyPanel(wx.Panel):
     def createPropetyGrid(self, book):
         # Difference between using PropertyGridManager vs PropertyGrid is that
         # the manager supports multiple pages and a description box.
-        self.pg  = wxpg.PropertyGridManager(self.panel,
+        self.pg = wxpg.PropertyGridManager(self.panel,
                         style=wxpg.PG_SPLITTER_AUTO_CENTER | 
 #                               wxpg.PG_AUTO_SORT | 
                               wxpg.PG_TOOLBAR)

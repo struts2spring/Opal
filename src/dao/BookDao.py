@@ -107,10 +107,13 @@ class CreateDatabase():
         print 'completed'
         return bs
     def findBookByNextMaxId(self, bookId):
-        bs = self.session.query(Book).filter(Book.id > bookId).first()
+        bs = self.session.query(Book).filter(Book.id > bookId).order_by(Book.id.asc()).first()
         print 'completed'
         return bs
-            
+    def findBookByPreviousMaxId(self, bookId):           
+        bs = self.session.query(Book).filter(Book.id < bookId).order_by(Book.id.desc()).first()
+        print 'completed'
+        return bs        
     def removeBook(self, book=None):
         print 'removeBook'
         try:
