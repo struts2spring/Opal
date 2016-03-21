@@ -165,13 +165,13 @@ class MainFrame(wx.Frame):
         self.SetMenuBar(mb)
         tb1 = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT | wx.TB_NODIVIDER)
         tb1.SetToolBitmapSize(wx.Size(24, 24))
-        tb1.AddLabelTool(ID_otherWorkspace, "Workspace Home", wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
+        tb1.AddLabelTool(id=ID_otherWorkspace, label="Workspace Home", shortHelp="Home" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
-        tb1.AddLabelTool(ID_search, "Search", wx.ArtProvider_GetBitmap(wx.ART_FIND))
-        tb1.AddLabelTool(ID_editMetadata, "Edit metadata", wx.ArtProvider_GetBitmap(wx.ART_WARNING))
-        tb1.AddLabelTool(ID_addBook, "Add book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
-        tb1.AddLabelTool(ID_deleteBook, "Delete book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
-        tb1.AddLabelTool(ID_reLoadDatabase, "Reload database", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
+        tb1.AddLabelTool(id=ID_search, label="Search", shortHelp="Search" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_FIND))
+        tb1.AddLabelTool(id=ID_editMetadata, label="Edit metadata", shortHelp="Edit metadata", bitmap=wx.ArtProvider_GetBitmap(wx.ART_WARNING))
+        tb1.AddLabelTool(id=ID_addBook, label="Add book", shortHelp="Add book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
+        tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
+        tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
         tb1.Realize()
 
         # add the toolbars to the manager
@@ -234,7 +234,7 @@ class MainFrame(wx.Frame):
     def onEditMetadata(self, event):
         print 'onEditMetadata'
         if self.thumbnail._scrolled._selected != None:
-            book=self.thumbnail._scrolled._items[self.thumbnail._scrolled._selected].book
+            book = self.thumbnail._scrolled._items[self.thumbnail._scrolled._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
             frame = BookPropertyFrame(None, book)
     def onSearch(self, event):
