@@ -18,6 +18,7 @@ import wx.grid
 import wx.html
 from wx.wizard import WizardPageSimple, Wizard
 from wx.lib.filebrowsebutton import DirBrowseButton
+from src.ui.view.opalview.property import BookPropertyFrame
 try:
     from src.dao.BookDao import CreateDatabase
 except:
@@ -54,6 +55,7 @@ ID_addBook = wx.NewId()
 ID_deleteBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
 ID_search = wx.NewId()
+ID_editMetadata = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
 # Define File Drop Target class
@@ -146,6 +148,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onDeleteBookToWorkspace, id=ID_deleteBook)
         self.Bind(wx.EVT_MENU, self.onReLoadDatabaseToWorkspace, id=ID_reLoadDatabase)
         self.Bind(wx.EVT_MENU, self.onSearch, id=ID_search)
+        self.Bind(wx.EVT_MENU, self.onEditMetadata, id=ID_editMetadata)
 
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -165,6 +168,7 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(ID_otherWorkspace, "Workspace Home", wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
         tb1.AddLabelTool(ID_search, "Search", wx.ArtProvider_GetBitmap(wx.ART_FIND))
+        tb1.AddLabelTool(ID_editMetadata, "Edit metadata", wx.ArtProvider_GetBitmap(wx.ART_WARNING))
         tb1.AddLabelTool(ID_addBook, "Add book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
         tb1.AddLabelTool(ID_deleteBook, "Delete book", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
         tb1.AddLabelTool(ID_reLoadDatabase, "Reload database", wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
@@ -227,7 +231,12 @@ class MainFrame(wx.Frame):
         if not  isDatabase:
             self.createDatabase .addingData()
      
-
+    def onEditMetadata(self, event):
+        print 'onEditMetadata'
+        if self.thumbnail._scrolled._selected != None:
+            book=self.thumbnail._scrolled._items[self.thumbnail._scrolled._selected].book
+#             frame = BookPropertyFrame(parent=None,book)
+            frame = BookPropertyFrame(None, book)
     def onSearch(self, event):
         print 'onSearch'
         frame = SearchFrame(parent=None)
@@ -468,7 +477,7 @@ class MainFrame(wx.Frame):
         dbb.SetFocus()
         dbb.SetLabel("Book Library Location")
         dbb.SetHelpText('Please set your default workspace location.')
-        dbb.textControl.SetValue( Workspace().path)
+        dbb.textControl.SetValue(Workspace().path)
         
         page1.sizer.Add(dbb , 0, wx.ALIGN_CENTRE | wx.ALL, 5)
         
