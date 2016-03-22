@@ -1,2 +1,30 @@
-12-05 14:58 it-ebook     INFO     start
-12-05 14:58 it-ebook     INFO     Downloading http://it-ebooks.info/book/5214
+03-22 22:09 root         INFO     checking  Is this book already availble (downloaded)Practical Arduino
+03-22 22:09 root         INFO     ['Practical Arduino.pdf.part', 'practical_arduino.jpg', 'book.json']
+03-22 22:09 root         INFO     checking  Is this book already availble (downloaded)Pro Silverlight 4 in VB, 3rd Edition
+03-22 22:09 root         INFO     []
+03-22 22:09 root         INFO     http://it-ebooks.info/book/5215/images/ebooks/6/pro_silverlight_4_in_vb_3rd_edition.jpg
+03-22 22:10 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session {"desiredCapabilities": {"platform": "ANY", "browserName": "firefox", "version": "", "marionette": false, "javascriptEnabled": true}}
+03-22 22:10 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:10 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/url {"url": "http://it-ebooks.info/book/5215", "sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element {"using": "link text", "sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "value": "Pro Silverlight 4 in VB, 3rd Edition"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element {"using": "xpath", "sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "value": "html/body/table/tbody/tr[2]/td/div/table/tbody/tr/td[2]/table/tbody/tr[8]/td[2]/b"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    GET http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element/{d8f709ea-ded1-4fe3-9b31-5790f0612f98}/text {"sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "id": "{d8f709ea-ded1-4fe3-9b31-5790f0612f98}"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element {"using": "xpath", "sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "value": "html/body/table/tbody/tr[2]/td/div/table/tbody/tr/td[2]/table/tbody/tr[9]/td[2]/b"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    GET http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element/{1bd2737c-dc93-4220-9223-a600f84ad54a}/text {"sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "id": "{1bd2737c-dc93-4220-9223-a600f84ad54a}"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/element/{e4d6b0f7-4c7e-470c-8048-c035e34897de}/click {"sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161", "id": "{e4d6b0f7-4c7e-470c-8048-c035e34897de}"}
+03-22 22:11 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:12 root         INFO     flag :True
+03-22 22:12 selenium.webdriver.remote.remote_connection DEBUG    DELETE http://127.0.0.1:41408/hub/session/a5df481d-f546-4cd7-8e4f-281f271d0161/window {"sessionId": "a5df481d-f546-4cd7-8e4f-281f271d0161"}
+03-22 22:12 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:12 root         INFO     checking  Is this book already availble (downloaded)Beginning Silverlight 4 in C#, 3rd Edition
+03-22 22:12 root         INFO     []
+03-22 22:12 root         INFO     http://it-ebooks.info/book/5216/images/ebooks/6/beginning_silverlight_4_in_c_3rd_edition.jpg
+03-22 22:12 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:45150/hub/session {"desiredCapabilities": {"platform": "ANY", "browserName": "firefox", "version": "", "marionette": false, "javascriptEnabled": true}}
+03-22 22:12 selenium.webdriver.remote.remote_connection DEBUG    Finished Request
+03-22 22:12 selenium.webdriver.remote.remote_connection DEBUG    POST http://127.0.0.1:45150/hub/session/95fa3835-9823-4e9a-b27d-61a1d301843a/url {"url": "http://it-ebooks.info/book/5216", "sessionId": "95fa3835-9823-4e9a-b27d-61a1d301843a"}
