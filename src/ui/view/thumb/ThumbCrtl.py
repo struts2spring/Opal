@@ -1538,7 +1538,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         myfiles = [thumb.GetFullFileName() for thumb in thumbs]
 
         items = self._items[:]
-        self._items.sort(CmpThumb)
+#         self._items.sort(CmpThumb)
 
         newfiles = SortFiles(items, self._items, myfiles)
         self._isrunning = True
@@ -1618,12 +1618,18 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 filenames = self.ListDirectory(imagePath, extensions)
                 if filenames:
                     imageName=filenames[0]
+                    
+                imagePath_1=os.path.join(imagePath,book.bookImgName)
+                if os.path.exists(imagePath_1):
+                    imageName=book.bookImgName
             else:
                 imagePath=book.localImagePath
                 self._dir=book.localImagePath
                 imageName=book.imageFileName
             bookName=book.bookName
 #                 imagePath=os.path.join(book.bookPath,imageName);
+
+                
             stats = os.stat(os.path.join(imagePath,imageName))
             size = stats[6]
 
