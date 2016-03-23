@@ -703,6 +703,12 @@ class BookPropertyPanel(wx.Panel):
         
         next.Bind(wx.EVT_BUTTON, self.onNext)
         previous.Bind(wx.EVT_BUTTON, self.onPrevious)
+        ok.Bind(wx.EVT_BUTTON, self.onOk)
+        cancel.Bind(wx.EVT_BUTTON, self.onCancel)
+        downloadMetadata.Bind(wx.EVT_BUTTON, self.onDownloadMetadata)
+        downloadCover.Bind(wx.EVT_BUTTON, self.onDownloadCover)
+        generateCover.Bind(wx.EVT_BUTTON, self.onGenerateCover)
+        
         
         
         rowsizer.Add(previous, 1)
@@ -735,7 +741,6 @@ class BookPropertyPanel(wx.Panel):
             self.setValuesToPropetyGrid()
         
         
-        
     def onPrevious(self, event):
         print 'onPrevious'
         bookId = self.currentBook.id
@@ -745,6 +750,24 @@ class BookPropertyPanel(wx.Panel):
             self.currentBook=b
             self.setValuesToPropetyGrid()
         
+    def onOk(self, event):
+        print 'onOk'
+        props = self.pg.GetPropertyValues(inc_attributes=True)
+        print props['Book name']
+        FindingBook().
+        
+    def onCancel(self, event):
+        print 'onCancel'    
+    
+    def onDownloadMetadata(self, event):
+        print 'onDownloadMetadata'  
+          
+    def onDownloadCover(self, event):
+        print 'onDownloadCover'    
+    
+    def onGenerateCover(self, event):
+        print 'onGenerateCover'        
+    
     def setValuesToPropetyGrid(self):
         '''
         This method is used to set values in property grid.
@@ -775,6 +798,28 @@ class BookPropertyPanel(wx.Panel):
         
         self.pg.SetPropertyValues(props)
         self.Layout()
+
+    def setValuesToBookFromPropertyGrid(self):
+        props['id'] = self.currentBook.id
+        props['Book name'] = str(self.currentBook.bookName or '')
+        props['Book description'] = str(self.currentBook.bookDescription or '')
+        props['Number of pages'] = str(self.currentBook.numberOfPages or '')
+        
+        authorName = ''
+        for a in self.currentBook.authors:
+            authorName = ',' + a.authorName
+        props['Author(s) name'] = authorName
+        props['Rating'] = str(self.currentBook.rating or 0)
+        props['Tag'] = str(self.currentBook.id or '')
+        props['File location'] = str(self.currentBook.bookPath or '')
+        props['File size'] = str(self.currentBook.fileSize or '')
+        props['fileFormat'] = str(self.currentBook.bookFormat or '')
+        
+        imgPath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
+        props['Book image'] = imgPath
+        props['Publisher'] = str(self.currentBook.publisher or '')
+        props['ISBN'] = str(self.currentBook.isbn_13 or '')
+        pass
         
     def onImageClick(self, event):
         """"""
