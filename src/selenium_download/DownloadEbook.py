@@ -220,7 +220,7 @@ class DownloadItEbook(object):
                         size.add(time_dic_files[i - 1][k])
                 for k in time_dic_files[i - 2]:
                     if 'part' in k:
-                          size.add(time_dic_files[i - 2][k])
+                        size.add(time_dic_files[i - 2][k])
                 for k in time_dic_files[i - 3]:
                     if 'part' in k:
                         size.add(time_dic_files[i - 3][k])

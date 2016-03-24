@@ -57,43 +57,35 @@ class CreateDatabase():
             listOfDir.sort(key=int)
         one = ''
        
-            
-        for dirName in listOfDir:
-            b = self.readJsonFile(dirName=dirName)
-#             one = os.path.join(directory_name , dirName)
-#             file = open(os.path.join(one , 'book.json'), 'r')
-# 
-#             rep = ''
-#             for line in file:
-#                 rep = rep + line
-#             file.close
-#             b = json.loads(rep)
-#             book = Book()
-#             for k in b:
-#                 if not isinstance(b[k], list):
-#                     if k in ['publishedOn', 'createdOn']:
-#                         if b[k]:
-#                             book.__dict__[k] = datetime.datetime.strptime(b[k][0:19], "%Y-%m-%d %H:%M:%S")
-#                     else:
-#                         book.__dict__[k] = b[k]
-#  
-#                 else:
-#                     authorList = list()
-#                     for a in b[k]:
-#                         author = Author()
-#                         for aKey in a:
-#                             author.__dict__[aKey] = a[aKey]
-#                             authorList.append(author)
-            book=self.createBookFromJson(bookJson=b)
-            book.bookPath = os.path.join(directory_name , dirName)
-            
-            for author in book.authors:
-                authorBookLink = AuthorBookLink()
-                authorBookLink.book = book
-                authorBookLink.author = author
-                self.session.add(authorBookLink)
-
-        self.session.commit()
+        try:    
+            single = {}
+            duplicate = {}
+            for dirName in listOfDir:
+                addDatabase=True
+                b = self.readJsonFile(dirName=dirName)
+                book = self.createBookFromJson(bookJson=b)
+                book.bookPath = os.path.join(directory_name , dirName)
+                if book.isbn_13: 
+                    if not single.has_key(book.isbn_13):
+                        single[book.isbn_13] = book
+                        
+                    else:
+                        duplicate[book.isbn_13] = book
+                        addDatabase=False
+#                 print single
+                if addDatabase:
+                    for author in book.authors:
+                        authorBookLink = AuthorBookLink()
+                        authorBookLink.book = book
+                        authorBookLink.author = author
+                        self.session.add(authorBookLink)
+            self.session.commit()
+            print duplicate
+    
+        except:
+            print duplicate
+            traceback.print_exc()
+            self.session.rollback();
         print 'data loaded'
     
     def createBookFromJson(self, bookJson=None):
@@ -113,7 +105,7 @@ class CreateDatabase():
                     for aKey in a:
                         author.__dict__[aKey] = a[aKey]
                         authorList.append(author)
-                book.authors=authorList
+                book.authors = authorList
         return book
     
     def readJsonFile(self, dirName=None):
