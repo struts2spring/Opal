@@ -58,40 +58,73 @@ class CreateDatabase():
         one = ''
        
             
-        for sName in listOfDir:
-            one = os.path.join(directory_name , sName)
-            file = open(os.path.join(one , 'book.json'), 'r')
-
-            rep = ''
-            for line in file:
-                rep = rep + line
-            file.close
-            b = json.loads(rep)
-            book = Book()
-            for k in b:
-                if not isinstance(b[k], list):
-                    if k in ['publishedOn', 'createdOn']:
-                        if b[k]:
-                            book.__dict__[k] = datetime.datetime.strptime(b[k][0:19], "%Y-%m-%d %H:%M:%S")
-                    else:
-                        book.__dict__[k] = b[k]
-
-                else:
-                    authorList = list()
-                    for a in b[k]:
-                        author = Author()
-                        for aKey in a:
-                            author.__dict__[aKey] = a[aKey]
-                            authorList.append(author)
-            book.bookPath = one
-
-            authorBookLink = AuthorBookLink()
-            authorBookLink.author = author
-            authorBookLink.book = book
-            self.session.add(authorBookLink)
+        for dirName in listOfDir:
+            b = self.readJsonFile(dirName=dirName)
+#             one = os.path.join(directory_name , dirName)
+#             file = open(os.path.join(one , 'book.json'), 'r')
+# 
+#             rep = ''
+#             for line in file:
+#                 rep = rep + line
+#             file.close
+#             b = json.loads(rep)
+#             book = Book()
+#             for k in b:
+#                 if not isinstance(b[k], list):
+#                     if k in ['publishedOn', 'createdOn']:
+#                         if b[k]:
+#                             book.__dict__[k] = datetime.datetime.strptime(b[k][0:19], "%Y-%m-%d %H:%M:%S")
+#                     else:
+#                         book.__dict__[k] = b[k]
+#  
+#                 else:
+#                     authorList = list()
+#                     for a in b[k]:
+#                         author = Author()
+#                         for aKey in a:
+#                             author.__dict__[aKey] = a[aKey]
+#                             authorList.append(author)
+            book=self.createBookFromJson(bookJson=b)
+            book.bookPath = os.path.join(directory_name , dirName)
+            
+            for author in book.authors:
+                authorBookLink = AuthorBookLink()
+                authorBookLink.book = book
+                authorBookLink.author = author
+                self.session.add(authorBookLink)
 
         self.session.commit()
         print 'data loaded'
+    
+    def createBookFromJson(self, bookJson=None):
+        book = Book()
+        for k in bookJson:
+            if not isinstance(bookJson[k], list):
+                if k in ['publishedOn', 'createdOn']:
+                    if bookJson[k]:
+                        book.__dict__[k] = datetime.datetime.strptime(bookJson[k][0:19], "%Y-%m-%d %H:%M:%S")
+                else:
+                    book.__dict__[k] = bookJson[k]
+
+            else:
+                authorList = list()
+                for a in bookJson[k]:
+                    author = Author()
+                    for aKey in a:
+                        author.__dict__[aKey] = a[aKey]
+                        authorList.append(author)
+                book.authors=authorList
+        return book
+    
+    def readJsonFile(self, dirName=None):
+        bookJsonFile = open(os.path.join(Workspace().path, dirName , 'book.json'), 'r')
+
+        rep = ''
+        for line in bookJsonFile:
+            rep = rep + line
+        bookJsonFile.close
+        b = json.loads(rep)
+        return b
 
     def saveAuthorBookLink(self, authorBookLink):
         self.session.add(authorBookLink)
@@ -212,7 +245,7 @@ if __name__ == '__main__':
     try:
         createdb = CreateDatabase()
         createdb.addingData()
-        createdb.findAllBook()
+#         createdb.findAllBook()
     except:
         print traceback.print_exc()
 #     for b in books:

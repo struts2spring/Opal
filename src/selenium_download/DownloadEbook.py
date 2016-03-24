@@ -246,8 +246,10 @@ class DownloadItEbook(object):
                 bs = FindingBook().findBookByIsbn(isbn_13=book.isbn_13)
                 if bs:
                     print 'this books is already present.', book.isbn_13, book.bookName
-                logging.info("checking  Is this book already availble (downloaded)" + book.bookName)
-#                 self.firefoxDownloadJob(book, baseUrl, number)
+                else:
+                    self.firefoxDownloadJob(book, baseUrl, number)
+                    
+#                 logging.info("checking  Is this book already availble (downloaded)" + book.bookName)
     
 if __name__ == "__main__":
     print 'download started'
