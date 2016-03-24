@@ -33,6 +33,10 @@ class FindingBook():
         books = self.createDatabase.findAllBook()
         return books
 
+    def findBookByIsbn(self, isbn_13):
+        bs = self.createDatabase.findBookByIsbn(isbn_13)
+        return bs
+
     def getMaxBookId(self):
         os.chdir(Workspace().path)
     

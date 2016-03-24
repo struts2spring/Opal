@@ -11,6 +11,10 @@ import logging
 import time
 import urllib
 from selenium import webdriver
+from src.static.constant import Workspace
+from datetime import datetime
+from src.logic.search_book import FindingBook
+
 
 
 
@@ -31,15 +35,17 @@ console.setFormatter(formatter)
 
 
 class Book(json.JSONEncoder):
-    def __init__(self, name=None, publisher=None, author=None, isbn=None, datePublished=None, numberOfPages=None, inLanguage=None, fileSize=None, bookFormat=None, bookDescription=None, image=None):
+    def __init__(self, name=None, publisher=None, authors=None, isbn=None, datePublished=None, numberOfPages=None, inLanguage=None, fileSize=None, bookFormat=None, bookDescription=None, image=None):
         '''
         Constructor
         '''
-        self.name = name
+        self.bookName = name
         self.publisher = publisher
-        self.author = author
-        self.isbn = isbn
-        self.datePublished = datePublished
+        
+        self.authors = list()
+        
+        self.isbn_13 = isbn
+        self.publishedOn = datePublished
         self.numberOfPages = numberOfPages
         self.inLanguage = inLanguage
         self.fileSize = fileSize
@@ -49,18 +55,28 @@ class Book(json.JSONEncoder):
         rep = self.name + self.publisher + self.author + self.isbn + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat
         return rep
 
-
+class Author(json.JSONEncoder):
+    def __init__(self, authorName='unknown'):
+        '''
+        Constructor
+        '''
+        self.authorName = authorName
+        
+    def __str__(self):
+        rep = self.authorName 
+        return rep
+        
 class DownloadItEbook(object):
     '''
-    classdocs
+    This class will download books from itebook.info
     '''
 
 
     def __init__(self):
         '''
-        Constructor
+        Constructor, setting location of downloaded book.
         '''
-        self.directory_name = '/docs/selenium/books'
+        self.directory_name = Workspace().path
         
         pass
     def getUrl(self, baseUrl, number):
@@ -74,16 +90,19 @@ class DownloadItEbook(object):
         content = urllib2.urlopen(url).read()
         soup = BeautifulSoup(content)
         book = Book()
-        book.author = soup.find_all(itemprop="author")[0].text
-        book.isbn = soup.find_all(itemprop="isbn")[0].text
+        book.authors.append(Author(soup.find_all(itemprop="author")[0].text))
+        book.isbn_13 = soup.find_all(itemprop="isbn")[0].text
         book.bookName = soup.find_all(itemprop="name")[0].text
         book.publisher = soup.find_all(itemprop="publisher")[0].text
-        book.datePublished = soup.find_all(itemprop="datePublished")[0].text
+        
+        date = datetime.strptime(str(soup.find_all(itemprop="datePublished")[0].text) , '%Y')
+        book.publishedOn = date
+        
         book.numberOfPages = soup.find_all(itemprop="numberOfPages")[0].text
         book.inLanguage = soup.find_all(itemprop="inLanguage")[0].text
         book.bookFormat = soup.find_all(itemprop="bookFormat")[0].text
         book.bookDescription = soup.find_all(itemprop="description")[0].text
-        book.image = (soup.find_all(itemprop="image")[0]).get('src')
+        book.bookImgName = (soup.find_all(itemprop="image")[0]).get('src')
 
         for link in soup.find_all('a'):
             if link.get('href').startswith('http://filepi.com'):
@@ -92,18 +111,13 @@ class DownloadItEbook(object):
 
     def firefoxDownloadJob(self, book, baseUrl, number):
         '''The function of this method is to download link of given URL.'''
-        # Creating directory
         directory_name = os.path.join(self.directory_name, str(number))
-#         directory_name = directory_name + str(number)
-
         # Creating Actual URL
         url = self.getUrl(baseUrl, number)
         if not os.path.exists(directory_name):
             os.makedirs(directory_name)
 
         lsFiles = []
-        logging.info(os.listdir(directory_name))
-
         # Checking if there are three files in this URL.
         # Creating a list of absolute files.
         if 3 == len(os.listdir(directory_name)) :
@@ -117,16 +131,30 @@ class DownloadItEbook(object):
             for sName in os.listdir(directory_name):
                 os.remove(directory_name + '/' + sName)
 
-            imageUrl = url + book.image
+            imageUrl = url + book.bookImgName
+            subUrl = book.bookImgName
+            imageFileName = subUrl.split('/')[-1:][0]
             logging.info(imageUrl)
-            subUrl = book.image
 
             # Downloading book cover
-            bookImagePath=os.path.join(directory_name, subUrl.split('/')[-1:][0])
-            urllib.urlretrieve(baseUrl + book.image, bookImagePath)
-
+            bookImagePath = os.path.join(directory_name, subUrl.split('/')[-1:][0])
+            urllib.urlretrieve(baseUrl + book.bookImgName, bookImagePath)
+            book.bookImgName = imageFileName
             f = open(os.path.join(directory_name, 'book.json'), 'w')
-            f.write(json.dumps(book.__dict__, sort_keys=False, indent=4))
+            row2dict = book.__dict__
+            authors = []
+            if type(row2dict['publishedOn']) == datetime:
+                row2dict['publishedOn'] = str(row2dict['publishedOn'])
+            for a in row2dict['authors']:
+                author = {}
+                if type(a) == str:
+                    author['authorName'] = a
+                else:
+                    author = a.__dict__
+                
+                authors.append(author)
+            row2dict['authors'] = authors
+            f.write(json.dumps(row2dict, sort_keys=False, indent=4))
             f.close()
 
             fp = webdriver.FirefoxProfile()
@@ -153,11 +181,11 @@ class DownloadItEbook(object):
                 time.sleep(10)
                 lst = []
                 files = []
-                for sName in os.listdir(self.directory_name):
-                    if os.path.isfile(os.path.join(self.directory_name, sName)):
+                for sName in os.listdir(directory_name):
+                    if os.path.isfile(os.path.join(directory_name, sName)):
                         logging.info(sName.split('.')[-1:][0])
                         lst.append(sName.split('.')[-1:][0])
-                        files.append(os.path.join(self.directory_name, sName))
+                        files.append(os.path.join(directory_name, sName))
                 print lst
                 if 'part' not in lst:
                     logging.info("flag :" + str(flag))
@@ -206,17 +234,20 @@ class DownloadItEbook(object):
 
     def startDownload(self):
         baseUrl = 'http://it-ebooks.info'
-        for number in range(5214, 5982):
-            itebook=DownloadItEbook()
+        for number in range(7016, 0, -1):
+            itebook = DownloadItEbook()
             url = itebook.getUrl(baseUrl, number)
             a = urllib2.urlopen(url)
             strig = a.geturl()
             if  '404' != strig[-4:-1]:
                 book = itebook.findBookDetail(baseUrl, number)
                 # Is this book already availble (downloaded)
-
+                # check book whethere it is existing in database.
+                bs = FindingBook().findBookByIsbn(isbn_13=book.isbn_13)
+                if bs:
+                    print 'this books is already present.', book.isbn_13, book.bookName
                 logging.info("checking  Is this book already availble (downloaded)" + book.bookName)
-                self.firefoxDownloadJob(book, baseUrl, number)
+#                 self.firefoxDownloadJob(book, baseUrl, number)
     
 if __name__ == "__main__":
     print 'download started'

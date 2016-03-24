@@ -106,6 +106,9 @@ class CreateDatabase():
         bs = self.session.query(Book).all()
         print 'completed'
         return bs
+    def findBookByIsbn(self, isbn_13):
+        bs = self.session.query(Book).filter(Book.isbn_13 == isbn_13).first()
+        return bs
     def findBookByNextMaxId(self, bookId):
         bs = self.session.query(Book).filter(Book.id > bookId).order_by(Book.id.asc()).first()
         print 'completed'
@@ -121,9 +124,9 @@ class CreateDatabase():
                 path = book.bookPath
                 query = self.session.query(Book).filter(Book.id == book.id)
                 books = query.all()
-                book=books[0]
+                book = books[0]
                 
-                author_id_lst=[]
+                author_id_lst = []
                 for author in book.authors:
                     author_id_lst.append(author.id)
                 
@@ -131,7 +134,7 @@ class CreateDatabase():
                 self.session.commit()
                 self.session.flush()
                 
-                query = self.session.query(Author).filter(Author.id.in_( author_id_lst))
+                query = self.session.query(Author).filter(Author.id.in_(author_id_lst))
                 authors = query.all()
                 for author in authors:
                     self.session.delete(author)
@@ -170,7 +173,7 @@ class CreateDatabase():
         books = self.session.query(Book).group_by(Book.isbn_13).having(func.count(Book.isbn_13) > 1).order_by(Book.isbn_13.desc())
         return books
     
-    def findBookByFileName(self,bookFileName):
+    def findBookByFileName(self, bookFileName):
         if bookFileName:
             query = self.session.query(Book).filter(Book.bookFileName.ilike('%' + bookFileName + '%'))
             books = query.all()

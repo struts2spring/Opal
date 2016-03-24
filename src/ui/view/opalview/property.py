@@ -754,7 +754,6 @@ class BookPropertyPanel(wx.Panel):
         print 'onOk'
         props = self.pg.GetPropertyValues(inc_attributes=True)
         print props['Book name']
-        FindingBook().
         
     def onCancel(self, event):
         print 'onCancel'    
