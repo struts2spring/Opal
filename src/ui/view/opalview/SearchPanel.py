@@ -24,6 +24,7 @@ class SearchPanel(wx.Panel):
 #         matchingItem = wx.StaticText(self, wx.ID_ANY, str('Matching names:'))
         self.searchCtrl = wx.SearchCtrl(self , id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TE_PROCESS_ENTER)
         self.searchCtrl.SetToolTip(wx.ToolTip('Search'))
+        self.searchCtrl.ShowCancelButton(True)
         self.searchCtrl.Bind(wx.EVT_TEXT_ENTER, self.OnTextEntered)
 
 
@@ -34,6 +35,8 @@ class SearchPanel(wx.Panel):
 
         search_btn = wx.Button(self, wx.ID_ANY, 'Search')
         self.Bind(wx.EVT_BUTTON, self.searchBtn, search_btn)
+        self.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, self.OnCancel, self.searchCtrl)
+        self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch, self.searchCtrl)
 #         cancel_btn = wx.Button(self, wx.ID_ANY, 'Cancel')
 #         self.Bind(wx.EVT_BUTTON, self.cancelBtn, cancel_btn)
 
@@ -103,7 +106,15 @@ class SearchPanel(wx.Panel):
 #             i=i+1
 #         if self.listbox.GetCount() !=0:
 #             self.listbox.SetSelection(0)
-
+    def OnSearch(self, evt):
+        print "OnSearch"
+    def OnCancel(self, evt):
+        print "OnCancel"
+        text= self.searchCtrl.GetValue()
+        self.doSearch(text)
+        self.TopLevelParent.LayoutAll()
+        searchCtrlBook = self.TopLevelParent.FindWindowByName('searchCtrl')
+        
     def onSelection(self, event):
         selectedItem=event.GetClientData()
 #         tree.Expand(root)

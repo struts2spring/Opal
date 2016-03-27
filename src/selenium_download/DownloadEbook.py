@@ -14,6 +14,7 @@ from selenium import webdriver
 from src.static.constant import Workspace
 from datetime import datetime
 from src.logic.search_book import FindingBook
+import threading
 
 
 
@@ -66,19 +67,27 @@ class Author(json.JSONEncoder):
         rep = self.authorName 
         return rep
         
-class DownloadItEbook(object):
+class DownloadItEbook(threading.Thread):
     '''
     This class will download books from itebook.info
     '''
 
 
-    def __init__(self):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
         '''
         Constructor, setting location of downloaded book.
         '''
+        super(DownloadItEbook, self).__init__(group=group, target=target, name=name, verbose=verbose)
+        self.args = args
+        self.kwargs = kwargs
         self.directory_name = Workspace().path
         
         pass
+
+    def run(self):
+        print ('running with %s and %s', self.args, self.kwargs)
+        return
+    
     def getUrl(self, baseUrl, number):
         '''this method will find and constuct all url of url given'''
         return baseUrl + '/book/' + str(number)
@@ -95,7 +104,10 @@ class DownloadItEbook(object):
         book.bookName = soup.find_all(itemprop="name")[0].text
         book.publisher = soup.find_all(itemprop="publisher")[0].text
         
-        date = datetime.strptime(str(soup.find_all(itemprop="datePublished")[0].text) , '%Y')
+        try:
+            date = datetime.strptime(str(soup.find_all(itemprop="datePublished")[0].text) , '%Y')
+        except:
+            date=datetime.now()
         book.publishedOn = date
         
         book.numberOfPages = soup.find_all(itemprop="numberOfPages")[0].text
@@ -234,7 +246,7 @@ class DownloadItEbook(object):
 
     def startDownload(self):
         baseUrl = 'http://it-ebooks.info'
-        for number in range(7016, 0, -1):
+        for number in range(3999, 3500, -1):
             itebook = DownloadItEbook()
             url = itebook.getUrl(baseUrl, number)
             a = urllib2.urlopen(url)
@@ -253,5 +265,9 @@ class DownloadItEbook(object):
     
 if __name__ == "__main__":
     print 'download started'
+#     for i in range(3):
+#         print i
+#         t = DownloadItEbook(args=(i,), kwargs={'a':1, 'b':2})
+#         t.start()
     it = DownloadItEbook()
     it.startDownload()
