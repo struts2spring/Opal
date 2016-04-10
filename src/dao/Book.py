@@ -40,6 +40,12 @@ class Book(Base):
     bookImgName = Column('book_img_name', String) # a comma separated list of images for the book
     wishListed = Column('wish_listed', String)  # this is an indicator that book is not available in workspace.
     createdOn = Column('created_on', DateTime, default=func.now())
+#     authors = relationship(
+#         "Author",
+#         backref="teachers",
+#         secondary=AuthorBoo
+#     )
+
     authors = relationship(
         'Author',
         secondary='author_book_link'

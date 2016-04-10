@@ -12,7 +12,7 @@ import os
 import sys
 import sqlalchemy
 from src.dao.Author import Author
-from src.dao.AuthorBookLink import AuthorBookLink, AuthorBookLink
+from src.dao.AuthorBookLink import AuthorBookLink
 import json
 from src.dao.Book import Base, Book
 from src.dao.Book import engine
@@ -60,6 +60,7 @@ class CreateDatabase():
         try:    
             single = {}
             duplicate = {}
+            self.duplicateBooks=list()
             for dirName in listOfDir:
                 addDatabase=True
                 b = self.readJsonFile(dirName=dirName)
@@ -72,15 +73,12 @@ class CreateDatabase():
                     else:
                         duplicate[book.isbn_13] = book
                         addDatabase=False
+                        self.duplicateBooks.append(duplicate)
 #                 print single
                 if addDatabase:
-                    for author in book.authors:
-                        authorBookLink = AuthorBookLink()
-                        authorBookLink.book = book
-                        authorBookLink.author = author
-                        self.session.add(authorBookLink)
+                    self.session.add(book)
             self.session.commit()
-            print duplicate
+            print self.duplicateBooks
     
         except:
             print duplicate
@@ -115,7 +113,12 @@ class CreateDatabase():
         for line in bookJsonFile:
             rep = rep + line
         bookJsonFile.close
-        b = json.loads(rep)
+        b=None
+        try:
+            b = json.loads(rep)
+        except:
+            traceback.print_exc()
+            print rep
         return b
 
     def saveAuthorBookLink(self, authorBookLink):
@@ -154,17 +157,20 @@ class CreateDatabase():
                 author_id_lst = []
                 for author in book.authors:
                     author_id_lst.append(author.id)
-                
+                    
+                query = self.session.query(AuthorBookLink).filter(AuthorBookLink.bookId == book.id)
+                authorBookLinks = query.all()
                 self.session.delete(book)
-                self.session.commit()
-                self.session.flush()
+#                 for authorBook in authorBookLinks:
+#                     self.session.delete(authorBook)
                 
-                query = self.session.query(Author).filter(Author.id.in_(author_id_lst))
-                authors = query.all()
-                for author in authors:
-                    self.session.delete(author)
+#                 query = self.session.query(Author).filter(Author.id.in_(author_id_lst))
+#                 authors = query.all()
+#                 for author in authors:
+#                     self.session.delete(author)
+#                 self.session.delete(book)
                 self.session.commit()
-                self.session.flush()                    
+                
                 
                 path = book.bookPath
                 if path and os.path.exists(path):
@@ -236,6 +242,7 @@ if __name__ == '__main__':
         
     try:
         createdb = CreateDatabase()
+        createdb.creatingDatabase()
         createdb.addingData()
 #         createdb.findAllBook()
     except:

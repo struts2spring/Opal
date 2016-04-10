@@ -149,6 +149,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onReLoadDatabaseToWorkspace, id=ID_reLoadDatabase)
         self.Bind(wx.EVT_MENU, self.onSearch, id=ID_search)
         self.Bind(wx.EVT_MENU, self.onEditMetadata, id=ID_editMetadata)
+        self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
 
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -163,7 +164,7 @@ class MainFrame(wx.Frame):
 
         # create some toolbars
         self.SetMenuBar(mb)
-        tb1 = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT | wx.TB_NODIVIDER)
+        tb1 = wx.ToolBar(self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TB_FLAT | wx.TB_NODIVIDER| wx.TB_TEXT )
         tb1.SetToolBitmapSize(wx.Size(24, 24))
         tb1.AddLabelTool(id=ID_otherWorkspace, label="Workspace Home", shortHelp="Home" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
@@ -172,6 +173,7 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_addBook, label="Add book", shortHelp="Add book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
         tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
         tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
+        tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
         tb1.Realize()
 
         # add the toolbars to the manager
@@ -350,7 +352,7 @@ class MainFrame(wx.Frame):
 #             self.LoadingBooks()
             self.books = FindingBook().findAllBooks()
 #             self.books=FindingBook().findAllBooks()
-            colnames = ['id', 'bookName', 'bookFormat', 'isbn_13', 'isbn_10', 'rating', 'inLanguage', 'series', 'bookPath', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'authors', 'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
+            colnames = ['id', 'bookName', 'bookFormat', 'authors', 'bookPath','isbn_13', 'isbn_10',  'inLanguage', 'series','rating', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize',  'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
             data = []
             noOfBooks = len(self.books)
             bookId_rowNo_dict = {}
@@ -358,7 +360,8 @@ class MainFrame(wx.Frame):
             print 'CreateGrid: noOfBooks:', noOfBooks
             for i in range(noOfBooks):
                 d = {}
-                data.append((str(i), self.books[i].__dict__))
+                
+                data.append((str(i), self.dicForGrid(self.books[i])))
                 bookId_rowNo_dict[self.books[i].id] = i
             self.grid = MegaGrid(self, data, colnames)
             self.grid.bookId_rowNo_dict = bookId_rowNo_dict
@@ -370,6 +373,19 @@ class MainFrame(wx.Frame):
         self.grid.SetDropTarget(self.fileDropTarget)
         return self.grid
 
+    def dicForGrid(self, book):
+        '''
+        this method has been used for constructing grid data.
+        '''
+        dicForBook=book.__dict__
+        authorsName=list()
+        for author in book.authors:
+#             print author.__dict__
+            authorsName.append(author.authorName)
+        dicForBook['authorName']=(" \n").join(authorsName)
+        
+        return dicForBook
+        
     def GetIntroText(self):
 
 
@@ -378,11 +394,13 @@ class MainFrame(wx.Frame):
 
     def onReLoadDatabaseToWorkspace(self, event):
         print 'onReLoadDatabaseToWorkspace'
+        self.reloadingDatabase()
+        
+    def reloadingDatabase(self):
         self.createDatabase.creatingDatabase()
         self.createDatabase.addingData()
         text = self.searchCtrlPanel.searchCtrl.GetValue()
         self.searchCtrlPanel.doSearch(text)
-        pass
 
     def onDeleteBookToWorkspace(self, event):
         print 'onDeleteBookToWorkspace'

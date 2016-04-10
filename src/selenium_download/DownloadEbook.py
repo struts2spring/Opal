@@ -15,6 +15,10 @@ from src.static.constant import Workspace
 from datetime import datetime
 from src.logic.search_book import FindingBook
 import threading
+from src.dao.BookDao import CreateDatabase
+import thread
+import traceback
+from test.dao.missing import Missing
 
 
 
@@ -36,7 +40,8 @@ console.setFormatter(formatter)
 
 
 class Book(json.JSONEncoder):
-    def __init__(self, name=None, publisher=None, authors=None, isbn=None, datePublished=None, numberOfPages=None, inLanguage=None, fileSize=None, bookFormat=None, bookDescription=None, image=None):
+    def __init__(self, name=None, publisher=None, authors=None, isbn=None, datePublished=None, numberOfPages=None,
+                 inLanguage=None, fileSize=None, bookFormat=None, bookDescription=None, image=None, bookSubTitle=None):
         '''
         Constructor
         '''
@@ -51,6 +56,7 @@ class Book(json.JSONEncoder):
         self.inLanguage = inLanguage
         self.fileSize = fileSize
         self.bookFormat = bookFormat
+        self.subTitle = bookSubTitle
 
     def __str__(self):
         rep = self.name + self.publisher + self.author + self.isbn + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat
@@ -78,10 +84,11 @@ class DownloadItEbook(threading.Thread):
         Constructor, setting location of downloaded book.
         '''
         super(DownloadItEbook, self).__init__(group=group, target=target, name=name, verbose=verbose)
+        
         self.args = args
         self.kwargs = kwargs
         self.directory_name = Workspace().path
-        
+        self.createDatabase = CreateDatabase()   
         pass
 
     def run(self):
@@ -107,7 +114,7 @@ class DownloadItEbook(threading.Thread):
         try:
             date = datetime.strptime(str(soup.find_all(itemprop="datePublished")[0].text) , '%Y')
         except:
-            date=datetime.now()
+            date = datetime.now()
         book.publishedOn = date
         
         book.numberOfPages = soup.find_all(itemprop="numberOfPages")[0].text
@@ -115,15 +122,38 @@ class DownloadItEbook(threading.Thread):
         book.bookFormat = soup.find_all(itemprop="bookFormat")[0].text
         book.bookDescription = soup.find_all(itemprop="description")[0].text
         book.bookImgName = (soup.find_all(itemprop="image")[0]).get('src')
+        book.subTitle = soup.h3.text
+        book.fileSize = soup.find_all('table')[3].find_all('tr')[7].find_all('td')[1].find_all('b')[0].text
+#         book.fileSize=
+
+#         .top > div:nth-child(2) > h3:nth-child(2)
+
 
         for link in soup.find_all('a'):
             if link.get('href').startswith('http://filepi.com'):
                 book.name = link.text
+                break
         return book
 
+    def getMaxBookID(self):
+        maxBookId = self.createDatabase.getMaxBookID()
+        if not maxBookId:
+            maxBookId = 0        
+        return maxBookId
+    def downloadDir(self):
+        '''
+        This function will create directory to download book.
+        @param number:it takes database maxId+1 to create new directory . 
+        '''
+        directory_name = os.path.join(self.directory_name, str(self.getMaxBookID() + 1))
+        if not os.path.exists(directory_name):
+            os.makedirs(directory_name)
+        return directory_name
+        
+        
     def firefoxDownloadJob(self, book, baseUrl, number):
         '''The function of this method is to download link of given URL.'''
-        directory_name = os.path.join(self.directory_name, str(number))
+        directory_name = self.downloadDir()
         # Creating Actual URL
         url = self.getUrl(baseUrl, number)
         if not os.path.exists(directory_name):
@@ -210,7 +240,27 @@ class DownloadItEbook(threading.Thread):
 #                         driver.close()
                     pass
 
-
+    def writeJsonToDir(self, bookPath=None, book=None):
+        '''
+        this function will write json file to given dir.
+        '''
+        f = open(os.path.join(bookPath, 'book.json'), 'w')
+        row2dict = book.__dict__
+        authors = []
+        if type(row2dict['publishedOn']) == datetime:
+            row2dict['publishedOn'] = str(row2dict['publishedOn'])
+        for a in row2dict['authors']:
+            author = {}
+            if type(a) == str:
+                author['authorName'] = a
+            else:
+                author = a.__dict__
+            
+            authors.append(author)
+        row2dict['authors'] = authors
+        f.write(json.dumps(row2dict, sort_keys=False, indent=4))
+        f.close()        
+        
     def isBookDownloading(self, files):
         ''' This method will inform that book is getting downloading or not.'''
         # time.sleep(2)
@@ -246,7 +296,12 @@ class DownloadItEbook(threading.Thread):
 
     def startDownload(self):
         baseUrl = 'http://it-ebooks.info'
-        for number in range(3999, 3500, -1):
+        miss = Missing()
+#         lst = miss.missingNumbers()
+        lst = [7103, 7102]
+        for number in lst:
+            print number
+#         for number in range(6998, 0, -1):
             itebook = DownloadItEbook()
             url = itebook.getUrl(baseUrl, number)
             a = urllib2.urlopen(url)
@@ -259,9 +314,21 @@ class DownloadItEbook(threading.Thread):
                 if bs:
                     print 'this books is already present.', book.isbn_13, book.bookName
                 else:
-                    self.firefoxDownloadJob(book, baseUrl, number)
+                    try:
+                        self.firefoxDownloadJob(book, baseUrl, number)
+                        self.updateDatabase()
+                    except:
+                        print number, baseUrl
+                        traceback.print_exc()
+#                 try:
+#                     thread.start_new_thread( self.updateDatabase, ())
+#                 except:
+#                     traceback.print_exc()
                     
 #                 logging.info("checking  Is this book already availble (downloaded)" + book.bookName)
+    def updateDatabase(self):
+        self.createDatabase.creatingDatabase()  
+        self.createDatabase.addingData()        
     
 if __name__ == "__main__":
     print 'download started'

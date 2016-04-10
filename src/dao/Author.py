@@ -16,8 +16,8 @@ class Author(Base):
     email = Column(String, unique=True)
     created_on = Column(DateTime, default=func.now())
 
-    books = relationship(
-        Book,
-        secondary='author_book_link', cascade="save-update, merge, delete"
-    )
+#     books = relationship(
+#         Book,
+#         secondary='author_book_link'
+#     )
 

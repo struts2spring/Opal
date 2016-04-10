@@ -112,8 +112,8 @@ class SearchPanel(wx.Panel):
         print "OnCancel"
         text= self.searchCtrl.GetValue()
         self.doSearch(text)
-        self.TopLevelParent.LayoutAll()
-        searchCtrlBook = self.TopLevelParent.FindWindowByName('searchCtrl')
+#         self.TopLevelParent.LayoutAll()
+#         searchCtrlBook = self.TopLevelParent.FindWindowByName('searchCtrl')
         
     def onSelection(self, event):
         selectedItem=event.GetClientData()

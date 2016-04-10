@@ -1,0 +1,27 @@
+from src.static.constant import Workspace
+import os
+
+
+class Missing():
+    def __init__(self):
+        self.missingListing=list()
+    
+    def missingNumbers(self):
+        directory_name = Workspace().path
+        os.chdir(directory_name)
+        listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
+        if listOfDir:
+            listOfDir.sort(key=int)
+#         for l in listOfDir:
+#             print type(l)
+        for l in range(7103, 7035, -1):
+            if str(l) not in listOfDir:
+                self.missingListing.append(l)
+        
+        return self.missingListing
+if __name__=='__main__':
+    missing=Missing()
+    missing.missingNumbers()
+    print missing.missingListing
+    print len(missing.missingListing)
+    pass

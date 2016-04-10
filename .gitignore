@@ -2,3 +2,7 @@
 /.dbeaver-data-sources.xml
 *.pyc
 
+/build/
+/dist/
+/Opal.egg-info/
+/Scripts/
