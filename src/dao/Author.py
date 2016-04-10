@@ -18,6 +18,6 @@ class Author(Base):
 
 #     books = relationship(
 #         Book,
-#         secondary='author_book_link'
+#         secondary='author_book_link', cascade="all"
 #     )
 

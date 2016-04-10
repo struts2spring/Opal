@@ -2330,7 +2330,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("Popup one\n")
 
     def deleteBook(self, event):
-        print ("OnOpenFolderPath \n")
+        print ("On deleteBook Path \n")
         deleteBooks=[]
         for selectedBookIndex in self._selectedarray:
             book=self._items[selectedBookIndex].book

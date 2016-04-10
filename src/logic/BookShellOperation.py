@@ -11,9 +11,13 @@ class BookTerminal():
     
     def removeBook(self,bookPath=None):
         '''
-        this function remove book directory from workspace
+        this function remove book directory from workspace. Method returns True if success. 
         '''
-        if bookPath and os.path.exists(bookPath):
-            shutil.rmtree(bookPath)
-            print 'deleting path'
-        pass
+        isDirRemoved=False
+        try:
+            if bookPath and os.path.exists(bookPath):
+                shutil.rmtree(bookPath)
+                isDirRemoved=True
+        except:
+            isDirRemoved=False
+        return isDirRemoved

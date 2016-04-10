@@ -1,6 +1,7 @@
 import os
 from src.dao.BookDao import CreateDatabase
 from src.static.constant import Workspace
+from src.logic.BookShellOperation import BookTerminal
 
 class FindingBook():
     def __init__(self):
@@ -45,6 +46,10 @@ class FindingBook():
         removing book from database and files.
         @param book: book object 
         '''
-        self.createDatabase.removeBook(book)
-        print 'deletingBook'
+        bookPath = book.bookPath
+        isSuccessfulDatabaseDelete=self.createDatabase.removeBook(book)
+        if isSuccessfulDatabaseDelete:
+            BookTerminal().removeBook(bookPath=bookPath)
+            
+        print 'Book deleted'
         

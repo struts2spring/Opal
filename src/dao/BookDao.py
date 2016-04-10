@@ -144,22 +144,27 @@ class CreateDatabase():
     def findBookByPreviousMaxId(self, bookId):           
         bs = self.session.query(Book).filter(Book.id < bookId).order_by(Book.id.desc()).first()
         print 'completed'
-        return bs        
+        return bs      
+      
     def removeBook(self, book=None):
-        print 'removeBook'
+        '''
+        This method removes entry from database. 
+        '''
+        isBookDeleted=False
         try:
             if book:
-                path = book.bookPath
                 query = self.session.query(Book).filter(Book.id == book.id)
-                books = query.all()
-                book = books[0]
+                book = query.first()
+                print book
+#                 book = books[0]
                 
                 author_id_lst = []
                 for author in book.authors:
                     author_id_lst.append(author.id)
+                    self.session.delete(author)
                     
-                query = self.session.query(AuthorBookLink).filter(AuthorBookLink.bookId == book.id)
-                authorBookLinks = query.all()
+#                 query = self.session.query(AuthorBookLink).filter(AuthorBookLink.bookId == book.id)
+#                 authorBookLinks = query.all()
                 self.session.delete(book)
 #                 for authorBook in authorBookLinks:
 #                     self.session.delete(authorBook)
@@ -172,17 +177,19 @@ class CreateDatabase():
                 self.session.commit()
                 
                 
-                path = book.bookPath
-                if path and os.path.exists(path):
-                    shutil.rmtree(path)
-                    print 'deleting path'
+#                 path = book.bookPath
+#                 if path and os.path.exists(path):
+#                     shutil.rmtree(path)
+#                     print 'deleting path'
+                isBookDeleted=True
         except:
             traceback.print_exc()
             self.session.flush()
             self.session.close()
+            isBookDeleted=False
             
 
-
+        return isBookDeleted
 
     def findByBookName(self, bookName=None):
         try:

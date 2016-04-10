@@ -5,7 +5,8 @@ Created on 05-Dec-2015
 '''
 import unittest
 from src.dao.BookDao import CreateDatabase
-from src.selenium_download.itebook import Book
+# from src.selenium_download.itebook import Book
+from src.dao.Book import  Book
 
 
 class CreateDatabaseTest(unittest.TestCase):
@@ -42,8 +43,9 @@ class CreateDatabaseTest(unittest.TestCase):
     def testRemoveBook(self):
         print 'testRemoveBook'
         book=Book()
-        book.id
-        self.createDatabase.removeBook(book)
+        book.id=1
+        isSuccessfulDelete=self.createDatabase.removeBook(book)
+        print isSuccessfulDelete
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
