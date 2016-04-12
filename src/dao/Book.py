@@ -39,6 +39,7 @@ class Book(Base):
     bookFileName = Column('book_file_name', String)
     bookImgName = Column('book_img_name', String) # a comma separated list of images for the book
     wishListed = Column('wish_listed', String)  # this is an indicator that book is not available in workspace.
+    itEbookUrlNumber=Column(String)
     createdOn = Column('created_on', DateTime, default=func.now())
 #     authors = relationship(
 #         "Author",

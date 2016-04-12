@@ -85,15 +85,17 @@ class ReadWriteJsonInfo(object):
     def writeJsonToDir(self, bookPath=None, book=None):
         '''
         this function will write json file to given dir.
-        @param bookPath: path of book.
-        @param book: book object 
+        @param bookPath: path of book : Book.
+        @param book: book object :Book
         '''
         try:
+            
             f = open(os.path.join(bookPath, 'book.json'), 'w')
             row2dict = book.__dict__
             authors = []
-            if type(row2dict['publishedOn']) == datetime:
+            if type(row2dict['publishedOn']) == datetime or type(row2dict['publishedOn']) == datetime.datetime:
                 row2dict['publishedOn'] = str(row2dict['publishedOn'])
+#                 row2dict['publishedOn']=datetime.datetime.strptime(row2dict['publishedOn'][0:19], "%Y-%m-%d %H:%M:%S")
             for a in row2dict['authors']:
                 author = {}
                 if type(a) == str:

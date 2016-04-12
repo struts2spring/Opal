@@ -5,6 +5,7 @@ import wx
 from src.logic.search_book import FindingBook
 import datetime
 from src.static.imgUtil import ImageUtil
+from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -753,7 +754,8 @@ class BookPropertyPanel(wx.Panel):
     def onOk(self, event):
         print 'onOk'
         props = self.pg.GetPropertyValues(inc_attributes=True)
-        print props['Book name']
+        self.setValuesToBookFromPropertyGrid(props)
+#         print props['Book name']
         
     def onCancel(self, event):
         print 'onCancel'    
@@ -788,7 +790,7 @@ class BookPropertyPanel(wx.Panel):
         props['Tag'] = str(self.currentBook.id or '')
         props['File location'] = str(self.currentBook.bookPath or '')
         props['File size'] = str(self.currentBook.fileSize or '')
-        props['fileFormat'] = str(self.currentBook.bookFormat or '')
+        props['file Format'] = str(self.currentBook.bookFormat or '')
         
         imgPath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
         props['Book image'] = imgPath
@@ -798,27 +800,35 @@ class BookPropertyPanel(wx.Panel):
         self.pg.SetPropertyValues(props)
         self.Layout()
 
-    def setValuesToBookFromPropertyGrid(self):
-        props['id'] = self.currentBook.id
-        props['Book name'] = str(self.currentBook.bookName or '')
-        props['Book description'] = str(self.currentBook.bookDescription or '')
-        props['Number of pages'] = str(self.currentBook.numberOfPages or '')
+    def setValuesToBookFromPropertyGrid(self,props):
+        book=Book()
+#         props['id'] = self.currentBook.id
+        book.publisher = props['Publisher']
+        book.subTitle=self.currentBook.subTitle
+        book.bookName = props['Book name']
+        book.numberOfPages = props['Number of pages']
+        book.bookDescription = props['Book description']
+        book.authors=list()
+        if props['Author(s) name']:
+            authors=props['Author(s) name'].split(',')
+            for authorName in authors:
+                author=Author()
+                author.authorName
+                book.authors.append(author)
+                
+        book.rating = props['Rating']
+#         book.bookPath = str(self.currentBook.bookPath or '')
+        book.fileSize = props['File size'] 
         
-        authorName = ''
-        for a in self.currentBook.authors:
-            authorName = ',' + a.authorName
-        props['Author(s) name'] = authorName
-        props['Rating'] = str(self.currentBook.rating or 0)
-        props['Tag'] = str(self.currentBook.id or '')
-        props['File location'] = str(self.currentBook.bookPath or '')
-        props['File size'] = str(self.currentBook.fileSize or '')
-        props['fileFormat'] = str(self.currentBook.bookFormat or '')
+#         props['Tag'] = str(self.currentBook.id or '')
+        book.bookFormat = str(self.currentBook.bookFormat or '')
         
-        imgPath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
-        props['Book image'] = imgPath
-        props['Publisher'] = str(self.currentBook.publisher or '')
-        props['ISBN'] = str(self.currentBook.isbn_13 or '')
-        pass
+        book.bookImgName =  self.currentBook.bookImgName
+        book.isbn_13 = props['ISBN']
+        book.itEbookUrlNumber=self.currentBook.itEbookUrlNumber
+        book.publishedOn=self.currentBook.publishedOn
+        ReadWriteJsonInfo().writeJsonToDir(bookPath=self.currentBook.bookPath, book=book)
+        
         
     def onImageClick(self, event):
         """"""
