@@ -57,6 +57,7 @@ class Book(json.JSONEncoder):
         self.fileSize = fileSize
         self.bookFormat = bookFormat
         self.subTitle = bookSubTitle
+        self.itEbookUrlNumber = None
 
     def __str__(self):
         rep = self.name + self.publisher + self.author + self.isbn + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat
@@ -122,7 +123,10 @@ class DownloadItEbook(threading.Thread):
         book.bookFormat = soup.find_all(itemprop="bookFormat")[0].text
         book.bookDescription = soup.find_all(itemprop="description")[0].text
         book.bookImgName = (soup.find_all(itemprop="image")[0]).get('src')
-        book.subTitle = soup.h3.text
+        try:
+            book.subTitle = soup.h3.text
+        except:
+            traceback.print_exc()
         book.fileSize = soup.find_all('table')[3].find_all('tr')[7].find_all('td')[1].find_all('b')[0].text
 #         book.fileSize=
 
@@ -244,22 +248,25 @@ class DownloadItEbook(threading.Thread):
         '''
         this function will write json file to given dir.
         '''
-        f = open(os.path.join(bookPath, 'book.json'), 'w')
-        row2dict = book.__dict__
-        authors = []
-        if type(row2dict['publishedOn']) == datetime:
-            row2dict['publishedOn'] = str(row2dict['publishedOn'])
-        for a in row2dict['authors']:
-            author = {}
-            if type(a) == str:
-                author['authorName'] = a
-            else:
-                author = a.__dict__
-            
-            authors.append(author)
-        row2dict['authors'] = authors
-        f.write(json.dumps(row2dict, sort_keys=False, indent=4))
-        f.close()        
+        try:
+            f = open(os.path.join(bookPath, 'book.json'), 'w')
+            row2dict = book.__dict__
+            authors = []
+            if type(row2dict['publishedOn']) == datetime:
+                row2dict['publishedOn'] = str(row2dict['publishedOn'])
+            for a in row2dict['authors']:
+                author = {}
+                if type(a) == str:
+                    author['authorName'] = a
+                else:
+                    author = a.__dict__
+                
+                authors.append(author)
+            row2dict['authors'] = authors
+            f.write(json.dumps(row2dict, sort_keys=False, indent=4))
+            f.close()     
+        except:
+            traceback.print_exc()   
         
     def isBookDownloading(self, files):
         ''' This method will inform that book is getting downloading or not.'''
@@ -330,11 +337,36 @@ class DownloadItEbook(threading.Thread):
         self.createDatabase.creatingDatabase()  
         self.createDatabase.addingData()        
     
+    def updateBooksMetadata(self):
+        miss = Missing()
+        listOfDir = miss.availableNumbers()
+        listOfDir=listOfDir[1391:]
+        baseUrl = 'http://it-ebooks.info'
+        for number in listOfDir:
+            print '------------------->',number
+#             url = self.getUrl(baseUrl, number)
+#             a = urllib2.urlopen(url)
+#             strig = a.geturl()
+#             if  '404' != strig[-4:-1]:
+    #             number=7102
+        #         genUrl=self.downloadItEbook.getUrl(baseUrl, number)
+            try:
+                book=self.findBookDetail(baseUrl, number)
+                book.itEbookUrlNumber=number
+                subUrl = book.bookImgName
+                imageFileName = subUrl.split('/')[-1:][0]
+                book.bookImgName=imageFileName
+                bookPath=os.path.join(Workspace().path,number)
+                self.writeJsonToDir(bookPath, book)
+            except:
+                traceback.print_exc()
+        
 if __name__ == "__main__":
-    print 'download started'
+    print ' started'
 #     for i in range(3):
 #         print i
 #         t = DownloadItEbook(args=(i,), kwargs={'a':1, 'b':2})
 #         t.start()
     it = DownloadItEbook()
-    it.startDownload()
+    it.updateBooksMetadata()
+    print ' completed'

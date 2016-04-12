@@ -780,10 +780,10 @@ class BookPropertyPanel(wx.Panel):
         props['Book description'] = str(self.currentBook.bookDescription or '')
         props['Number of pages'] = str(self.currentBook.numberOfPages or '')
         
-        authorName = ''
+        authorName = list()
         for a in self.currentBook.authors:
-            authorName = ',' + a.authorName
-        props['Author(s) name'] = authorName
+            authorName.append(a.authorName)
+        props['Author(s) name'] = ','.join(authorName)
         props['Rating'] = str(self.currentBook.rating or 0)
         props['Tag'] = str(self.currentBook.id or '')
         props['File location'] = str(self.currentBook.bookPath or '')

@@ -12,7 +12,7 @@ setup(
     description='Opal is a advance book management system.',
     long_description=__doc__,
     packages=['src', 'src.dao', 'src.logic','src.selenium_download','src.static', 'src.ui', 'src.ui.view','src.ui.view.opalview','src.ui.view.thumb','src.util'],
-    py_modules=['opal'],
+    py_modules=['src'],
     zip_safe=False,
     platforms='any',
     install_requires=[

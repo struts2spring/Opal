@@ -5,6 +5,7 @@ import os
 class Missing():
     def __init__(self):
         self.missingListing=list()
+        self.directory_name = Workspace().path
     
     def missingNumbers(self):
         directory_name = Workspace().path
@@ -19,6 +20,13 @@ class Missing():
                 self.missingListing.append(l)
         
         return self.missingListing
+    
+    def availableNumbers(self):
+        listOfDir = [ name for name in os.listdir(self.directory_name) if os.path.isdir(os.path.join(self.directory_name, name)) ]
+        if listOfDir:
+            listOfDir.sort(key=int)
+        return listOfDir
+        
 if __name__=='__main__':
     missing=Missing()
     missing.missingNumbers()

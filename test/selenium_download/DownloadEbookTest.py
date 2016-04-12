@@ -36,12 +36,18 @@ class Test(unittest.TestCase):
         self.downloadItEbook.findBookDetail(baseUrl, number)
         print 'testFindBookDetail'
 
+    @unittest.skip("demonstrating skipping")   
     def testWriteJsonToDir(self):
         baseUrl = 'http://it-ebooks.info'
         number=7102
 #         genUrl=self.downloadItEbook.getUrl(baseUrl, number)
         book=self.downloadItEbook.findBookDetail(baseUrl, number)
-        self.downloadItEbook.writeJsonToDir(self.downloadItEbook.downloadDir(), book)
+        book.itEbookUrlNumber=number
+        bookPath=self.downloadItEbook.downloadDir()
+        self.downloadItEbook.writeJsonToDir(bookPath, book)
+     
+    def testUpdateBooksMetadata(self):
+        self.downloadItEbook.updateBooksMetadata()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testStartDownload']
