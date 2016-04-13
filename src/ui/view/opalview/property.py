@@ -796,6 +796,7 @@ class BookPropertyPanel(wx.Panel):
         props['Book image'] = imgPath
         props['Publisher'] = str(self.currentBook.publisher or '')
         props['ISBN'] = str(self.currentBook.isbn_13 or '')
+        props['Language'] = str(self.currentBook.inLanguage or '')
         
         self.pg.SetPropertyValues(props)
         self.Layout()
@@ -811,10 +812,10 @@ class BookPropertyPanel(wx.Panel):
         book.authors=list()
         if props['Author(s) name']:
             authors=props['Author(s) name'].split(',')
-            for authorName in authors:
-                author=Author()
-                author.authorName
-                book.authors.append(author)
+            for a in authors:
+                if a !='':
+                    author=Author(authorName=a)
+                    book.authors.append(author)
                 
         book.rating = props['Rating']
 #         book.bookPath = str(self.currentBook.bookPath or '')
@@ -824,10 +825,15 @@ class BookPropertyPanel(wx.Panel):
         book.bookFormat = str(self.currentBook.bookFormat or '')
         
         book.bookImgName =  self.currentBook.bookImgName
-        book.isbn_13 = props['ISBN']
+        if str(props['ISBN']) =='':
+            book.isbn_13 = None
+        else:
+            book.isbn_13 = str(props['ISBN'])
         book.itEbookUrlNumber=self.currentBook.itEbookUrlNumber
         book.publishedOn=self.currentBook.publishedOn
-        ReadWriteJsonInfo().writeJsonToDir(bookPath=self.currentBook.bookPath, book=book)
+        book.inLanguage=props['Language']
+        ReadWriteJsonInfo().writeJsonToDir(self.currentBook.bookPath, book)
+        
         
         
     def onImageClick(self, event):
@@ -877,17 +883,17 @@ class BookPropertyPanel(wx.Panel):
         self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
-        authorName = ''
+        authorNames = list()
         for a in book.authors:
-            authorName = ',' + a.authorName
+            authorNames.append(a.authorName)
         
-        self.pg.Append(wxpg.StringProperty("Author(s) name", value=authorName))
+        self.pg.Append(wxpg.StringProperty("Author(s) name", value=','.join(authorNames)))
         
         self.pg.Append(wxpg.IntProperty("Rating", value=long(book.rating or 0)))
         self.pg.SetPropertyEditor("Rating", "SpinCtrl")
         
         self.pg.Append(wxpg.EditEnumProperty("Tag", "EditEnumProperty",
-                                         ['A', 'B', 'C'],
+                                         ['Physis', 'B', 'C'],
                                          [0, 1, 2],
                                          "Text Not in List"))
         
@@ -902,6 +908,7 @@ class BookPropertyPanel(wx.Panel):
         self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
         
         self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
+        self.pg.Append(wxpg.StringProperty("Language", value=str(book.inLanguage or '')))
         
         
 #         self.pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
