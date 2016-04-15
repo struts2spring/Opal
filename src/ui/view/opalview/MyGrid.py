@@ -313,6 +313,7 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
 
         dc.SetTextForeground(self.color)
         dc.SetFont(self.font)
+        print '-----1----1------1--->',text
         dc.DrawText(text, rect.x + 1, rect.y + 1)
 
         # Okay, now for the advanced class :)

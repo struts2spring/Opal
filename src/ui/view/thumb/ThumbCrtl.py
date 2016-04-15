@@ -1395,7 +1395,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         if thumb >= 0:
 #             print 'thumb info', self._items[thumb]
-            bookName=str(self._items[thumb].book.bookName)
+            bookName=self._items[thumb].book.bookName
             author=''
             fileSize=''
             for a in self._items[thumb].book.authors:
@@ -2265,7 +2265,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.popupID5 = wx.NewId()
             self.popupID6 = wx.NewId()
     
-            self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
+            self.Bind(wx.EVT_MENU, self.OnDownloadMetadata, id=self.popupID1)
             self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
             self.Bind(wx.EVT_MENU, self.OnPopupThree, id=self.popupID3)
             self.Bind(wx.EVT_MENU, self.showBookProperties, id=self.popupID4)
@@ -2273,7 +2273,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
         
             # Show how to put an icon in the menu
-            item = wx.MenuItem(menu, self.popupID1, "Open book detail in New Tab.")
+            item = wx.MenuItem(menu, self.popupID1, "Download metadata and cover.")
             item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
             menu.AppendItem(item)
     
@@ -2326,8 +2326,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def onDownloadToLibrary(self, event):
         print 'onDownloadToLibrary'
     
-    def OnPopupOne(self, event):
-        print ("Popup one\n")
+    def OnDownloadMetadata(self, event):
+        print ("OnDownloadMetadata\n")
 
     def deleteBook(self, event):
         print ("On deleteBook Path \n")
