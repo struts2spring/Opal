@@ -20,9 +20,9 @@ class DownloadMetadataInfo():
     def doAmazonBookSerach(self, searchText=None):
         if searchText:
 #             searchUrl = 'http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords=' + searchText
-            searchUrl ="http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords={}&sprefix={},aps,319".format(searchText, searchText)
+            searchUrl = "http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords={}&sprefix={},aps,319".format(searchText, searchText)
 #             print searchUrl
-            payload = {'Host':"www.amazon.com", 
+            payload = {'Host':"www.amazon.com",
                        'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
                        'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                        'Accept-Language':"en-US,en;q=0.5",
@@ -40,11 +40,34 @@ class DownloadMetadataInfo():
                     text_file.close()
                 soup = BeautifulSoup(content)
                 
-                print soup.find_all(class_="s-result-item celwidget")[0]
+#                 el= soup.find_all(class_="s-result-item celwidget")[0]
+#                 print el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
+# class_="s-result-item celwidget",
+                for link in soup.find_all(class_="a-link-normal s-access-detail-page a-text-normal"):
+#                     print el
+#                     x= el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
+                    print link.get('href')
+                    
+                    
                 
+    def getAmazonSingleBookInfo(self, bookUrl=None):
+            
+        payload = {'Host':"www.amazon.com",
+           'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
+           'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+           'Accept-Language':"en-US,en;q=0.5",
+           'Accept-Encoding':"gzip, deflate",
+           'Referer':"http://www.amazon.com/",
+           'Connection':"keep-alive"}
+#         searchUrl = ''
+        with requests.Session() as c:
+            r = c.get(bookUrl, params=payload)
+#             print(r.url)
+            content = r.text
+            soup = BeautifulSoup(content)
+            print content
+        pass   
         
-        
-        pass
     
     def readAnalyseFile(self):
         with open("response.txt", "w") as text_file:
