@@ -1093,7 +1093,7 @@ class SettingsPanel(wx.Panel):
 
 #----------------------------------------------------------------------
 
-class TestPanel(wx.Panel):
+class SearchBookPanel(wx.Panel):
     def __init__(self, parent, log):
         self.log = log
         wx.Panel.__init__(self, parent, -1)
@@ -1107,7 +1107,7 @@ class TestPanel(wx.Panel):
 #----------------------------------------------------------------------
 
 def runTest(frame, nb, log):
-    win = TestPanel(nb, log)
+    win = SearchBookPanel(nb, log)
     return win
 
 #----------------------------------------------------------------------

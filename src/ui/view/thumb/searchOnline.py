@@ -14,11 +14,15 @@ sampleList = ['google book', 'amazon book', 'IT ebook', 'Tubebl', 'Lit2go', 'Pro
                       'ePubBud', 'Scribd', 'ManyBooks', 'Obooko', 'Wattpad', 'Ebookee',
                       'ShareBookFree', 'FreeBookSpot', 'Bookyards', 'FreeBooks4Doctors', 'Smashwords',
                       'BookBoon', 'Dailylit', 'Free-eBooks', 'PDFGeni', 'E-Books Directory', 'issuu', 'WikiBooks']
-class TestPanel(wx.Panel):
+
+class SearchBookPanel(wx.Panel):
+    '''
+    This class searches online book metadata.
+    '''
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         
-        print 'TestPanel'
+        print 'SearchBookPanel'
         os.chdir(os.path.join(os.path.dirname(__file__), '..', 'opalview', "images"))
 
         image = wx.Image('pdf.png', wx.BITMAP_TYPE_ANY)
@@ -91,11 +95,20 @@ class TestPanel(wx.Panel):
 
     def OnDoSearch(self, evt):
         print("OnDoSearch: " + self.search.GetValue())
-        listOfBooks = self.doGoogleSearch()
+#         listOfBooks = self.doGoogleSearch()
+        listOfBooks=list()
+        self.doAmazonBookSerach()
+        
         print len(listOfBooks)
         
         self.thumbnail.ShowDir(listOfBooks)
         
+    def doAmazonBookSerach(self):
+        searchUrl='http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords='+ self.search.GetValue()
+        r=requests.get(searchUrl)
+        
+        
+        pass
     def doGoogleSearch(self):
         r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + self.search.GetValue())
         json_data = r.json()
@@ -165,8 +178,8 @@ class TestPanel(wx.Panel):
 #----------------------------------------------------------------------
 class SearchFrame(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, title='Test', size=(600, 400))
-        self.panel = TestPanel(self)
+        wx.Frame.__init__(self, parent, -1, title='Search Book', size=(600, 400))
+        self.panel = SearchBookPanel(self)
         self.Show()
 #----------------------------------------------------------------------
 

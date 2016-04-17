@@ -34,7 +34,7 @@ from src.ui.view.opalview.MyGrid import MegaGrid
 from src.ui.view.opalview.SearchPanel import SearchPanel
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
-from src.ui.view.thumb.search import SearchFrame
+from src.ui.view.thumb.searchOnline import SearchFrame
 
 
 

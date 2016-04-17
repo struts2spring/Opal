@@ -4,6 +4,9 @@ from src.static.constant import Workspace
 from src.logic.BookShellOperation import BookTerminal
 
 class FindingBook():
+    '''
+    This class searches book detail in Opal database.this database would be created in workspace(Opal library).
+    '''
     def __init__(self):
         self.createDatabase = CreateDatabase()
         pass
@@ -47,7 +50,7 @@ class FindingBook():
         @param book: book object 
         '''
         bookPath = book.bookPath
-        isSuccessfulDatabaseDelete=self.createDatabase.removeBook(book)
+        isSuccessfulDatabaseDelete = self.createDatabase.removeBook(book)
         if isSuccessfulDatabaseDelete:
             BookTerminal().removeBook(bookPath=bookPath)
             
