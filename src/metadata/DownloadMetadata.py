@@ -8,6 +8,8 @@ import os
 import urllib2
 from src.metadata.book import Book, VolumeInfo
 from bs4 import BeautifulSoup
+import uuid
+import traceback
 
 class DownloadMetadataInfo():
     '''
@@ -15,7 +17,9 @@ class DownloadMetadataInfo():
     '''
     def __init__(self):
         self.searchText = None
-        pass
+        self.session = requests.Session()
+        self.listOfBook = list()
+        self.requestHeader = None
     
     def doAmazonBookSerach(self, searchText=None):
         if searchText:
@@ -29,11 +33,13 @@ class DownloadMetadataInfo():
                        'Accept-Encoding':"gzip, deflate",
                        'Referer':"http://www.amazon.com/",
                        'Connection':"keep-alive"}
-            with requests.Session() as c:
-                r = c.get(searchUrl, params=payload)
-                print(r.url)
-#                 print r.status_code, r.headers['content-type'], r.encoding
-                content = r.text
+#             with requests.Session() as c:
+            r = self.session.get(searchUrl, params=payload)
+#             print(r.url)
+            self.requestHeader = r.headers
+#             print r.status_code, r.headers['content-type'], r.encoding
+            content = r.text
+            if r.status_code == 200:
                 with open("response.html", "w") as text_file:
 #                     print content.encode('utf-8')
                     text_file.write(content.encode('utf-8'))
@@ -43,14 +49,26 @@ class DownloadMetadataInfo():
 #                 el= soup.find_all(class_="s-result-item celwidget")[0]
 #                 print el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
 # class_="s-result-item celwidget",
+                urlList = list()
                 for link in soup.find_all(class_="a-link-normal s-access-detail-page a-text-normal"):
 #                     print el
 #                     x= el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
-                    print link.get('href')
-                    
-                    
+                    urlList.append(link.get('href'))
+                for url in urlList:
+                    b = Book()
+                    b.id = url.split('/')[-1]
+                    imgFileName = b.id + '.jpg'
+#                     print imgFileName
+                    self.getAmazonSingleBookInfo(imgFileName=imgFileName, bookUrl=url)
+            else:
+                self.doAmazonBookSerach(searchText)    
                 
-    def getAmazonSingleBookInfo(self, bookUrl=None):
+    def getAmazonSingleBookInfo(self, imgFileName, bookUrl=None):
+        '''
+        e.g. urls are given below.
+        'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730',
+        'http://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994',
+        '''
             
         payload = {'Host':"www.amazon.com",
            'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
@@ -60,25 +78,91 @@ class DownloadMetadataInfo():
            'Referer':"http://www.amazon.com/",
            'Connection':"keep-alive"}
 #         searchUrl = ''
-        with requests.Session() as c:
-            r = c.get(bookUrl, params=payload)
+        if self.requestHeader:
+            payload = self.requestHeader
+        print bookUrl, imgFileName 
+#         with requests.Session() as c:
+        r = self.session.get(bookUrl, params=payload)
 #             print(r.url)
+        print r.status_code
+        if r.status_code == 200:
             content = r.text
             soup = BeautifulSoup(content)
-            print content
-        pass   
+            print r.url
+            b = self.populateBookObj(htmlContent=soup, imgFileName=imgFileName)
+#             print content
+            el = soup.find(id="imgBlkFront", class_="a-dynamic-image")
+            imgUrl = el['src']
+            if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
+                self.downloadUrl(imageUrl=imgUrl, imgFileName=imgFileName, destinationPath=os.path.join('/tmp', 'img'))
+        else:
+#             print r.text
+            self.getAmazonSingleBookInfo(imgFileName, bookUrl)
+            
+            
+    def populateBookObj(self, htmlContent=None, imgFileName=None):
+        '''
+        '''
+        b = Book()
+        b.id = None
+        el0 = htmlContent.find_all(id="productTitle")
+        if el0 == None or len(el0) == 0:
+            el0 = htmlContent.find_all(id="ebooksProductTitle")
+            
+        if el0:
+            b.bookName = el0.pop().text
+        el1 = htmlContent.find_all('div', class_="content")
+
+        for tag in el1:
+            if tag.ul:
+                el01 = tag.ul.find_all('li')
+                if el01:
+                    for el02 in el01:
+#                         print el02.id,el02.b, el02.text
+                        if el02.b:
+                            prop = el02.b.text
+                            if prop == 'Series:':
+                                b.series = el02.text.split(':')[1:][0]
+                            if prop == 'ASIN:':
+                                b.asin = el02.text.split(':')[1:][0]
+                            if prop == 'Publication Date:':
+                                b.publishedOn = el02.text.split(':')[1:][0]
+                            if prop == 'Paperback:':
+                                b.numberOfPages = el02.text.split(':')[1:][0]
+                            if prop == 'Print Length:':
+                                b.numberOfPages = el02.text.split(':')[1:][0]
+                            if prop == 'Publisher:':
+                                b.publisher = el02.text.split(':')[1:][0]
+                            if prop == 'Language:':
+                                b.inLanguage = el02.text.split(':')[1:][0]
+                            if prop == 'ISBN-13:':
+                                b.isbn_13 = el02.text.split(':')[1:][0]
+                            if prop == 'ISBN-10:':
+                                b.id = el02.text.split(':')[1:][0]
+                                b.isbn_10 = el02.text.split(':')[1:][0]
+                            if prop.strip() == 'Product Dimensions:':
+                                b.dimension = el02.text.split(':')[1:][0].strip()
+                            if prop.strip() == 'Average Customer Review:':
+                                x = el02.find_all(class_="crAvgStars")[0]
+                                b.rating = x.next()[2].text.split('out of')[0:1][0]
+                            
+                            
+                                       
+            el2 = tag.find_all('div', class_="productDescriptionWrapper")
+            for tag1 in el2:
+                if tag1.text == 'About the Author':
+                    b.aboutAuthor = tag1.text
+        if b.id == None:
+            b.id = b.asin
+        b.localImagePath = os.path.join('/tmp', 'img') 
+        b.imageFileName = imgFileName    
+        b.bookPath = None
+        self.listOfBook.append(b)    
+        return b
+
         
-    
-    def readAnalyseFile(self):
-        with open("response.txt", "w") as text_file:
-            content = ''
-            for line in text_file.readlines():
-                print line
-            soup = BeautifulSoup(content)
-            print soup.find_all_next('img')
-        
-    def doGoogleSearch(self):
-        r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + self.search.GetValue())
+    def doGoogleSearch(self, searchText=None):
+        r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + searchText)
         json_data = r.json()
         items = json_data['items']
         listOfBooks = []
@@ -106,13 +190,41 @@ class DownloadMetadataInfo():
             if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
                 os.chdir(path)
                 print 'writing file'
-                with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
-                    f.write(urllib2.urlopen(url).read())
+                self.downloadUrl(imageUrl=url, imgFileName=b.id + '.jpeg', destinationPath=os.path.join('/tmp', 'img'))
+#                 with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
+#                     f.write(urllib2.urlopen(url).read())
             b.volumeInfo = volumeInfo
             b.bookPath = None
             listOfBooks.append(b)
         return listOfBooks   
+    
+    def downloadUrl(self, imageUrl=None, imgFileName=None, destinationPath=os.path.join('/tmp', 'img')):
+        '''
+        This function will download url.
+        '''
+        if not os.path.exists(destinationPath):
+            os.mkdir(destinationPath)
+        os.chdir(destinationPath)   
+        try:
+            with open(os.path.join(destinationPath, imgFileName), 'wb') as f:
+                f.write(urllib2.urlopen(imageUrl).read())
+        except :
+            print 'unable to donwload url: ', imageUrl
+            traceback.print_exc()
+            
 
+    def readAnalyseFile(self):
+        with open("response.txt", "w") as text_file:
+            content = ''    
+            for line in text_file.readlines():
+                print line
+            soup = BeautifulSoup(content)
+            print soup.find_all_next('img')
 if __name__ == '__main__':
-    DownloadMetadataInfo().doAmazonBookSerach(searchText='python')
+#     DownloadMetadataInfo().doAmazonBookSerach(searchText='python')
+#     bookUrl = 'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730'
+    downloadMetadataInfo = DownloadMetadataInfo()
+#     downloadMetadataInfo.getAmazonSingleBookInfo(imgFileName='1449355730.jpg', bookUrl=bookUrl)
+    downloadMetadataInfo.doAmazonBookSerach(searchText='java')
+    print downloadMetadataInfo.listOfBook
     pass

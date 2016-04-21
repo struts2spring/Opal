@@ -8,6 +8,8 @@ from book import Book, VolumeInfo
 import urllib2
 import urllib
 import shutil
+from src.metadata import DownloadMetadata
+from src.metadata.DownloadMetadata import DownloadMetadataInfo
 
 #----------------------------------------------------------------------
 sampleList = ['google book', 'amazon book', 'IT ebook', 'Tubebl', 'Lit2go', 'Project Gutenberg',
@@ -96,54 +98,64 @@ class SearchBookPanel(wx.Panel):
     def OnDoSearch(self, evt):
         print("OnDoSearch: " + self.search.GetValue())
 #         listOfBooks = self.doGoogleSearch()
-        listOfBooks=list()
-        self.doAmazonBookSerach()
+        listOfBooks = list()
+#         self.doAmazonBookSerach()
+        searchListOfBook = self.doSearch(self.search.GetValue())
         
         print len(listOfBooks)
-        
+        if len(searchListOfBook) > 0:
+            listOfBooks = searchListOfBook
         self.thumbnail.ShowDir(listOfBooks)
+    
+    def doSearch(self, searchText=None):
+        downloadMetadataInfo = DownloadMetadataInfo()
+#         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
+        downloadMetadataInfo.doAmazonBookSerach(searchText)
+        listOfBooks = downloadMetadataInfo.listOfBook
         
-    def doAmazonBookSerach(self):
-        searchUrl='http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords='+ self.search.GetValue()
-        r=requests.get(searchUrl)
-        
-        
-        pass
-    def doGoogleSearch(self):
-        r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + self.search.GetValue())
-        json_data = r.json()
-        items = json_data['items']
-        listOfBooks = []
-        for x in items:
-        #     print x.keys()
-            b = Book(x)
-            volumeInfo = VolumeInfo(b['volumeInfo'])
-            b.bookName = volumeInfo.title
-#                volumeInfo.imageLinks['thumbnail']
-            
-            if volumeInfo.has_key('imageLinks'):
-                url = str(volumeInfo.imageLinks['thumbnail'])
-            else:
-                url = "https://books.google.co.in/googlebooks/images/no_cover_thumb.gif"
-                
-            path = os.path.join('/tmp', 'img')
-#             os.mkdir(tmp_path)
-#             path = os.path.dirname(__file__) + os.sep + 'tmp'
-            print path
-            if not os.path.exists(path):
-                os.mkdir(path)
-            b.localImagePath = path 
-#             + os.sep + b.id + '.jpeg'
-            b.imageFileName = b.id + '.jpeg'
-            if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
-                os.chdir(path)
-                print 'writing file'
-                with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
-                    f.write(urllib2.urlopen(url).read())
-            b.volumeInfo = volumeInfo
-            b.bookPath = None
-            listOfBooks.append(b)
         return listOfBooks
+        
+#     def doAmazonBookSerach(self):
+#         searchUrl = 'http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords=' + self.search.GetValue()
+#         r = requests.get(searchUrl)
+#         
+#         
+#         pass
+#     def doGoogleSearch(self):
+#         r = requests.get('https://www.googleapis.com/books/v1/volumes?q=' + self.search.GetValue())
+#         json_data = r.json()
+#         items = json_data['items']
+#         listOfBooks = []
+#         for x in items:
+#         #     print x.keys()
+#             b = Book(x)
+#             volumeInfo = VolumeInfo(b['volumeInfo'])
+#             b.bookName = volumeInfo.title
+# #                volumeInfo.imageLinks['thumbnail']
+#             
+#             if volumeInfo.has_key('imageLinks'):
+#                 url = str(volumeInfo.imageLinks['thumbnail'])
+#             else:
+#                 url = "https://books.google.co.in/googlebooks/images/no_cover_thumb.gif"
+#                 
+#             path = os.path.join('/tmp', 'img')
+# #             os.mkdir(tmp_path)
+# #             path = os.path.dirname(__file__) + os.sep + 'tmp'
+#             print path
+#             if not os.path.exists(path):
+#                 os.mkdir(path)
+#             b.localImagePath = path 
+# #             + os.sep + b.id + '.jpeg'
+#             b.imageFileName = b.id + '.jpeg'
+#             if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
+#                 os.chdir(path)
+#                 print 'writing file'
+#                 with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
+#                     f.write(urllib2.urlopen(url).read())
+#             b.volumeInfo = volumeInfo
+#             b.bookPath = None
+#             listOfBooks.append(b)
+#         return listOfBooks
 
     def MakeMenu(self):
         menu = wx.Menu()
