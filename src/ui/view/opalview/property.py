@@ -6,6 +6,7 @@ from src.logic.search_book import FindingBook
 import datetime
 from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
+import threading
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -666,7 +667,47 @@ class LargeImageEditor(wxpg.PyEditor):
 # MAIN PROPERTY GRID TEST PANEL
 #
 ############################################################################
+class PropertyPhotoPanel(wx.Panel):
 
+    def __init__(self, parent=None, book=None):
+        wx.Panel.__init__(self, parent, id=-1)
+        self.Bind(wx.EVT_SIZE, self.OnSize, self)
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.parent = parent
+        self.bitmap = None
+        self.currentBook = book
+    def OnSize(self, event):
+        self.changeBitmapWorker()
+        print 'onsize'
+
+    def OnPaint(self, evt):
+        if self.bitmap != None:
+            dc = wx.BufferedPaintDC(self)
+            dc.Clear()
+            dc.DrawBitmap(self.bitmap, 0, 0)
+        else:
+            pass
+    def changeBitmapWorker(self):
+#         relevant_path = "/docs/LiClipse Workspace/img/wallpaper"
+#         imgFileName=self.getImgFileName(relevant_path)
+#         imgFilePath=os.path.join(relevant_path,imgFileName[0] )
+        imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
+#         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
+        print '---------->', self.GetSize()
+        NewW, NewH = self.GetSize()
+        if  NewW > 0 and NewH > 0:
+            img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
+            img = img.Scale(NewW, NewH)
+            self.bitmap = wx.BitmapFromImage(img)
+            self.Refresh()
+        
+        
+#     def getImgFileName(self, relevant_path=None):
+#     #         relevant_path = "/docs/LiClipse Workspace/img/wallpaper"
+#         included_extenstions = ['jpg', 'bmp', 'png', 'gif']
+#         file_names = [fn for fn in os.listdir(relevant_path)
+#                       if any(fn.endswith(ext) for ext in included_extenstions)]
+#         return file_names
 class BookPropertyPanel(wx.Panel):
 
     def __init__(self, parent, book):
@@ -675,20 +716,22 @@ class BookPropertyPanel(wx.Panel):
         self.panel = wx.Panel(self, wx.ID_ANY)
         self.currentBook = book
         
-        self.photoPanel = wx.Panel(self, wx.ID_ANY)
-        img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        self.photoPanel = PropertyPhotoPanel(self, book=self.currentBook)
+#         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
+        print '-------------->', self.GetParent().GetSize()
+        img1 = self.scale_bitmap()
         img = wx.EmptyImage(240, 240)
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
-        self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1, name="anotherEmptyImage")
-        self.imageCtrl.Bind(wx.EVT_LEFT_DOWN, self.onImageClick)
+#         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1, name="anotherEmptyImage")
+#         self.imageCtrl.Bind(wx.EVT_LEFT_DOWN, self.onImageClick)
         
         
         topsizer = wx.BoxSizer(wx.VERTICAL)
         hBox = wx.BoxSizer(wx.HORIZONTAL)
         self.pg = self.createPropetyGrid(self.currentBook)
 
-        hBox.Add(self.pg, 5, wx.EXPAND, 2)
+        hBox.Add(self.pg, 1, wx.EXPAND, 2)
         hBox.Add(self.photoPanel, 1, wx.EXPAND, 5)
         
         topsizer.Add(hBox, 3, wx.EXPAND)
@@ -732,14 +775,27 @@ class BookPropertyPanel(wx.Panel):
 #         self.SetAutoLayout(True)
 
     #----------------------------------------------------------------------
+    
+
+        
+    def scale_bitmap(self, width=None, height=None):
+        bitmap = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        image = wx.ImageFromBitmap(bitmap)
+        if width and height:
+            image = image.Scale(width, height, wx.IMAGE_QUALITY_HIGH)
+        result = wx.BitmapFromImage(image)
+        return result
+    
     def onNext(self, event):
         print 'onNext'
         bookId = self.currentBook.id
         self.previousBook = self.currentBook
         b = FindingBook().findBookByNextMaxId(bookId)
         if b:
-            self.currentBook=b
+            self.currentBook = b
             self.setValuesToPropetyGrid()
+            self.photoPanel.currentBook=b
+            self.photoPanel.changeBitmapWorker()
         
         
     def onPrevious(self, event):
@@ -748,8 +804,10 @@ class BookPropertyPanel(wx.Panel):
         self.previousBook = self.currentBook
         b = FindingBook().findBookByPreviousMaxId(bookId)
         if b:
-            self.currentBook=b
+            self.currentBook = b
             self.setValuesToPropetyGrid()
+            self.photoPanel.currentBook=b
+            self.photoPanel.changeBitmapWorker()
         
     def onOk(self, event):
         print 'onOk'
@@ -773,7 +831,7 @@ class BookPropertyPanel(wx.Panel):
         '''
         This method is used to set values in property grid.
         '''
-        self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
+#         self.imageCtrl.SetBitmap(wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap())
         props = self.pg.GetPropertyValues(inc_attributes=True)
         props['id'] = self.currentBook.id
         
@@ -801,20 +859,20 @@ class BookPropertyPanel(wx.Panel):
         self.pg.SetPropertyValues(props)
         self.Layout()
 
-    def setValuesToBookFromPropertyGrid(self,props):
-        book=Book()
+    def setValuesToBookFromPropertyGrid(self, props):
+        book = Book()
 #         props['id'] = self.currentBook.id
         book.publisher = props['Publisher']
-        book.subTitle=self.currentBook.subTitle
+        book.subTitle = self.currentBook.subTitle
         book.bookName = props['Book name']
         book.numberOfPages = props['Number of pages']
         book.bookDescription = props['Book description']
-        book.authors=list()
+        book.authors = list()
         if props['Author(s) name']:
-            authors=props['Author(s) name'].split(',')
+            authors = props['Author(s) name'].split(',')
             for a in authors:
-                if a !='':
-                    author=Author(authorName=a)
+                if a != '':
+                    author = Author(authorName=a)
                     book.authors.append(author)
                 
         book.rating = props['Rating']
@@ -824,14 +882,14 @@ class BookPropertyPanel(wx.Panel):
 #         props['Tag'] = str(self.currentBook.id or '')
         book.bookFormat = str(self.currentBook.bookFormat or '')
         
-        book.bookImgName =  self.currentBook.bookImgName
-        if str(props['ISBN']) =='':
+        book.bookImgName = self.currentBook.bookImgName
+        if str(props['ISBN']) == '':
             book.isbn_13 = None
         else:
             book.isbn_13 = str(props['ISBN'])
-        book.itEbookUrlNumber=self.currentBook.itEbookUrlNumber
-        book.publishedOn=self.currentBook.publishedOn
-        book.inLanguage=props['Language']
+        book.itEbookUrlNumber = self.currentBook.itEbookUrlNumber
+        book.publishedOn = self.currentBook.publishedOn
+        book.inLanguage = props['Language']
         ReadWriteJsonInfo().writeJsonToDir(self.currentBook.bookPath, book)
         
         
@@ -1145,6 +1203,7 @@ class BookPropertyFrame(wx.Frame):
     def __init__(self, parent, book):
         wx.Frame.__init__(self, parent, -1, title='Edit Book Metadata', size=(800, 600))
         self.panel = BookPropertyPanel(self, book)
+#         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Show()
 
 if __name__ == '__main__':
