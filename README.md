@@ -38,7 +38,10 @@ we love to provide as many documents support as possible.
 * PDF (.PDF) :
 
 ## Need to work on.
-| s.no   |      Description      |  Status |
-|----------|:-------------:|------:|
-| 1 |Provide support for epub, kindle, movie, azw, doc rtf, txt | not started |
-| 2 |3d cover flow in Opal.   |   not started |
+following are the items that have to be worked.
+
+| S.no|Description|Status|
+|----------|:-------------|------:|
+|1|Provide support for epub, kindle, movie, azw, doc rtf, txt | not started |
+|2|3d cover flow in Opal.|Not started |
+|3|Compare book metadata|Not started|
