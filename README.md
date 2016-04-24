@@ -26,7 +26,7 @@ Opal is a advance book management system.
 ## Support following type of documents.
 we love to provide as many documents support as possible.
 
-* Kindle Format (.MOBI, .AZW): currently supporting
+* Kindle Format (.MOBI, .AZW):
 * Microsoft Word (.DOC, .DOCX)
 * HTML (.HTML, .HTM)
 * RTF (.RTF)
@@ -35,4 +35,10 @@ we love to provide as many documents support as possible.
 * GIF (.GIF)
 * PNG (.PNG)
 * BMP (.BMP)
-* PDF (.PDF) : currently supporting
+* PDF (.PDF) :
+
+## Need to work on.
+| s.no   |      Description      |  Status |
+|----------|:-------------:|------:|
+| 1 |Provide support for epub, kindle, movie, azw, doc rtf, txt | not started |
+| 2 |3d cover flow in Opal.   |   not started |
