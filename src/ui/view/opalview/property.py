@@ -673,9 +673,52 @@ class PropertyPhotoPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id=-1)
         self.Bind(wx.EVT_SIZE, self.OnSize, self)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         self.parent = parent
         self.bitmap = None
         self.currentBook = book
+        
+    def OnContextMenu(self, event):
+        print("OnContextMenu\n")
+
+        # only do this part the first time so the events are only bound once
+        #
+        # Yet another anternate way to do IDs. Some prefer them up top to
+        # avoid clutter, some prefer them close to the object of interest
+        # for clarity. 
+        if not hasattr(self, "popupID1"):
+            self.popupID1 = wx.NewId()
+            self.popupID2 = wx.NewId()
+        # make a menu
+        menu = wx.Menu()
+        # Show how to put an icon in the menu
+        item = wx.MenuItem(menu, self.popupID1,"Copy book cover")
+#         bmp = images.Smiles.GetBitmap()
+#         item.SetBitmap(bmp)
+        menu.AppendItem(item)
+        # add some other items
+        menu.Append(self.popupID2, "Download book cover")
+        
+        
+        self.Bind(wx.EVT_MENU, self.OnCopyToClipboard, id=self.popupID1)
+        # Popup the menu.  If an item is selected then its handler
+        # will be called before PopupMenu returns.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def OnCopyToClipboard(self,event):
+        print 'OnCopyToClipboard'
+
+        d = wx.BitmapDataObject(self.bitmap)
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(d)
+            wx.TheClipboard.Flush()
+            wx.TheClipboard.Close()
+            print("Image copied to cliboard.\n")
+        else:
+            print("Couldn't open clipboard!\n")  
+              
     def OnSize(self, event):
         self.changeBitmapWorker()
         print 'onsize'
@@ -937,7 +980,7 @@ class BookPropertyPanel(wx.Panel):
 
         self.pg.Append(wxpg.PropertyCategory("1 - Basic Properties"))
         
-        self.pg.Append(wxpg.IntProperty("id", value=book.id))
+        
         self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
@@ -955,20 +998,23 @@ class BookPropertyPanel(wx.Panel):
                                          [0, 1, 2],
                                          "Text Not in List"))
         
-        self.pg.Append(wxpg.DirProperty("File location", value=book.bookPath))
-        self.pg.Append(wxpg.StringProperty("File size", value=str(book.fileSize or '')))
+
         
-        self.pg.Append(wxpg.LongStringProperty("MultipleButtons"));
-        self.pg.SetPropertyEditor("MultipleButtons", "SampleMultiButtonEditor");
         
-        imgPath = os.path.join(book.bookPath, book.bookImgName)
-        self.pg.Append(wxpg.ImageFileProperty(label="Book image", value=imgPath))
         self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
         
         self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
         self.pg.Append(wxpg.StringProperty("Language", value=str(book.inLanguage or '')))
         
+        self.pg.Append( wxpg.PropertyCategory("2 - More Properties") )
+        self.pg.Append(wxpg.IntProperty("id", value=book.id))
+        self.pg.Append(wxpg.DirProperty("File location", value=book.bookPath))
+        self.pg.Append(wxpg.StringProperty("File size", value=str(book.fileSize or '')))
+        self.pg.Append(wxpg.LongStringProperty("MultipleButtons"));
+        self.pg.SetPropertyEditor("MultipleButtons", "SampleMultiButtonEditor");
         
+        imgPath = os.path.join(book.bookPath, book.bookImgName)
+        self.pg.Append(wxpg.ImageFileProperty(label="Book image", value=imgPath))
 #         self.pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
        
         
