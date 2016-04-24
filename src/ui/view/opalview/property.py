@@ -689,6 +689,8 @@ class PropertyPhotoPanel(wx.Panel):
         if not hasattr(self, "popupID1"):
             self.popupID1 = wx.NewId()
             self.popupID2 = wx.NewId()
+            self.popupID3 = wx.NewId()
+            self.popupID4 = wx.NewId()
         # make a menu
         menu = wx.Menu()
         # Show how to put an icon in the menu
@@ -698,15 +700,26 @@ class PropertyPhotoPanel(wx.Panel):
         menu.AppendItem(item)
         # add some other items
         menu.Append(self.popupID2, "Download book cover")
+        menu.Append(self.popupID3, "Generate book cover")
+        menu.Append(self.popupID4, "Open book")
         
         
         self.Bind(wx.EVT_MENU, self.OnCopyToClipboard, id=self.popupID1)
+        self.Bind(wx.EVT_MENU, self.downloadCover, id=self.popupID2)
+        self.Bind(wx.EVT_MENU, self.generateCover, id=self.popupID3)
+        self.Bind(wx.EVT_MENU, self.openBook, id=self.popupID4)
+        
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
-
-
+    def downloadCover(self,event):
+        print 'downloadCover'
+    def generateCover(self,event):
+        print 'generateCover'
+    def openBook(self,event):
+        print 'openBook'        
+        
     def OnCopyToClipboard(self,event):
         print 'OnCopyToClipboard'
 
