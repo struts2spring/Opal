@@ -790,10 +790,12 @@ class BookPropertyPanel(wx.Panel):
         topsizer = wx.BoxSizer(wx.VERTICAL)
         hBox = wx.BoxSizer(wx.HORIZONTAL)
         self.pg = self.createPropetyGrid(self.currentBook)
-
-        hBox.Add(self.pg, 1, wx.EXPAND, 2)
-        hBox.Add(self.rt, 1, wx.EXPAND, 1)
-        hBox.Add(self.photoPanel, 1, wx.EXPAND, 5)
+        
+        vBox= wx.BoxSizer(wx.VERTICAL)
+        vBox.Add(self.pg, 1, wx.EXPAND, 2)
+        vBox.Add(self.rt, 1, wx.EXPAND, 1)
+        hBox.Add(vBox, 3, wx.EXPAND, 5)
+        hBox.Add(self.photoPanel, 2, wx.EXPAND, 1)
         
         topsizer.Add(hBox, 3, wx.EXPAND)
         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -1265,7 +1267,7 @@ some custom property classes.
 
 class BookPropertyFrame(wx.Frame):
     def __init__(self, parent, book):
-        wx.Frame.__init__(self, parent, -1, title='Edit Book Metadata', size=(800, 600))
+        wx.Frame.__init__(self, parent, -1, title='Edit Book Metadata', size=(1100, 650))
         self.panel = BookPropertyPanel(self, book)
 #         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Show()
