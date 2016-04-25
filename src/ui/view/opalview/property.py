@@ -2,11 +2,13 @@
 import sys, time, math, os, os.path
 
 import wx
+import wx.richtext
 from src.logic.search_book import FindingBook
 import datetime
 from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 import threading
+from src.ui.view.opalview.RichTextCtrl import RichTextPanel
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -694,7 +696,7 @@ class PropertyPhotoPanel(wx.Panel):
         # make a menu
         menu = wx.Menu()
         # Show how to put an icon in the menu
-        item = wx.MenuItem(menu, self.popupID1,"Copy book cover")
+        item = wx.MenuItem(menu, self.popupID1, "Copy book cover")
 #         bmp = images.Smiles.GetBitmap()
 #         item.SetBitmap(bmp)
         menu.AppendItem(item)
@@ -713,14 +715,14 @@ class PropertyPhotoPanel(wx.Panel):
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
-    def downloadCover(self,event):
+    def downloadCover(self, event):
         print 'downloadCover'
-    def generateCover(self,event):
+    def generateCover(self, event):
         print 'generateCover'
-    def openBook(self,event):
+    def openBook(self, event):
         print 'openBook'        
         
-    def OnCopyToClipboard(self,event):
+    def OnCopyToClipboard(self, event):
         print 'OnCopyToClipboard'
 
         d = wx.BitmapDataObject(self.bitmap)
@@ -773,6 +775,8 @@ class BookPropertyPanel(wx.Panel):
         self.currentBook = book
         
         self.photoPanel = PropertyPhotoPanel(self, book=self.currentBook)
+#         self.rt = wx.richtext.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER)
+        self.rt=RichTextPanel(self)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         print '-------------->', self.GetParent().GetSize()
@@ -788,6 +792,7 @@ class BookPropertyPanel(wx.Panel):
         self.pg = self.createPropetyGrid(self.currentBook)
 
         hBox.Add(self.pg, 1, wx.EXPAND, 2)
+        hBox.Add(self.rt, 1, wx.EXPAND, 1)
         hBox.Add(self.photoPanel, 1, wx.EXPAND, 5)
         
         topsizer.Add(hBox, 3, wx.EXPAND)
@@ -850,7 +855,7 @@ class BookPropertyPanel(wx.Panel):
         if b:
             self.currentBook = b
             self.setValuesToPropetyGrid()
-            self.photoPanel.currentBook=b
+            self.photoPanel.currentBook = b
             self.photoPanel.changeBitmapWorker()
         
         
@@ -862,7 +867,7 @@ class BookPropertyPanel(wx.Panel):
         if b:
             self.currentBook = b
             self.setValuesToPropetyGrid()
-            self.photoPanel.currentBook=b
+            self.photoPanel.currentBook = b
             self.photoPanel.changeBitmapWorker()
         
     def onOk(self, event):
@@ -1019,7 +1024,7 @@ class BookPropertyPanel(wx.Panel):
         self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
         self.pg.Append(wxpg.StringProperty("Language", value=str(book.inLanguage or '')))
         
-        self.pg.Append( wxpg.PropertyCategory("2 - More Properties") )
+        self.pg.Append(wxpg.PropertyCategory("2 - More Properties"))
         self.pg.Append(wxpg.IntProperty("id", value=book.id))
         self.pg.Append(wxpg.DirProperty("File location", value=book.bookPath))
         self.pg.Append(wxpg.StringProperty("File size", value=str(book.fileSize or '')))
