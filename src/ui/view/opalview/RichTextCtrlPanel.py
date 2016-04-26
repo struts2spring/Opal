@@ -20,16 +20,16 @@ class Window(wx.App):
 #         panel.Layout()
        
 class RichTextPanel(wx.Panel):
-    def __init__(self,parent=None, *args, **kw):
-        wx.Panel.__init__(self,parent,id=-1)
+    def __init__(self, parent=None, *args, **kw):
+        wx.Panel.__init__(self, parent, id=-1)
         self.parent = parent
 
 #         self.MakeMenuBar()
-#         self.MakeToolBar()
+        self.tbar = self.MakeToolBar()
 #         self.CreateStatusBar()
 #         self.SetStatusText("Welcome to wx.richtext.RichTextCtrl!")
 
-        self.rtc = rt.RichTextCtrl(self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER);
+        self.rtc = rt.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER);
         wx.CallAfter(self.rtc.SetFocus)
 
         self.rtc.Freeze()
@@ -250,15 +250,16 @@ class RichTextPanel(wx.Panel):
         self.rtc.Thaw()
         
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.rtc, 1, wx.EXPAND | wx.ALL, 1)
+        sizer.Add(self.tbar, 1, wx.EXPAND | wx.ALL, 1)
+        sizer.Add(self.rtc, 9, wx.EXPAND | wx.ALL, 1)
 #         sizer.Add(save_button, 1, wx.EXPAND | wx.ALL, 1)
  
         self.SetSizer(sizer)
 #         self.Show()
         
 
-    def SetFontStyle(self, fontColor = None, fontBgColor = None, fontFace = None, fontSize = None,
-                     fontBold = None, fontItalic = None, fontUnderline = None):
+    def SetFontStyle(self, fontColor=None, fontBgColor=None, fontFace=None, fontSize=None,
+                     fontBold=None, fontItalic=None, fontUnderline=None):
       if fontColor:
          self.textAttr.SetTextColour(fontColor)
       if fontBgColor:
@@ -333,7 +334,7 @@ class RichTextPanel(wx.Panel):
         # resulting html text in a dialog with a HtmlWindow.
         handler = rt.RichTextHTMLHandler()
         handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
-        handler.SetFontSizeMapping([7,9,11,12,14,22,100])
+        handler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
 
         import cStringIO
         stream = cStringIO.StringIO()
@@ -341,13 +342,13 @@ class RichTextPanel(wx.Panel):
             return
 
         import wx.html
-        dlg = wx.Dialog(self, title="HTML", style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
-        html = wx.html.HtmlWindow(dlg, size=(500,400), style=wx.BORDER_SUNKEN)
+        dlg = wx.Dialog(self, title="HTML", style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        html = wx.html.HtmlWindow(dlg, size=(500, 400), style=wx.BORDER_SUNKEN)
         html.SetPage(stream.getvalue())
         btn = wx.Button(dlg, wx.ID_CANCEL)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(html, 1, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(btn, 0, wx.ALL|wx.CENTER, 10)
+        sizer.Add(html, 1, wx.ALL | wx.EXPAND, 5)
+        sizer.Add(btn, 0, wx.ALL | wx.CENTER, 10)
         dlg.SetSizer(sizer)
         sizer.Fit(dlg)
 
@@ -558,67 +559,67 @@ class RichTextPanel(wx.Panel):
                 self.Bind(wx.EVT_UPDATE_UI, updateUI, item)
             
         fileMenu = wx.Menu()
-        doBind( fileMenu.Append(-1, "&Open\tCtrl+O", "Open a file"),
-                self.OnFileOpen )
-        doBind( fileMenu.Append(-1, "&Save\tCtrl+S", "Save a file"),
-                self.OnFileSave )
-        doBind( fileMenu.Append(-1, "&Save As...\tF12", "Save to a new file"),
-                self.OnFileSaveAs )
+        doBind(fileMenu.Append(-1, "&Open\tCtrl+O", "Open a file"),
+                self.OnFileOpen)
+        doBind(fileMenu.Append(-1, "&Save\tCtrl+S", "Save a file"),
+                self.OnFileSave)
+        doBind(fileMenu.Append(-1, "&Save As...\tF12", "Save to a new file"),
+                self.OnFileSaveAs)
         fileMenu.AppendSeparator()
-        doBind( fileMenu.Append(-1, "&View as HTML", "View HTML"),
+        doBind(fileMenu.Append(-1, "&View as HTML", "View HTML"),
                 self.OnFileViewHTML)
         fileMenu.AppendSeparator()
-        doBind( fileMenu.Append(-1, "E&xit\tCtrl+Q", "Quit this program"),
-                self.OnFileExit )
+        doBind(fileMenu.Append(-1, "E&xit\tCtrl+Q", "Quit this program"),
+                self.OnFileExit)
         
         editMenu = wx.Menu()
-        doBind( editMenu.Append(wx.ID_UNDO, "&Undo\tCtrl+Z"),
+        doBind(editMenu.Append(wx.ID_UNDO, "&Undo\tCtrl+Z"),
                 self.ForwardEvent, self.ForwardEvent)
-        doBind( editMenu.Append(wx.ID_REDO, "&Redo\tCtrl+Y"),
-                self.ForwardEvent, self.ForwardEvent )
-        editMenu.AppendSeparator()
-        doBind( editMenu.Append(wx.ID_CUT, "Cu&t\tCtrl+X"),
-                self.ForwardEvent, self.ForwardEvent )
-        doBind( editMenu.Append(wx.ID_COPY, "&Copy\tCtrl+C"),
-                self.ForwardEvent, self.ForwardEvent)
-        doBind( editMenu.Append(wx.ID_PASTE, "&Paste\tCtrl+V"),
-                self.ForwardEvent, self.ForwardEvent)
-        doBind( editMenu.Append(wx.ID_CLEAR, "&Delete\tDel"),
+        doBind(editMenu.Append(wx.ID_REDO, "&Redo\tCtrl+Y"),
                 self.ForwardEvent, self.ForwardEvent)
         editMenu.AppendSeparator()
-        doBind( editMenu.Append(wx.ID_SELECTALL, "Select A&ll\tCtrl+A"),
-                self.ForwardEvent, self.ForwardEvent )
+        doBind(editMenu.Append(wx.ID_CUT, "Cu&t\tCtrl+X"),
+                self.ForwardEvent, self.ForwardEvent)
+        doBind(editMenu.Append(wx.ID_COPY, "&Copy\tCtrl+C"),
+                self.ForwardEvent, self.ForwardEvent)
+        doBind(editMenu.Append(wx.ID_PASTE, "&Paste\tCtrl+V"),
+                self.ForwardEvent, self.ForwardEvent)
+        doBind(editMenu.Append(wx.ID_CLEAR, "&Delete\tDel"),
+                self.ForwardEvent, self.ForwardEvent)
+        editMenu.AppendSeparator()
+        doBind(editMenu.Append(wx.ID_SELECTALL, "Select A&ll\tCtrl+A"),
+                self.ForwardEvent, self.ForwardEvent)
         
-        #doBind( editMenu.AppendSeparator(),  )
-        #doBind( editMenu.Append(-1, "&Find...\tCtrl+F"),  )
-        #doBind( editMenu.Append(-1, "&Replace...\tCtrl+R"),  )
+        # doBind( editMenu.AppendSeparator(),  )
+        # doBind( editMenu.Append(-1, "&Find...\tCtrl+F"),  )
+        # doBind( editMenu.Append(-1, "&Replace...\tCtrl+R"),  )
 
         formatMenu = wx.Menu()
-        doBind( formatMenu.AppendCheckItem(-1, "&Bold\tCtrl+B"),
+        doBind(formatMenu.AppendCheckItem(-1, "&Bold\tCtrl+B"),
                 self.OnBold, self.OnUpdateBold)
-        doBind( formatMenu.AppendCheckItem(-1, "&Italic\tCtrl+I"),
+        doBind(formatMenu.AppendCheckItem(-1, "&Italic\tCtrl+I"),
                 self.OnItalic, self.OnUpdateItalic)
-        doBind( formatMenu.AppendCheckItem(-1, "&Underline\tCtrl+U"),
+        doBind(formatMenu.AppendCheckItem(-1, "&Underline\tCtrl+U"),
                 self.OnUnderline, self.OnUpdateUnderline)
         formatMenu.AppendSeparator()
-        doBind( formatMenu.AppendCheckItem(-1, "L&eft Align"),
+        doBind(formatMenu.AppendCheckItem(-1, "L&eft Align"),
                 self.OnAlignLeft, self.OnUpdateAlignLeft)
-        doBind( formatMenu.AppendCheckItem(-1, "&Centre"),
+        doBind(formatMenu.AppendCheckItem(-1, "&Centre"),
                 self.OnAlignCenter, self.OnUpdateAlignCenter)
-        doBind( formatMenu.AppendCheckItem(-1, "&Right Align"),
+        doBind(formatMenu.AppendCheckItem(-1, "&Right Align"),
                 self.OnAlignRight, self.OnUpdateAlignRight)
         formatMenu.AppendSeparator()
-        doBind( formatMenu.Append(-1, "Indent &More"), self.OnIndentMore)
-        doBind( formatMenu.Append(-1, "Indent &Less"), self.OnIndentLess)
+        doBind(formatMenu.Append(-1, "Indent &More"), self.OnIndentMore)
+        doBind(formatMenu.Append(-1, "Indent &Less"), self.OnIndentLess)
         formatMenu.AppendSeparator()
-        doBind( formatMenu.Append(-1, "Increase Paragraph &Spacing"), self.OnParagraphSpacingMore)
-        doBind( formatMenu.Append(-1, "Decrease &Paragraph Spacing"), self.OnParagraphSpacingLess)
+        doBind(formatMenu.Append(-1, "Increase Paragraph &Spacing"), self.OnParagraphSpacingMore)
+        doBind(formatMenu.Append(-1, "Decrease &Paragraph Spacing"), self.OnParagraphSpacingLess)
         formatMenu.AppendSeparator()
-        doBind( formatMenu.Append(-1, "Normal Line Spacing"), self.OnLineSpacingSingle)
-        doBind( formatMenu.Append(-1, "1.5 Line Spacing"), self.OnLineSpacingHalf)
-        doBind( formatMenu.Append(-1, "Double Line Spacing"), self.OnLineSpacingDouble)
+        doBind(formatMenu.Append(-1, "Normal Line Spacing"), self.OnLineSpacingSingle)
+        doBind(formatMenu.Append(-1, "1.5 Line Spacing"), self.OnLineSpacingHalf)
+        doBind(formatMenu.Append(-1, "Double Line Spacing"), self.OnLineSpacingDouble)
         formatMenu.AppendSeparator()
-        doBind( formatMenu.Append(-1, "&Font..."), self.OnFont)
+        doBind(formatMenu.Append(-1, "&Font..."), self.OnFont)
         
         mb = wx.MenuBar()
         mb.Append(fileMenu, "&File")
@@ -633,49 +634,33 @@ class RichTextPanel(wx.Panel):
             if updateUI is not None:
                 self.Bind(wx.EVT_UPDATE_UI, updateUI, item)
         
-        tbar = self.CreateToolBar()
-        doBind( tbar.AddTool(-1, images._rt_open.GetBitmap(),
-                            shortHelpString="Open"), self.OnFileOpen)
-        doBind( tbar.AddTool(-1, images._rt_save.GetBitmap(),
-                            shortHelpString="Save"), self.OnFileSave)
+        tbar = wx.ToolBar(self, style=wx.TB_FLAT)
+        doBind(tbar.AddTool(-1, images._rt_open.GetBitmap(), shortHelpString="Open"), self.OnFileOpen)
+        doBind(tbar.AddTool(-1, images._rt_save.GetBitmap(), shortHelpString="Save"), self.OnFileSave)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(wx.ID_CUT, images._rt_cut.GetBitmap(),
-                            shortHelpString="Cut"), self.ForwardEvent, self.ForwardEvent)
-        doBind( tbar.AddTool(wx.ID_COPY, images._rt_copy.GetBitmap(),
-                            shortHelpString="Copy"), self.ForwardEvent, self.ForwardEvent)
-        doBind( tbar.AddTool(wx.ID_PASTE, images._rt_paste.GetBitmap(),
-                            shortHelpString="Paste"), self.ForwardEvent, self.ForwardEvent)
+        doBind(tbar.AddTool(wx.ID_CUT, images._rt_cut.GetBitmap(), shortHelpString="Cut"), self.ForwardEvent, self.ForwardEvent)
+        doBind(tbar.AddTool(wx.ID_COPY, images._rt_copy.GetBitmap(), shortHelpString="Copy"), self.ForwardEvent, self.ForwardEvent)
+        doBind(tbar.AddTool(wx.ID_PASTE, images._rt_paste.GetBitmap(), shortHelpString="Paste"), self.ForwardEvent, self.ForwardEvent)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(wx.ID_UNDO, images._rt_undo.GetBitmap(),
-                            shortHelpString="Undo"), self.ForwardEvent, self.ForwardEvent)
-        doBind( tbar.AddTool(wx.ID_REDO, images._rt_redo.GetBitmap(),
-                            shortHelpString="Redo"), self.ForwardEvent, self.ForwardEvent)
+        doBind(tbar.AddTool(wx.ID_UNDO, images._rt_undo.GetBitmap(), shortHelpString="Undo"), self.ForwardEvent, self.ForwardEvent)
+        doBind(tbar.AddTool(wx.ID_REDO, images._rt_redo.GetBitmap(), shortHelpString="Redo"), self.ForwardEvent, self.ForwardEvent)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(-1, images._rt_bold.GetBitmap(), isToggle=True,
-                            shortHelpString="Bold"), self.OnBold, self.OnUpdateBold)
-        doBind( tbar.AddTool(-1, images._rt_italic.GetBitmap(), isToggle=True,
-                            shortHelpString="Italic"), self.OnItalic, self.OnUpdateItalic)
-        doBind( tbar.AddTool(-1, images._rt_underline.GetBitmap(), isToggle=True,
-                            shortHelpString="Underline"), self.OnUnderline, self.OnUpdateUnderline)
+        doBind(tbar.AddTool(-1, images._rt_bold.GetBitmap(), isToggle=True, shortHelpString="Bold"), self.OnBold, self.OnUpdateBold)
+        doBind(tbar.AddTool(-1, images._rt_italic.GetBitmap(), isToggle=True, shortHelpString="Italic"), self.OnItalic, self.OnUpdateItalic)
+        doBind(tbar.AddTool(-1, images._rt_underline.GetBitmap(), isToggle=True, shortHelpString="Underline"), self.OnUnderline, self.OnUpdateUnderline)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(-1, images._rt_alignleft.GetBitmap(), isToggle=True,
-                            shortHelpString="Align Left"), self.OnAlignLeft, self.OnUpdateAlignLeft)
-        doBind( tbar.AddTool(-1, images._rt_centre.GetBitmap(), isToggle=True,
-                            shortHelpString="Center"), self.OnAlignCenter, self.OnUpdateAlignCenter)
-        doBind( tbar.AddTool(-1, images._rt_alignright.GetBitmap(), isToggle=True,
-                            shortHelpString="Align Right"), self.OnAlignRight, self.OnUpdateAlignRight)
+        doBind(tbar.AddTool(-1, images._rt_alignleft.GetBitmap(), isToggle=True, shortHelpString="Align Left"), self.OnAlignLeft, self.OnUpdateAlignLeft)
+        doBind(tbar.AddTool(-1, images._rt_centre.GetBitmap(), isToggle=True, shortHelpString="Center"), self.OnAlignCenter, self.OnUpdateAlignCenter)
+        doBind(tbar.AddTool(-1, images._rt_alignright.GetBitmap(), isToggle=True, shortHelpString="Align Right"), self.OnAlignRight, self.OnUpdateAlignRight)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(-1, images._rt_indentless.GetBitmap(),
-                            shortHelpString="Indent Less"), self.OnIndentLess)
-        doBind( tbar.AddTool(-1, images._rt_indentmore.GetBitmap(),
-                            shortHelpString="Indent More"), self.OnIndentMore)
+        doBind(tbar.AddTool(-1, images._rt_indentless.GetBitmap(), shortHelpString="Indent Less"), self.OnIndentLess)
+        doBind(tbar.AddTool(-1, images._rt_indentmore.GetBitmap(), shortHelpString="Indent More"), self.OnIndentMore)
         tbar.AddSeparator()
-        doBind( tbar.AddTool(-1, images._rt_font.GetBitmap(),
-                            shortHelpString="Font"), self.OnFont)
-        doBind( tbar.AddTool(-1, images._rt_colour.GetBitmap(),
-                            shortHelpString="Font Colour"), self.OnColour)
+        doBind(tbar.AddTool(-1, images._rt_font.GetBitmap(), shortHelpString="Font"), self.OnFont)
+        doBind(tbar.AddTool(-1, images._rt_colour.GetBitmap(), shortHelpString="Font Colour"), self.OnColour)
 
         tbar.Realize()
+        return tbar
 
        
 
@@ -686,7 +671,7 @@ class TestPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent, -1)
 
-        b = wx.Button(self, -1, "Show the RichTextCtrl sample", (50,50))
+        b = wx.Button(self, -1, "Show the RichTextCtrl sample", (50, 50))
         self.Bind(wx.EVT_BUTTON, self.OnButton, b)
 
         self.AddRTCHandlers()

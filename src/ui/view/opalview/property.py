@@ -8,7 +8,7 @@ import datetime
 from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 import threading
-from src.ui.view.opalview.RichTextCtrl import RichTextPanel
+from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg

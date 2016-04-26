@@ -44,6 +44,6 @@ following are the items that have to be worked.
 |----------|:-------------|------:|
 |1|Provide support for epub, kindle, movie, azw, doc rtf, txt |Not started|
 |2|3d cover flow in Opal.|Not started |
-|3|Compare book metadata|Not started|
+|3|Compare book metadata,This page will compare book info side by side.|Not started|
 |4|Grid alternate color.|Not started|
 |5|add multiple books|Not started|
