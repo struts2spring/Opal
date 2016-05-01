@@ -16,9 +16,13 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'wxPython >=2.9.1.1',
-        'SQLAlchemy >= 1.0.11',
-        'selenium',
+        'wxPython ==3.0.2.0',
+        'SQLAlchemy == 1.0.12',
+        'selenium >= selenium-2.53.2',
+	'Kivy==1.9.0',
+	'Pillow==2.6.1',
+	'yattag==1.5.3',
+	'beautifulsoup4==4.4.1',
         'PyPDF2'
     ],
     classifiers=[

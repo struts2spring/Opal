@@ -9,6 +9,7 @@ from wx.lib.embeddedimage import PyEmbeddedImage
 import os
 import sys
 import subprocess
+import traceback
 
 #---------------------------------------------------------------------------
 
@@ -52,7 +53,8 @@ class MegaTable(Grid.PyGridTableBase):
         try:
             value = str(self.data[row][1].get(self.GetColLabelValue(col), ""))
         except:
-            print '------------------------------------------------>',self.data[row][1]
+            traceback.print_exc()
+#             print '------------------------------------------------>',self.data[row][1]
         if 'authors' == self.GetColLabelValue(col):
             authorsName=list()
             for a in self.data[row][1].get(self.GetColLabelValue(col), ""):
@@ -313,7 +315,7 @@ class MegaFontRenderer(Grid.PyGridCellRenderer):
 
         dc.SetTextForeground(self.color)
         dc.SetFont(self.font)
-        print '-----1----1------1--->',text
+#         print '-----1----1------1--->',text
         dc.DrawText(text, rect.x + 1, rect.y + 1)
 
         # Okay, now for the advanced class :)

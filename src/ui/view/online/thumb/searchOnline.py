@@ -1,6 +1,6 @@
 
 import wx
-from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
+from src.ui.view.online.thumb.OnlineThumbCrtl import NativeImageHandler, ThumbnailCtrl
 import os
 import requests
 import book
@@ -24,8 +24,14 @@ class SearchBookPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         
+        
         print 'SearchBookPanel'
-        os.chdir(os.path.join(os.path.dirname(__file__), '..', 'opalview', "images"))
+        '''
+        This stores previous search result.
+        '''
+        self.searchCache = dict()
+        
+        os.chdir(os.path.join(os.path.dirname(__file__),'..', '..', 'opalview', "images"))
 
         image = wx.Image('pdf.png', wx.BITMAP_TYPE_ANY)
         img = image.Scale(18, 18)
@@ -110,9 +116,13 @@ class SearchBookPanel(wx.Panel):
     def doSearch(self, searchText=None):
         downloadMetadataInfo = DownloadMetadataInfo()
 #         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
-        downloadMetadataInfo.doAmazonBookSerach(searchText)
-        listOfBooks = downloadMetadataInfo.listOfBook
-        
+        if self.searchCache.has_key(searchText):
+            listOfBooks = self.searchCache[searchText]
+            print listOfBooks
+        else:
+            downloadMetadataInfo.doAmazonBookSerach(searchText)
+            listOfBooks = downloadMetadataInfo.listOfBook
+        self.searchCache[searchText] = listOfBooks
         return listOfBooks
         
 #     def doAmazonBookSerach(self):

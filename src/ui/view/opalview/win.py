@@ -7,7 +7,7 @@ Created on 05-Dec-2015
 __version__ = "1.0"
 
 
-from PIL import Image
+# from PIL import Image
 import cStringIO
 import os
 import sys
@@ -19,6 +19,13 @@ import wx.html
 from wx.wizard import WizardPageSimple, Wizard
 from wx.lib.filebrowsebutton import DirBrowseButton
 from src.ui.view.opalview.property import BookPropertyFrame
+import subprocess
+import thread
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from src.ui.view.kivy.x import MyApp
 try:
     from src.dao.BookDao import CreateDatabase
 except:
@@ -34,7 +41,7 @@ from src.ui.view.opalview.MyGrid import MegaGrid
 from src.ui.view.opalview.SearchPanel import SearchPanel
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
-from src.ui.view.thumb.searchOnline import SearchFrame
+from src.ui.view.online.thumb.searchOnline import SearchFrame
 
 
 
@@ -56,6 +63,7 @@ ID_deleteBook = wx.NewId()
 ID_reLoadDatabase = wx.NewId()
 ID_search = wx.NewId()
 ID_editMetadata = wx.NewId()
+ID_cover_flow = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
 # Define File Drop Target class
@@ -142,6 +150,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
         self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
+        self.Bind(wx.EVT_MENU, self.OnCoverFlow, id=ID_cover_flow)
+        
 
         self.Bind(wx.EVT_MENU, self.onOtherWorkspace, id=ID_otherWorkspace)
         self.Bind(wx.EVT_MENU, self.onAddBookToWorkspace, id=ID_addBook)
@@ -164,7 +174,7 @@ class MainFrame(wx.Frame):
 
         # create some toolbars
         self.SetMenuBar(mb)
-        tb1 = wx.ToolBar(self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TB_FLAT | wx.TB_NODIVIDER| wx.TB_TEXT )
+        tb1 = wx.ToolBar(self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TB_FLAT | wx.TB_NODIVIDER | wx.TB_TEXT)
         tb1.SetToolBitmapSize(wx.Size(24, 24))
         tb1.AddLabelTool(id=ID_otherWorkspace, label="Workspace Home", shortHelp="Home" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_GO_HOME))
         tb1.AddSeparator()
@@ -174,6 +184,7 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
         tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
         tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
+        tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
         tb1.Realize()
 
         # add the toolbars to the manager
@@ -268,7 +279,31 @@ class MainFrame(wx.Frame):
     def OnRestView(self, event):
         print 'OnResetView'
         self._mgr.LoadPerspective(self.perspective_default)
-
+        
+    def OnCoverFlow(self, event):
+        print 'OnCoverFlow'
+        try:
+            thread.start_new_thread( self.startShell, (1, ) )
+#             MyApp().run()
+        except:
+            print "Error: unable to start thread"
+#         exit_code = call("python3 2.py", shell=True)
+#         exit_code = subprocess.call("python3 2.py", shell=False)
+#         cmd = "python3 2.py"
+#         p = subprocess.Popen(cmd, shell=False, bufsize=1024, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+#         pid = os.popen(cmd)
+#         print pid
+#         print exit_code
+#         MyApp().run()
+#         self._mgr.LoadPerspective(self.perspective_default)
+    def startShell(self, a):
+        MyApp().run()
+#         from subprocess import call
+#         os.chdir('/docs/github/Opal/src/ui/view/kivy')
+#         print '-----1----1------','---> ',os.getcwd()
+#         cmd ='bsh /docs/github/Opal/src/ui/view/kivy/shell.sh'
+#         subprocess.call(['./shell.sh']) 
+        
     def searchCtrl(self):
         self.searchCtrlPanel = SearchPanel(self)
 #         self.searchCtrl.SetToolTip(wx.ToolTip('Search'))
@@ -352,7 +387,7 @@ class MainFrame(wx.Frame):
 #             self.LoadingBooks()
             self.books = FindingBook().findAllBooks()
 #             self.books=FindingBook().findAllBooks()
-            colnames = ['id', 'bookName', 'bookFormat', 'authors', 'bookPath','isbn_13', 'isbn_10',  'inLanguage', 'series','rating', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize',  'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
+            colnames = ['id', 'bookName', 'bookFormat', 'authors', 'bookPath', 'isbn_13', 'isbn_10', 'inLanguage', 'series', 'rating', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
             data = []
             noOfBooks = len(self.books)
             bookId_rowNo_dict = {}
@@ -377,12 +412,12 @@ class MainFrame(wx.Frame):
         '''
         this method has been used for constructing grid data.
         '''
-        dicForBook=book.__dict__
-        authorsName=list()
+        dicForBook = book.__dict__
+        authorsName = list()
         for author in book.authors:
 #             print author.__dict__
             authorsName.append(author.authorName)
-        dicForBook['authorName']=(" \n").join(authorsName)
+        dicForBook['authorName'] = (" \n").join(authorsName)
         
         return dicForBook
         

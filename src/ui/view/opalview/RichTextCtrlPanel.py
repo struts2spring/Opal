@@ -2,7 +2,10 @@
 import wx
 import wx.richtext as rt
 import images
-
+import os
+from StringIO import StringIO
+# import lxml
+# import lxml.html
 #----------------------------------------------------------------------
 class Window(wx.App):
     def __init__(self):
@@ -18,7 +21,19 @@ class Window(wx.App):
 #         panel.SetSizer(self.vbox1)
 #         panel.SetSizer(sizer)
 #         panel.Layout()
-       
+
+
+html_content = '''
+<html>
+    <head></head>
+    <body>
+        <font face="Ubuntu" size="3" color="#4C4C4C">
+            <p align="center"><font face="Ubuntu" size="3" color="#4C4C4C"><b>asfd </b><b><i>asdf  s</i></b><b><i><u>tream.getvalue()</u></i></b></font></p>
+        </font>
+    </body>
+</html>
+
+'''       
 class RichTextPanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
         wx.Panel.__init__(self, parent, id=-1)
@@ -29,15 +44,15 @@ class RichTextPanel(wx.Panel):
 #         self.CreateStatusBar()
 #         self.SetStatusText("Welcome to wx.richtext.RichTextCtrl!")
 
-        self.rtc = rt.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER);
+        self.rtc = rt.RichTextCtrl(self, -1, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER);
+#         handler = rt.RichTextHTMLHandler()
         wx.CallAfter(self.rtc.SetFocus)
 
-        self.rtc.Freeze()
-        self.rtc.BeginSuppressUndo()
-
-        
-        self.rtc.EndSuppressUndo()
-        self.rtc.Thaw()
+#         self.rtc.Freeze()
+#         self.rtc.BeginSuppressUndo()
+# 
+#         self.rtc.EndSuppressUndo()
+#         self.rtc.Thaw()
         
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.tbar, 1, wx.EXPAND | wx.ALL, 1)
@@ -45,35 +60,78 @@ class RichTextPanel(wx.Panel):
 #         sizer.Add(save_button, 1, wx.EXPAND | wx.ALL, 1)
  
         self.SetSizer(sizer)
+        self.loadFile()
 #         self.Show()
+    
+    def loadFile(self):
+        path=os.path.join('/docs/github/Opal/src/ui/view/opalview','bookInfo.html')
+
+
+
+        out = StringIO()
+        htmlhandler = rt.RichTextHTMLHandler()
+        buffer = self.rtc.GetBuffer()
+#         htmlhandler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
+        htmlhandler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
+        print 'canload:', htmlhandler.CanLoad()
+        print 'cansave:', htmlhandler.CanSave()
+        print 'CanHandle', htmlhandler.CanHandle('bookInfo.html')
+        rt.RichTextBuffer.AddHandler(htmlhandler)
+#         buffer.AddHandler(htmlhandler)
+        out.write(html_content)
+        out.seek(0)
+#         htmlhandler.LoadStream(buffer, out)
+#         htmlhandler.LoadFile(path,'text')
+        self.rtc.AppendText(html_content)
+#         htmlhandler.LoadStream(buffer, out.getvalue())
+        self.rtc.Refresh()
+#         buffer = self.rtc.GetBuffer()
+        # you have to specify the type of data to load and the control
+        # must already have an instance of the handler to parse it
+#         buffer.LoadStream(stream, rt.RICHTEXT_TYPE_HTML)
         
+#         self.rtc.Refresh()
+#         self.rtc.LoadFile(path,  type=1)
+            
+    def OnFileSave(self, evt):
+        self.loadFile()
+#         handler = rt.RichTextHTMLHandler()
+#         handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
+#         handler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
+# 
+#         import cStringIO
+#         stream = cStringIO.StringIO()
+#         if not handler.SaveStream(self.rtc.GetBuffer(), stream):
+#             return
+#         html_content = stream.getvalue()
+#         print html_content
 
     def SetFontStyle(self, fontColor=None, fontBgColor=None, fontFace=None, fontSize=None,
                      fontBold=None, fontItalic=None, fontUnderline=None):
-      if fontColor:
-         self.textAttr.SetTextColour(fontColor)
-      if fontBgColor:
-         self.textAttr.SetBackgroundColour(fontBgColor)
-      if fontFace:
-         self.textAttr.SetFontFaceName(fontFace)
-      if fontSize:
-         self.textAttr.SetFontSize(fontSize)
-      if fontBold != None:
-         if fontBold:
-            self.textAttr.SetFontWeight(wx.FONTWEIGHT_BOLD)
-         else:
-            self.textAttr.SetFontWeight(wx.FONTWEIGHT_NORMAL)
-      if fontItalic != None:
-         if fontItalic:
-            self.textAttr.SetFontStyle(wx.FONTSTYLE_ITALIC)
-         else:
-            self.textAttr.SetFontStyle(wx.FONTSTYLE_NORMAL)
-      if fontUnderline != None:
-         if fontUnderline:
-            self.textAttr.SetFontUnderlined(True)
-         else:
-            self.textAttr.SetFontUnderlined(False)
-      self.rtc.SetDefaultStyle(self.textAttr)
+        if fontColor:
+            self.textAttr.SetTextColour(fontColor)
+        if fontBgColor:
+            self.textAttr.SetBackgroundColour(fontBgColor)
+        if fontFace:
+            self.textAttr.SetFontFaceName(fontFace)
+        if fontSize:
+            self.textAttr.SetFontSize(fontSize)
+        if fontBold != None:
+            if fontBold:
+                self.textAttr.SetFontWeight(wx.FONTWEIGHT_BOLD)
+            else:
+                self.textAttr.SetFontWeight(wx.FONTWEIGHT_NORMAL)
+        if fontItalic != None:
+            if fontItalic:
+                self.textAttr.SetFontStyle(wx.FONTSTYLE_ITALIC)
+            else:
+                self.textAttr.SetFontStyle(wx.FONTSTYLE_NORMAL)
+        if fontUnderline != None:
+            if fontUnderline:
+                self.textAttr.SetFontUnderlined(True)
+            else:
+                self.textAttr.SetFontUnderlined(False)
+        self.rtc.SetDefaultStyle(self.textAttr)
 
     def OnURL(self, evt):
         wx.MessageBox(evt.GetString(), "URL Clicked")
@@ -94,11 +152,11 @@ class RichTextPanel(wx.Panel):
         dlg.Destroy()
 
         
-    def OnFileSave(self, evt):
-        if not self.rtc.GetFilename():
-            self.OnFileSaveAs(evt)
-            return
-        self.rtc.SaveFile()
+# 
+#         if not self.rtc.GetFilename():
+#             self.OnFileSaveAs(evt)
+#             return
+#         self.rtc.SaveFile()
 
         
     def OnFileSaveAs(self, evt):

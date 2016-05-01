@@ -2256,14 +2256,18 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print 'updating info'
         menu = wx.Menu()
         # checking if it is not an internte searched book.
-        if not type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
-            page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+        if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
+            try:
+                page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+            except:
+                traceback.print_exc()
             self.popupID1 = wx.NewId()
             self.popupID2 = wx.NewId()
             self.popupID3 = wx.NewId()
             self.popupID4 = wx.NewId()
             self.popupID5 = wx.NewId()
             self.popupID6 = wx.NewId()
+            self.popupID7 = wx.NewId()
     
             self.Bind(wx.EVT_MENU, self.OnDownloadMetadata, id=self.popupID1)
             self.Bind(wx.EVT_MENU, self.OnOpenFolderPath, id=self.popupID2)
@@ -2271,6 +2275,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Bind(wx.EVT_MENU, self.showBookProperties, id=self.popupID4)
             self.Bind(wx.EVT_MENU, self.OpenBook, id=self.popupID5)
             self.Bind(wx.EVT_MENU, self.deleteBook, id=self.popupID6)
+            self.Bind(wx.EVT_MENU, self.onCopy, id=self.popupID7)
         
             # Show how to put an icon in the menu
             item = wx.MenuItem(menu, self.popupID1, "Download metadata and cover.")
@@ -2296,7 +2301,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             item = wx.MenuItem(menu, self.popupID6, "Delete Book")
             item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU, (16, 16)))
             menu.AppendItem(item)
-        elif type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
+        elif type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
             self.addToLibrary = wx.NewId()
             self.downloadToLibrary = wx.NewId()
             
@@ -2329,6 +2334,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def OnDownloadMetadata(self, event):
         print ("OnDownloadMetadata\n")
 
+    def onCopy(self,event):
+        print 'copy'
     def deleteBook(self, event):
         print ("On deleteBook Path \n")
         deleteBooks=[]
@@ -2453,15 +2460,18 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             print 'printing all selected',self._selectedarray
             if len(self._selectedarray)==1:
                 # checking if it is not an internte searched book.
-                if not type(self._items[self._selected].book).__module__ == 'src.ui.view.thumb.book':
+                if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
                     name=self._items[self._selected].book.bookName
                     id=self._items[self._selected].book.id
                     print 'updating info'
-                    page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                    if sys.platform=='win32':
-                        self.GetTopLevelParent().browser.SetPage(page,"")
-                    else:
-                        self.GetTopLevelParent().browser.SetPage(page)
+                    try:
+                        page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+                        if sys.platform=='win32':
+                            self.GetTopLevelParent().browser.SetPage(page,"")
+                        else:
+                            self.GetTopLevelParent().browser.SetPage(page)
+                    except:
+                        traceback.print_exc()
                     print 'selecting grid'
                     row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
                     self.GetTopLevelParent().grid.SelectRow(row=row)

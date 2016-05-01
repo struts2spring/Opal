@@ -27,7 +27,7 @@ class MyFrame(wx.Frame):
                             wx.NO_BORDER | wx.TE_MULTILINE)
 
         # add the panes to the manager
-        self._mgr.AddPane(text1, aui.AuiPaneInfo().Left().Caption("Pane Number One").MaximizeButton(True).Dockable(True).)
+        self._mgr.AddPane(text1, aui.AuiPaneInfo().Left().Caption("Pane Number One").MaximizeButton(True).Dockable(True))
         self._mgr.AddPane(text2, aui.AuiPaneInfo().Bottom().Caption("Pane Number Two"))
         self._mgr.AddPane(text3, aui.AuiPaneInfo().CenterPane())
 
