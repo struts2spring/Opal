@@ -5,10 +5,10 @@ import os
 class Missing():
     def __init__(self):
         self.missingListing=list()
-        self.directory_name = Workspace().path
+        self.directory_name = Workspace().libraryPath
     
     def missingNumbers(self):
-        directory_name = Workspace().path
+        directory_name = Workspace().libraryPath
         os.chdir(directory_name)
         listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
         if listOfDir:

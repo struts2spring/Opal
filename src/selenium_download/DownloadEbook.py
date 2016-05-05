@@ -88,7 +88,7 @@ class DownloadItEbook(threading.Thread):
         
         self.args = args
         self.kwargs = kwargs
-        self.directory_name = Workspace().path
+        self.directory_name = Workspace().libraryPath
         self.createDatabase = CreateDatabase()   
         pass
 
@@ -356,7 +356,7 @@ class DownloadItEbook(threading.Thread):
                 subUrl = book.bookImgName
                 imageFileName = subUrl.split('/')[-1:][0]
                 book.bookImgName=imageFileName
-                bookPath=os.path.join(Workspace().path,number)
+                bookPath=os.path.join(Workspace().libraryPath,number)
                 self.writeJsonToDir(bookPath, book)
             except:
                 traceback.print_exc()

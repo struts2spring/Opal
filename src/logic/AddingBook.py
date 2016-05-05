@@ -52,7 +52,7 @@ class AddBook():
             maxBookId = self.createDatabase.getMaxBookID()
             if maxBookId == None:
                 maxBookId = 0
-            workspacePath = Workspace().path
+            workspacePath = Workspace().libraryPath
             self.book.bookPath = os.path.join(workspacePath, str(maxBookId + 1))
 
             head, tail = os.path.split(sourcePath)

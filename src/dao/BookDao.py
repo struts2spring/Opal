@@ -25,9 +25,9 @@ from src.static.SessionUtil import SingletonSession
 #  def getSession(self):
 print '3--->', os.getcwd(), os.name, sys.platform
 
-if os.path.exists(Workspace().path):
-    os.chdir(Workspace().path)
-    listOfDir = os.listdir(Workspace().path)
+if os.path.exists(Workspace().libraryPath):
+    os.chdir(Workspace().libraryPath)
+    listOfDir = os.listdir(Workspace().libraryPath)
     
  
 class CreateDatabase():
@@ -36,24 +36,24 @@ class CreateDatabase():
         '''
         Creating database for library.
         '''
-        self.engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
+        self.engine = create_engine('sqlite:///' + Workspace().libraryPath + os.sep + '_opal.sqlite', echo=True)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = SingletonSession().session
         
-        if not os.path.exists(Workspace().path):
-            os.mkdir(Workspace().path)
-        os.chdir(Workspace().path)
+        if not os.path.exists(Workspace().libraryPath):
+            os.mkdir(Workspace().libraryPath)
+        os.chdir(Workspace().libraryPath)
         
 
     def creatingDatabase(self):
-        os.chdir(Workspace().path)
+        os.chdir(Workspace().libraryPath)
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
 
     def addingData(self):
 
-        directory_name = Workspace().path
+        directory_name = Workspace().libraryPath
         os.chdir(directory_name)
         listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
         if listOfDir:
@@ -110,7 +110,7 @@ class CreateDatabase():
         return book
     
     def readJsonFile(self, dirName=None):
-        bookJsonFile = open(os.path.join(Workspace().path, dirName , 'book.json'), 'r')
+        bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
         for line in bookJsonFile:
@@ -247,7 +247,7 @@ if __name__ == '__main__':
 #     CreateDatabase().addingData()
 
 #     books = CreateDatabase().findByBookName("java")
-    if not os.path.exists(Workspace().path):
+    if not os.path.exists(Workspace().libraryPath):
         print 'no workspace'
         
     try:

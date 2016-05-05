@@ -10,6 +10,7 @@ from src.metadata.book import Book, VolumeInfo
 from bs4 import BeautifulSoup
 import uuid
 import traceback
+from src.static.constant import Workspace
 
 class DownloadMetadataInfo():
     '''
@@ -94,7 +95,7 @@ class DownloadMetadataInfo():
             el = soup.find(id="imgBlkFront", class_="a-dynamic-image")
             imgUrl = el['src']
             if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
-                self.downloadUrl(imageUrl=imgUrl, imgFileName=imgFileName, destinationPath=os.path.join('/tmp', 'img'))
+                self.downloadUrl(imageUrl=imgUrl, imgFileName=imgFileName, destinationPath=Workspace().imagePath)
         else:
 #             print r.text
             self.getAmazonSingleBookInfo(imgFileName, bookUrl)
@@ -154,7 +155,7 @@ class DownloadMetadataInfo():
                     b.aboutAuthor = tag1.text
         if b.id == None:
             b.id = b.asin
-        b.localImagePath = os.path.join('/tmp', 'img') 
+        b.localImagePath = Workspace().imagePath
         b.imageFileName = imgFileName    
         b.bookPath = None
         self.listOfBook.append(b)    
@@ -178,7 +179,7 @@ class DownloadMetadataInfo():
             else:
                 url = "https://books.google.co.in/googlebooks/images/no_cover_thumb.gif"
                 
-            path = os.path.join('/tmp', 'img')
+            path = Workspace().imagePath
 #             os.mkdir(tmp_path)
 #             path = os.path.dirname(__file__) + os.sep + 'tmp'
             print path
@@ -190,7 +191,7 @@ class DownloadMetadataInfo():
             if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
                 os.chdir(path)
                 print 'writing file'
-                self.downloadUrl(imageUrl=url, imgFileName=b.id + '.jpeg', destinationPath=os.path.join('/tmp', 'img'))
+                self.downloadUrl(imageUrl=url, imgFileName=b.id + '.jpeg', destinationPath=Workspace().imagePath)
 #                 with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
 #                     f.write(urllib2.urlopen(url).read())
             b.volumeInfo = volumeInfo
@@ -198,7 +199,7 @@ class DownloadMetadataInfo():
             listOfBooks.append(b)
         return listOfBooks   
     
-    def downloadUrl(self, imageUrl=None, imgFileName=None, destinationPath=os.path.join('/tmp', 'img')):
+    def downloadUrl(self, imageUrl=None, imgFileName=None, destinationPath=Workspace().imagePath):
         '''
         This function will download url.
         '''

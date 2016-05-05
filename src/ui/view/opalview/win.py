@@ -105,7 +105,7 @@ class MainFrame(wx.Frame):
         style = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
 #         wx.Frame.__init__(self, parent, wx.ID_ANY, title, pos, size, style)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
-        if not os.path.exists(Workspace().path):
+        if not os.path.exists(Workspace().libraryPath):
             self.createWizard()
         self.createDatabase = CreateDatabase()
 #         self.creatingDatabase()
@@ -232,13 +232,13 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     def creatingDatabase(self):
-        if not os.path.exists(Workspace().path):
-            os.mkdir(Workspace().path)
-        os.chdir(Workspace().path)
-        listOfDir = os.listdir(Workspace().path)
+        if not os.path.exists(Workspace().libraryPath):
+            os.mkdir(Workspace().libraryPath)
+        os.chdir(Workspace().libraryPath)
+        listOfDir = os.listdir(Workspace().libraryPath)
         isDatabase = False
         for sName in listOfDir:
-            if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size != 0):
+            if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().libraryPath + os.sep + '_opal.sqlite').st_size != 0):
                 print sName
                 isDatabase = True
         if not  isDatabase:
@@ -530,7 +530,7 @@ class MainFrame(wx.Frame):
         dbb.SetFocus()
         dbb.SetLabel("Book Library Location")
         dbb.SetHelpText('Please set your default workspace location.')
-        dbb.textControl.SetValue(Workspace().path)
+        dbb.textControl.SetValue(Workspace().libraryPath)
         
         page1.sizer.Add(dbb , 0, wx.ALIGN_CENTRE | wx.ALL, 5)
         
@@ -551,7 +551,7 @@ class MainFrame(wx.Frame):
     def dbbCallback(self, evt):
         print('DirBrowseButton: %s\n' % evt.GetString())
         if evt.GetString():  
-            Workspace().path = evt.GetString() 
+            Workspace().libraryPath = evt.GetString() 
              
 
 #----------------------------------------------------------------------

@@ -18,7 +18,7 @@ class FindingBook():
         '''
         books = list()
         if searchText != None and searchText != '':
-            os.chdir(Workspace().path)
+            os.chdir(Workspace().libraryPath)
             books = self.createDatabase.findByBookName(searchText)
         else:
             books = self.findAllBooks()
@@ -33,7 +33,7 @@ class FindingBook():
         This method will give all the books list in book library.
         '''
         books = list()
-        os.chdir(Workspace().path)
+        os.chdir(Workspace().libraryPath)
         books = self.createDatabase.findAllBook()
         return books
 
@@ -42,7 +42,7 @@ class FindingBook():
         return bs
 
     def getMaxBookId(self):
-        os.chdir(Workspace().path)
+        os.chdir(Workspace().libraryPath)
     
     def deleteBook(self, book):
         '''

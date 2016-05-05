@@ -68,7 +68,7 @@ class ReadWriteJsonInfo(object):
         This method read the json file from workspace and return book object.
         @param dirName: this is directory name.
         '''
-        bookJsonFile = open(os.path.join(Workspace().path, dirName , 'book.json'), 'r')
+        bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
         for line in bookJsonFile:

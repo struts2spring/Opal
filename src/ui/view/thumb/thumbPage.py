@@ -457,8 +457,8 @@ def main():
 #     books = CreateDatabase().findAllBook(session)
 #     bookName = 'head'
 #     books = CreateDatabase().findByBookName(session, bookName)
-    if Workspace().path + os.sep + '_opal.sqlite':
-        if os.stat(Workspace().path + os.sep + '_opal.sqlite').st_size == 0:
+    if Workspace().libraryPath + os.sep + '_opal.sqlite':
+        if os.stat(Workspace().libraryPath + os.sep + '_opal.sqlite').st_size == 0:
             c = CreateDatabase()
             c.creatingDatabase()
             c.addingData()

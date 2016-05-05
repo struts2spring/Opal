@@ -14,14 +14,14 @@ class SingletonSession(object):
     
     
         def createSession(self):
-            engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
+            engine = create_engine('sqlite:///' + Workspace().libraryPath + os.sep + '_opal.sqlite', echo=True)
             Session = sessionmaker(autoflush=False, autocommit=False, bind=engine)
             self.session = Session()
-            database_fileName = os.path.join(Workspace().path , '_opal.sqlite')
+            database_fileName = os.path.join(Workspace().libraryPath , '_opal.sqlite')
             if not os.path.exists(database_fileName) or os.path.getsize(database_fileName)==0:
-                if not os.path.exists(Workspace().path):
-                    os.mkdir(Workspace().path)
-                os.chdir(Workspace().path)
+                if not os.path.exists(Workspace().libraryPath):
+                    os.mkdir(Workspace().libraryPath)
+                os.chdir(Workspace().libraryPath)
     #             print '---------------------------',os.path.getsize(database_fileName)
     #             self.creatingDatabase()
                 print Base.metadata.drop_all(engine)

@@ -89,4 +89,5 @@ if __name__ == "__main__":
 #     print(x)
 #     print(y)
     x.writeWorkspace("/docs/new")
+    print x.libraryPath
     print type(Workspace().path), Workspace().path
