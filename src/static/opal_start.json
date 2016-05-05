@@ -1,1 +1,26 @@
-{"workspace": [{"platform": "win32", "image": "/docs/library/image", "library": "/docs/library", "path": ["C:\\new_1"]}, {"platform": "linux2", "image": "image", "searched": "searched", "library": "library", "path": ["/docs/new", "/docs/new", "/docs/new"]}]}
+{
+	"workspace": 
+	[
+		{
+			"platform": "win32",
+			"image": "image",
+			"searched": "searched",
+			"library": "library",
+			"path": 
+			[
+				"C:\\new_1"
+			]
+		},
+
+		{
+			"platform": "linux2",
+			"image": "image",
+			"searched": "searched",
+			"library": "library",
+			"path": 
+			[
+				"/docs/new"
+			]
+		}
+	]
+}
