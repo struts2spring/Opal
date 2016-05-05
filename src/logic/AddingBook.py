@@ -24,12 +24,12 @@ import uuid
 
 class AddBook():
     '''
-    This class have been written to add book to Opal workspace.
+    This class have been written to add book to Opal workspace library.
     '''
     
     def __init__(self):
         self.book = Book()
-        self.book.uuid=str(uuid.uuid4())
+        self.book.uuid = str(uuid.uuid4())
         self.book.tag = None
         self.book.authors = list()
         self.createDatabase = CreateDatabase()
@@ -87,7 +87,7 @@ class AddBook():
                
                 
                 os.chdir(self.book.bookPath)
-                self.book.bookImgName=book_file_name+'.jpg'
+                self.book.bookImgName = book_file_name + '.jpg'
                 BookImage().getBookImage(self.book.bookPath, book_file_name, self.book.bookFormat)
                 
                 book_copy1 = copy.deepcopy(self.book)
@@ -128,8 +128,8 @@ class AddBook():
         try:
             for a in row2dict['authors']:
                 author = {}
-                if type(a)==str:
-                    author['authorName']=a
+                if type(a) == str:
+                    author['authorName'] = a
                 else:
                     author = a.__dict__
                 if author.has_key('_sa_instance_state'):
@@ -157,7 +157,7 @@ class AddBook():
 
     def getEpubMetadata(self, path=None):
         os.chdir(self.book.bookPath)
-        file_name=self.book.bookName+'.epub'
+        file_name = self.book.bookName + '.epub'
         epubBook = EpubBook()
         epubBook.open(file_name)
     
@@ -169,9 +169,9 @@ class AddBook():
             author = Author()
             author.authorName = authorName
             authorList.append(author)
-        self.book.authors=authorList
+        self.book.authors = authorList
         
-        self.book.tag=epubBook.subjectTag
+        self.book.tag = epubBook.subjectTag
         epubBook.extract_cover_image(outdir='.')
         self.book.createdOn = datetime.now()
     
@@ -193,7 +193,7 @@ class AddBook():
             print str(pdf_info)
             print 'Pages:', pdf_toread.getNumPages()
             try:
-                if pdf_info.title != None:
+                if pdf_info.title != None and pdf_info.title.strip() != '':
                     self.book.bookName = str(pdf_info.title)
             except:
                 print 'unable to set bookName', traceback.print_exc()
@@ -251,7 +251,7 @@ if __name__ == '__main__':
 #     sys.set
 #     sourcePath = '/home/vijay/Downloads/1389095365492.pdf'
 #     AddBook().addingBookToWorkspace(sourcePath)
-    path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/70+ English grammar and writing books (individual files)/Advanced English CAE Grammar Practice.pdf"
+    path = "/home/vijay/Downloads/Software in 30 Days How Agile Managers Beat the Odds, Delight Their Customers, And Leave Competitors In the Dust.pdf"
     addBook = AddBook()
 #     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/English Grammar - A function-based introduction/English Grammar - A function-based introduction. Volume I.pdf"
 #     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/Apress.Venture.Capitalists.at.Work.Nov.2011/Apress.Venture.Capitalists.at.Work.Nov.2011.pdf"

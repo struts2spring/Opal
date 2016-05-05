@@ -17,15 +17,16 @@ class Workspace(object):
     class __Workspace:
 
         def __init__(self):
-#             self.path = None
             self.readWorkspace()
         def __str__(self):
             return `self` + self.path
 
         def readWorkspace(self):
             '''
-            This method will read existing opal_start.json file. It will assign path to Workspace
+            This method will read existing opal_start.json file. 
+            It will set path, image directory, searched  to Workspace object.
             '''
+            
             rep = ''
 #             file = open('opal_start.json', 'r')
             with open(os.path.dirname(__file__) + os.sep + 'opal_start.json', 'r') as f:
@@ -38,6 +39,9 @@ class Workspace(object):
 #                 x=OpalStart(workspace)
                 print workspace['platform']
                 if sys.platform == workspace['platform']:
+                    self.libraryPath = os.path.join(str(workspace['path'][0]),workspace['library'])
+                    self.imagePath = os.path.join(str(workspace['path'][0]),workspace['image'])
+                    self.searchedPath = os.path.join(str(workspace['path'][0]),workspace['searched'])
                     self.path = str(workspace['path'][0])
             print self.path
 
@@ -50,7 +54,9 @@ class Workspace(object):
                     print data[k]
                     for d in data[k]:
                         if sys.platform == d['platform']:
-                            print type(d['platform'])
+                            d['library']='library'
+                            d['image']='image'
+                            d['searched']='searched'
                             d['path'].insert(0, newPath)
 #                             print data[k]['path']
                             self.path = str(d['path'][0])

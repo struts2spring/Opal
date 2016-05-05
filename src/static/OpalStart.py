@@ -23,6 +23,7 @@ class OpalStart(json.JSONEncoder):
             workspace['platform'] = platform
             lst = list()
             lst.append(path)
+            workspace['library'] = 'library'
             workspace['path'] = lst
             workspaceList.append(workspace)
         else:
@@ -30,16 +31,16 @@ class OpalStart(json.JSONEncoder):
         self.workspace = workspaceList
 
     def objToJson(self):
-        print 'to_json',self.__dict__
+        print 'to_json', self.__dict__
         return json.dumps(self.__dict__)
 
     @classmethod
     def jsonToObject(cls, json_str):
         json_dict = json.loads(json_str)
-        print 'from_json',json_dict
+        print 'from_json', json_dict
 #         for workspace in json_dict:
 #             print workspace
-        val=cls(**json_dict)
+        val = cls(**json_dict)
         return val
 
     @classmethod
@@ -51,10 +52,10 @@ class OpalStart(json.JSONEncoder):
 if __name__ == "__main__":
 #     o = OpalStart(platform=sys.platform, path="/docs/new")
 #     print o.objToJson()
-    jsonFileStr=''
+    jsonFileStr = ''
     f = open(os.path.dirname(__file__) + os.sep + 'opal_start.json', 'r')
     for x in f:
-        jsonFileStr=jsonFileStr+x
+        jsonFileStr = jsonFileStr + x
     f.close()
     print jsonFileStr
 

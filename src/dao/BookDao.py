@@ -33,6 +33,9 @@ if os.path.exists(Workspace().path):
 class CreateDatabase():
 
     def __init__(self):
+        '''
+        Creating database for library.
+        '''
         self.engine = create_engine('sqlite:///' + Workspace().path + os.sep + '_opal.sqlite', echo=True)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = SingletonSession().session

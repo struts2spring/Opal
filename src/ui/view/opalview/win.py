@@ -21,10 +21,10 @@ from wx.lib.filebrowsebutton import DirBrowseButton
 from src.ui.view.opalview.property import BookPropertyFrame
 import subprocess
 import thread
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+# from kivy.app import App
+# from kivy.uix.gridlayout import GridLayout
+# from kivy.uix.label import Label
+# from kivy.uix.textinput import TextInput
 from src.ui.view.kivy.x import MyApp
 try:
     from src.dao.BookDao import CreateDatabase
