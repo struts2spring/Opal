@@ -1,0 +1,25 @@
+{
+    "workspace": 
+    [
+        {
+            "platform": "win32",
+            "library": "/docs/library",
+            "image": "/docs/library/image",
+            "path": 
+            [
+                "C:\\new_1"
+            ]
+        },
+
+        {
+            "platform": "linux2",
+            "library": "library",
+            "image": "image",
+            "searched":"searched",
+            "path": 
+            [
+                "/docs/new"
+            ]
+        }
+    ]
+}
