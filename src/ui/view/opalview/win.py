@@ -530,7 +530,7 @@ class MainFrame(wx.Frame):
         dbb.SetFocus()
         dbb.SetLabel("Book Library Location")
         dbb.SetHelpText('Please set your default workspace location.')
-        dbb.textControl.SetValue(Workspace().libraryPath)
+        dbb.textControl.SetValue(Workspace().path)
         
         page1.sizer.Add(dbb , 0, wx.ALIGN_CENTRE | wx.ALL, 5)
         
@@ -551,7 +551,7 @@ class MainFrame(wx.Frame):
     def dbbCallback(self, evt):
         print('DirBrowseButton: %s\n' % evt.GetString())
         if evt.GetString():  
-            Workspace().libraryPath = evt.GetString() 
+            Workspace().path = evt.GetString() 
              
 
 #----------------------------------------------------------------------

@@ -23,7 +23,9 @@ class DownloadMetadataInfo():
         self.requestHeader = None
     
     def doAmazonBookSerach(self, searchText=None):
+        
         if searchText:
+            self.searchText=searchText
 #             searchUrl = 'http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords=' + searchText
             searchUrl = "http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords={}&sprefix={},aps,319".format(searchText, searchText)
 #             print searchUrl
@@ -36,7 +38,7 @@ class DownloadMetadataInfo():
                        'Connection':"keep-alive"}
 #             with requests.Session() as c:
             r = self.session.get(searchUrl, params=payload)
-#             print(r.url)
+            print(r.url)
             self.requestHeader = r.headers
 #             print r.status_code, r.headers['content-type'], r.encoding
             content = r.text
@@ -58,13 +60,13 @@ class DownloadMetadataInfo():
                 for url in urlList:
                     b = Book()
                     b.id = url.split('/')[-1]
-                    imgFileName = b.id + '.jpg'
-#                     print imgFileName
-                    self.getAmazonSingleBookInfo(imgFileName=imgFileName, bookUrl=url)
+                    bookImgName = b.id + '.jpg'
+#                     print bookImgName
+                    self.getAmazonSingleBookInfo(bookImgName=bookImgName, bookUrl=url)
             else:
                 self.doAmazonBookSerach(searchText)    
                 
-    def getAmazonSingleBookInfo(self, imgFileName, bookUrl=None):
+    def getAmazonSingleBookInfo(self, bookImgName, bookUrl=None):
         '''
         e.g. urls are given below.
         'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730',
@@ -81,7 +83,7 @@ class DownloadMetadataInfo():
 #         searchUrl = ''
         if self.requestHeader:
             payload = self.requestHeader
-        print bookUrl, imgFileName 
+        print bookUrl, bookImgName 
 #         with requests.Session() as c:
         r = self.session.get(bookUrl, params=payload)
 #             print(r.url)
@@ -90,18 +92,18 @@ class DownloadMetadataInfo():
             content = r.text
             soup = BeautifulSoup(content)
             print r.url
-            b = self.populateBookObj(htmlContent=soup, imgFileName=imgFileName)
+            b = self.populateBookObj(htmlContent=soup, bookImgName=bookImgName)
 #             print content
             el = soup.find(id="imgBlkFront", class_="a-dynamic-image")
             imgUrl = el['src']
-            if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
-                self.downloadUrl(imageUrl=imgUrl, imgFileName=imgFileName, destinationPath=Workspace().imagePath)
+            if not os.path.exists(os.path.join(b.localImagePath, b.bookImgName)):
+                self.downloadUrl(imageUrl=imgUrl, bookImgName=bookImgName, destinationPath=Workspace().imagePath)
         else:
 #             print r.text
-            self.getAmazonSingleBookInfo(imgFileName, bookUrl)
+            self.getAmazonSingleBookInfo(bookImgName, bookUrl)
             
             
-    def populateBookObj(self, htmlContent=None, imgFileName=None):
+    def populateBookObj(self, htmlContent=None, bookImgName=None):
         '''
         '''
         b = Book()
@@ -151,13 +153,17 @@ class DownloadMetadataInfo():
                                        
             el2 = tag.find_all('div', class_="productDescriptionWrapper")
             for tag1 in el2:
-                if tag1.text == 'About the Author':
+                if tag1.text == 'About the Author' or tag1.parent.h3.text == 'About the Author':
                     b.aboutAuthor = tag1.text
         if b.id == None:
             b.id = b.asin
         b.localImagePath = Workspace().imagePath
-        b.imageFileName = imgFileName    
+        b.bookImgName = bookImgName    
+        b.imageFileName=bookImgName
         b.bookPath = None
+        b.searchedText=self.searchText
+        b.source='amazon.com'
+        
         self.listOfBook.append(b)    
         return b
 
@@ -191,15 +197,16 @@ class DownloadMetadataInfo():
             if not os.path.exists(os.path.join(b.localImagePath, b.imageFileName)):
                 os.chdir(path)
                 print 'writing file'
-                self.downloadUrl(imageUrl=url, imgFileName=b.id + '.jpeg', destinationPath=Workspace().imagePath)
+                self.downloadUrl(imageUrl=url, bookImgName=b.id + '.jpeg', destinationPath=Workspace().imagePath)
 #                 with open(path + os.sep + b.id + '.jpeg', 'wb') as f:
 #                     f.write(urllib2.urlopen(url).read())
             b.volumeInfo = volumeInfo
             b.bookPath = None
+            b.source='googleapis.com'
             listOfBooks.append(b)
         return listOfBooks   
     
-    def downloadUrl(self, imageUrl=None, imgFileName=None, destinationPath=Workspace().imagePath):
+    def downloadUrl(self, imageUrl=None, bookImgName=None, destinationPath=Workspace().imagePath):
         '''
         This function will download url.
         '''
@@ -207,7 +214,7 @@ class DownloadMetadataInfo():
             os.mkdir(destinationPath)
         os.chdir(destinationPath)   
         try:
-            with open(os.path.join(destinationPath, imgFileName), 'wb') as f:
+            with open(os.path.join(destinationPath, bookImgName), 'wb') as f:
                 f.write(urllib2.urlopen(imageUrl).read())
         except :
             print 'unable to donwload url: ', imageUrl
@@ -225,7 +232,7 @@ if __name__ == '__main__':
 #     DownloadMetadataInfo().doAmazonBookSerach(searchText='python')
 #     bookUrl = 'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730'
     downloadMetadataInfo = DownloadMetadataInfo()
-#     downloadMetadataInfo.getAmazonSingleBookInfo(imgFileName='1449355730.jpg', bookUrl=bookUrl)
+#     downloadMetadataInfo.getAmazonSingleBookInfo(bookImgName='1449355730.jpg', bookUrl=bookUrl)
     downloadMetadataInfo.doAmazonBookSerach(searchText='java')
     print downloadMetadataInfo.listOfBook
     pass
