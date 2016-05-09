@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import uuid
 import traceback
 from src.static.constant import Workspace
+from src.logic.online.OnlineBookLogic import OnlineBookInfoLogic
 
 class DownloadMetadataInfo():
     '''
@@ -19,13 +20,21 @@ class DownloadMetadataInfo():
     def __init__(self):
         self.searchText = None
         self.session = requests.Session()
+        self.payload = {
+                   'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
+                   'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                   'Accept-Language':"en-US,en;q=0.5",
+                   'Accept-Encoding':"gzip, deflate",
+                   'Connection':"keep-alive"}
         self.listOfBook = list()
         self.requestHeader = None
+        self.isbnUrlDict = None
+        self.bookListInDatabase=None
     
     def doAmazonBookSerach(self, searchText=None):
         
         if searchText:
-            self.searchText=searchText
+            self.searchText = searchText
 #             searchUrl = 'http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords=' + searchText
             searchUrl = "http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords={}&sprefix={},aps,319".format(searchText, searchText)
 #             print searchUrl
@@ -37,35 +46,53 @@ class DownloadMetadataInfo():
                        'Referer':"http://www.amazon.com/",
                        'Connection':"keep-alive"}
 #             with requests.Session() as c:
-            r = self.session.get(searchUrl, params=payload)
-            print(r.url)
-            self.requestHeader = r.headers
-#             print r.status_code, r.headers['content-type'], r.encoding
-            content = r.text
-            if r.status_code == 200:
-                with open("response.html", "w") as text_file:
-#                     print content.encode('utf-8')
-                    text_file.write(content.encode('utf-8'))
-                    text_file.close()
-                soup = BeautifulSoup(content)
+            
+            try:
+                r = self.session.get(searchUrl, params=self.payload)
+                self.requestHeader = r.headers
+                content = r.text
+                print(r.url)
+    #             print r.status_code, r.headers['content-type'], r.encoding
+                if r.status_code == 200:
+                    soup = BeautifulSoup(content, "html.parser")
+                    urlList = list()
+                    isbnList = list()
+                    self.isbnUrlDict = dict()
+                    for link in soup.find_all(class_="a-link-normal s-access-detail-page a-text-normal"):
+                        url = link.get('href')
+                        isbn = url.split('/')[-1]
+                        urlList.append(url)
+                        isbnList.append(isbn)
+                        self.isbnUrlDict[isbn] = url
+                        
+                    print urlList
+                    print isbnList
+                    onlineBookInfoLogic = OnlineBookInfoLogic()
+                    
+                    isbnListInDatabase=onlineBookInfoLogic.bookListInOnlineDatabase(isbnList)
+                    self.bookListInDatabase=onlineBookInfoLogic.getBookInfoObjects(isbnListInDatabase)
+
+                    
+                    isbnSearchList = onlineBookInfoLogic.bookListNotInOnlineDatabase(isbnList)
+                    print isbnSearchList
+                    for isbn in isbnSearchList:
+                        b = Book()
+                        b.id = isbn
+                        bookImgName = b.id + '.jpg'
+                        print bookImgName
+                        # Take decision if book present in database dont call URL
+    #                     if not self.isBookAvailable():
+                        url=self.isbnUrlDict[isbn]
+                        self.getAmazonSingleBookInfo(bookImgName=bookImgName, bookUrl=url)
+                else:
+                    self.doAmazonBookSerach(searchText)    
+            except:
+                print traceback.print_exc()
                 
-#                 el= soup.find_all(class_="s-result-item celwidget")[0]
-#                 print el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
-# class_="s-result-item celwidget",
-                urlList = list()
-                for link in soup.find_all(class_="a-link-normal s-access-detail-page a-text-normal"):
-#                     print el
-#                     x= el.find_all(class_="a-link-normal s-access-detail-page a-text-normal")
-                    urlList.append(link.get('href'))
-                for url in urlList:
-                    b = Book()
-                    b.id = url.split('/')[-1]
-                    bookImgName = b.id + '.jpg'
-#                     print bookImgName
-                    self.getAmazonSingleBookInfo(bookImgName=bookImgName, bookUrl=url)
-            else:
-                self.doAmazonBookSerach(searchText)    
                 
+
+         
+    
     def getAmazonSingleBookInfo(self, bookImgName, bookUrl=None):
         '''
         e.g. urls are given below.
@@ -73,24 +100,25 @@ class DownloadMetadataInfo():
         'http://www.amazon.com/Automate-Boring-Stuff-Python-Programming/dp/1593275994',
         '''
             
-        payload = {'Host':"www.amazon.com",
-           'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
-           'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-           'Accept-Language':"en-US,en;q=0.5",
-           'Accept-Encoding':"gzip, deflate",
-           'Referer':"http://www.amazon.com/",
-           'Connection':"keep-alive"}
+#         payload = {'Host':"www.amazon.com",
+#            'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
+#            'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+#            'Accept-Language':"en-US,en;q=0.5",
+#            'Accept-Encoding':"gzip, deflate",
+#            'Referer':"http://www.amazon.com/",
+#            'Connection':"keep-alive"}
 #         searchUrl = ''
         if self.requestHeader:
             payload = self.requestHeader
         print bookUrl, bookImgName 
-#         with requests.Session() as c:
-        r = self.session.get(bookUrl, params=payload)
+#         with requests.Session() as c:.
+        
+        r = self.session.get(bookUrl, params=self.payload)
 #             print(r.url)
         print r.status_code
         if r.status_code == 200:
             content = r.text
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, "html.parser")
             print r.url
             b = self.populateBookObj(htmlContent=soup, bookImgName=bookImgName)
 #             print content
@@ -159,10 +187,10 @@ class DownloadMetadataInfo():
             b.id = b.asin
         b.localImagePath = Workspace().imagePath
         b.bookImgName = bookImgName    
-        b.imageFileName=bookImgName
+        b.imageFileName = bookImgName
         b.bookPath = None
-        b.searchedText=self.searchText
-        b.source='amazon.com'
+        b.searchedText = self.searchText
+        b.source = 'amazon.com'
         
         self.listOfBook.append(b)    
         return b
@@ -202,7 +230,7 @@ class DownloadMetadataInfo():
 #                     f.write(urllib2.urlopen(url).read())
             b.volumeInfo = volumeInfo
             b.bookPath = None
-            b.source='googleapis.com'
+            b.source = 'googleapis.com'
             listOfBooks.append(b)
         return listOfBooks   
     
@@ -233,6 +261,6 @@ if __name__ == '__main__':
 #     bookUrl = 'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730'
     downloadMetadataInfo = DownloadMetadataInfo()
 #     downloadMetadataInfo.getAmazonSingleBookInfo(bookImgName='1449355730.jpg', bookUrl=bookUrl)
-    downloadMetadataInfo.doAmazonBookSerach(searchText='java')
+    downloadMetadataInfo.doAmazonBookSerach(searchText='time')
     print downloadMetadataInfo.listOfBook
     pass

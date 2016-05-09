@@ -57,6 +57,9 @@ class SearchBookPanel(wx.Panel):
         pos = lb.GetPosition().x + lb.GetSize().width + 25
         btn = wx.Button(self, -1, "Test SetString", (pos, 50))
         self.Bind(wx.EVT_BUTTON, self.OnTestButton, btn)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+        
+        self.defaultSearch()
 # ## end of checklist
 
         vbox_1 = wx.BoxSizer(wx.VERTICAL)
@@ -83,6 +86,8 @@ class SearchBookPanel(wx.Panel):
         self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch, self.search)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnDoSearch, self.search)
 
+    def OnClose(self, event):
+        self.Destroy()
 
     def OnToggleSearchButton(self, evt):
         self.search.ShowSearchButton(evt.GetInt())
@@ -115,8 +120,19 @@ class SearchBookPanel(wx.Panel):
             listOfBooks = searchListOfBook
         self.thumbnail.ShowDir(listOfBooks)
     
+    def defaultSearch(self, searchText='python'):
+        listOfBooks = list()
+#         self.doAmazonBookSerach()
+        searchListOfBook = self.doSearch(searchText)
+        
+        print len(listOfBooks)
+        if len(searchListOfBook) > 0:
+            listOfBooks = searchListOfBook
+        self.thumbnail.ShowDir(listOfBooks)
+    
     def doSearch(self, searchText=None):
         downloadMetadataInfo = DownloadMetadataInfo()
+        onlineDatabase = OnlineDatabase()
 #         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
         if self.searchCache.has_key(searchText):
             listOfBooks = self.searchCache[searchText]
@@ -124,10 +140,17 @@ class SearchBookPanel(wx.Panel):
         else:
             downloadMetadataInfo.doAmazonBookSerach(searchText)
             listOfBooks = downloadMetadataInfo.listOfBook
+            
+            
         self.searchCache[searchText] = listOfBooks
         
-        onlineDatabase = OnlineDatabase()
         onlineDatabase.addingData(listOfBooks)
+        if downloadMetadataInfo.bookListInDatabase:
+            for book in downloadMetadataInfo.bookListInDatabase:
+                book.localImagePath='/docs/new/image'
+                book.imageFileName=book.bookImgName
+                listOfBooks.append(book)
+        
         return listOfBooks
         
 #     def doAmazonBookSerach(self):

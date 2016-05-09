@@ -1005,8 +1005,9 @@ class BookPropertyPanel(wx.Panel):
         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
         authorNames = list()
-        for a in book.authors:
-            authorNames.append(a.authorName)
+        if hasattr(book, 'authors'):
+            for a in book.authors:
+                authorNames.append(a.authorName)
         
         self.pg.Append(wxpg.StringProperty("Author(s) name", value=','.join(authorNames)))
         

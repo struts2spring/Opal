@@ -2377,6 +2377,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if self._selected != None:
             book=self._items[self._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
+            book.bookPath='/docs/new/image'
             frame = BookPropertyFrame(None, book)
         
 
