@@ -86,9 +86,9 @@ class PropertyPhotoPanel(wx.Panel):
 #         relevant_path = "/docs/LiClipse Workspace/img/wallpaper"
 #         imgFileName=self.getImgFileName(relevant_path)
 #         imgFilePath=os.path.join(relevant_path,imgFileName[0] )
-#         imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
+        imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
 #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
-        imgFilePath="cat.bmp"
+#         imgFilePath="cat.bmp"
         print '---------->', self.GetSize()
         NewW, NewH = self.GetSize()
         if  NewW > 0 and NewH > 0:
