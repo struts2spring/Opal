@@ -197,9 +197,12 @@ class AddBook():
                     self.book.bookName = str(pdf_info.title)
             except:
                 print 'unable to set bookName', traceback.print_exc()
-
-            if pdf_info.creator:
-                self.book.publisher = str(pdf_info.creator.encode('utf-8'))
+            
+            try:
+                if pdf_info.creator:
+                    self.book.publisher = str(pdf_info.creator.encode('utf-8'))
+            except:
+                pass
             self.book.createdOn = datetime.now()
             try:
                 print str(pdf_info['/CreationDate'])[2:10]

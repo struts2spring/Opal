@@ -36,7 +36,6 @@ import traceback
 from src.logic import search_book
 from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
-from src.ui.view.metadata.review.ReviewMetadataFrame import ReviewFrame
 
 
 """
@@ -2279,6 +2278,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Bind(wx.EVT_MENU, self.onCopy, id=self.popupID7)
         
             # Show how to put an icon in the menu
+            item = wx.MenuItem(menu, self.popupID7, "copy book name")
+            item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU, (16, 16)))
+            menu.AppendItem(item)
+            
             item = wx.MenuItem(menu, self.popupID1, "Download metadata and cover.")
             item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU, (16, 16)))
             menu.AppendItem(item)
@@ -2334,12 +2337,6 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     
     def OnDownloadMetadata(self, event):
         print ("OnDownloadMetadata\n")
-        selectedBooks=[]
-        book=None
-        for selectedBookIndex in self._selectedarray:
-            book=self._items[selectedBookIndex].book
-            selectedBooks.append(book)
-        frame = ReviewFrame(None, book)
 
     def onCopy(self,event):
         print 'copy'
@@ -2380,6 +2377,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if self._selected != None:
             book=self._items[self._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
+            book.bookPath='/docs/new/image'
             frame = BookPropertyFrame(None, book)
         
 
