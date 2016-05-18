@@ -29,7 +29,7 @@ class DownloadMetadataInfo():
         self.listOfBook = list()
         self.requestHeader = None
         self.isbnUrlDict = None
-        self.bookListInDatabase=None
+        self.bookListInDatabase = None
     
     def doAmazonBookSerach(self, searchText=None):
         
@@ -69,8 +69,8 @@ class DownloadMetadataInfo():
                     print isbnList
                     onlineBookInfoLogic = OnlineBookInfoLogic()
                     
-                    isbnListInDatabase=onlineBookInfoLogic.bookListInOnlineDatabase(isbnList)
-                    self.bookListInDatabase=onlineBookInfoLogic.getBookInfoObjects(isbnListInDatabase)
+                    isbnListInDatabase = onlineBookInfoLogic.bookListInOnlineDatabase(isbnList)
+                    self.bookListInDatabase = onlineBookInfoLogic.getBookInfoObjects(isbnListInDatabase)
 
                     
                     isbnSearchList = onlineBookInfoLogic.bookListNotInOnlineDatabase(isbnList)
@@ -82,7 +82,7 @@ class DownloadMetadataInfo():
                         print bookImgName
                         # Take decision if book present in database dont call URL
     #                     if not self.isBookAvailable():
-                        url=self.isbnUrlDict[isbn]
+                        url = self.isbnUrlDict[isbn]
                         self.getAmazonSingleBookInfo(bookImgName=bookImgName, bookUrl=url)
                 else:
                     self.doAmazonBookSerach(searchText)    
@@ -135,6 +135,11 @@ class DownloadMetadataInfo():
         '''
         '''
         b = Book()
+        b.rating = '0'
+        b.isbn_13 = None
+        b.isbn_10 = None
+        b.inLanguage = None
+        b.bookDescription = None
         b.id = None
         el0 = htmlContent.find_all(id="productTitle")
         if el0 == None or len(el0) == 0:
@@ -191,6 +196,7 @@ class DownloadMetadataInfo():
         b.bookPath = None
         b.searchedText = self.searchText
         b.source = 'amazon.com'
+        b.tag = ''
         
         self.listOfBook.append(b)    
         return b

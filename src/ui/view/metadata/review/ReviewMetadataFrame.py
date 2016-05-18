@@ -100,24 +100,33 @@ class ReviewMetadataPanel(wx.Panel):
         return listOfBooks       
             
     def decodeProperty(self, book, key):
-        authorName = list()
-        for a in book.authors:
-            authorName.append(a.authorName)
+        decodedProperty = ''
+        
+        if book != None:
+            authorName = list()
+            try:
+                for a in book.authors:
+                    authorName.append(a.authorName)
+            except:
+                pass
             
-        self.keyValue = {
-                       'Title':book.bookName,
-                       'Authors':','.join(authorName),
-                       'Series':str(book.tag or ''),
-                       'Tags':str(book.tag or ''),
-                       'Rating':str(book.rating or ''),
-                       'Publisher':str(book.publisher or ''),
-                       'ISBN-13':str(book.isbn_13 or ''),
-                       'ISBN-10':str(book.isbn_10 or ''),
-                       'Language':str(book.inLanguage or ''),
-                       'Description':str(book.bookDescription or ''),
-                       'Cover':'',
-                       }
-        return self.keyValue[key]
+            authorNameString=','.join(authorName)
+                
+            self.keyValue = {
+                           'Title':book.bookName,
+                           'Authors':authorNameString,
+                           'Series':str(book.tag or ''),
+                           'Tags':str(book.tag or ''),
+                           'Rating':str(book.rating or ''),
+                           'Publisher':str(book.publisher or ''),
+                           'ISBN-13':str(book.isbn_13 or ''),
+                           'ISBN-10':str(book.isbn_10 or ''),
+                           'Language':str(book.inLanguage or ''),
+                           'Description':str(book.bookDescription or ''),
+                           'Cover':'',
+                           }
+            decodedProperty=self.keyValue[key]
+        return decodedProperty
 
     def createButtonBar(self):
         self.acceptAll = wx.Button(self.mainPanel, -1, "Accept all")
@@ -146,7 +155,7 @@ class ReviewMetadataPanel(wx.Panel):
             else:
                 
                 self.reviewRow.leftText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(b, item), size=(200, -1))
-                self.reviewRow.rightText = wx.TextCtrl(self.mainPanel, -1, value="Right" + item, size=(200, -1))
+                self.reviewRow.rightText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(rightBookInfo, item), size=(200, -1))
                  
             self.rowDict[idx] = self.reviewRow
 #         return self.rowDict

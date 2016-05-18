@@ -2470,17 +2470,27 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                     id=self._items[self._selected].book.id
                     print 'updating info'
                     try:
-                        page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                        if sys.platform=='win32':
-                            self.GetTopLevelParent().browser.SetPage(page,"")
-                        else:
-                            self.GetTopLevelParent().browser.SetPage(page)
+#                         self.GetTopLevelParent().panel.rowDict
+                        lefBookInfo=self.GetTopLevelParent().panel.currentBook
+                        rightBookInfo=self._items[self._selected].book
+#                         self.GetTopLevelParent().panel.diffView(lefBookInfo, rightBookInfo)
+                        print self.GetTopLevelParent().panel.rowDict
+                        rows=self.GetTopLevelParent().panel.rowDict
+                        for row, value in rows.iteritems():
+#                             print row, value.rightText.GetValue()
+                            rightValue=self.GetTopLevelParent().panel.decodeProperty(rightBookInfo,value.label.GetLabel())
+                            value.rightText.SetValue(rightValue)
+#                         page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+#                         if sys.platform=='win32':
+#                             self.GetTopLevelParent().browser.SetPage(page,"")
+#                         else:
+#                             self.GetTopLevelParent().browser.SetPage(page)
                     except:
                         traceback.print_exc()
-                    print 'selecting grid'
-                    row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
-                    self.GetTopLevelParent().grid.SelectRow(row=row)
-                    self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
+#                     print 'selecting grid'
+#                     row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
+#                     self.GetTopLevelParent().grid.SelectRow(row=row)
+#                     self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
 
 
 

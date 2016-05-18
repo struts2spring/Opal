@@ -4,6 +4,7 @@ import json
 class Book(dict):
     def __init__(self, *args, **kwargs):
         super(Book, self).__init__(*args, **kwargs)
+        self.rating='0'
         self.__dict__ = self
         
 class VolumeInfo(dict):
