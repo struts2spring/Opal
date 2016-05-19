@@ -11,6 +11,7 @@ from src.ui.view.metadata.review.ReviewThumbCrtl import ThumbnailCtrl, \
     NativeImageHandler
 from src.metadata.DownloadMetadata import DownloadMetadataInfo
 from src.dao.online.OnlineBookDaoImpl import OnlineDatabase
+from threading import Thread
 
 class BookMetadata():
     
@@ -19,6 +20,78 @@ class BookMetadata():
     
 class ReviewRow():
     pass
+
+# Define notification event for thread completion
+EVT_RESULT_ID = wx.NewId()
+
+def EVT_RESULT(win, func):
+    """Define Result Event."""
+    win.Connect(-1, -1, EVT_RESULT_ID, func)
+
+class ResultEvent(wx.PyEvent):
+    """Simple event to carry arbitrary result data."""
+    def __init__(self, data):
+        """Init Result Event."""
+        wx.PyEvent.__init__(self)
+        self.SetEventType(EVT_RESULT_ID)
+        self.data = data
+
+# Thread class that executes processing
+class WorkerThread(Thread):
+    """Worker Thread Class."""
+    def __init__(self, notify_window, searchText):
+        """Init Worker Thread Class."""
+        Thread.__init__(self)
+        self._notify_window = notify_window
+        self.searchText = searchText
+        self._want_abort = 0
+        # This starts the thread running on creation, but you could
+        # also make the GUI thread responsible for calling this
+        self.start()
+
+    def run(self):
+        """Run Worker Thread."""
+        # This is the code executing in the new thread. Simulation of
+        # a long process (well, 10s here) as a simple loop - you will
+        # need to structure your processing so that you periodically
+        # peek at the abort variable
+#         for i in range(10):
+#             time.sleep(1)
+#             if self._want_abort:
+#                 # Use a result of None to acknowledge the abort (of
+#                 # course you can use whatever you'd like or even
+#                 # a separate event type)
+#                 wx.PostEvent(self._notify_window, ResultEvent(None))
+#                 return
+        listOfBooks = self.doSearch(self.searchText )
+        # Here's where the result would be returned (this is an
+        # example fixed result of the number 10, but it could be
+        # any Python object)
+        wx.PostEvent(self._notify_window, ResultEvent(listOfBooks))
+    def doSearch(self,searchText):
+#         searchText = 'python'
+        downloadMetadataInfo = DownloadMetadataInfo()
+        onlineDatabase = OnlineDatabase()
+#         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
+
+        downloadMetadataInfo.doAmazonBookSerach(searchText)
+        listOfBooks = downloadMetadataInfo.listOfBook
+            
+            
+        
+        onlineDatabase.addingData(listOfBooks)
+        if downloadMetadataInfo.bookListInDatabase:
+            for book in downloadMetadataInfo.bookListInDatabase:
+                book.localImagePath = '/docs/new/image'
+                book.imageFileName = book.bookImgName
+                listOfBooks.append(book)
+        
+        return listOfBooks  
+    def abort(self):
+        """abort worker thread."""
+        # Method for use by main thread to signal an abort
+        self._want_abort = 1
+
 class ReviewMetadataPanel(wx.Panel):
     '''
     This class review metadata.
@@ -41,9 +114,14 @@ class ReviewMetadataPanel(wx.Panel):
         self.search.SetValue(self.currentBook.bookName)
         self.search.ShowCancelButton(True)
         self.searchCache = dict()
+        self.info = wx.InfoBar(self)
         self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
+        self.worker = None
         self.defaultSearch(self.currentBook.bookName)
-        
+        # Set up event handler for any worker thread results
+        EVT_RESULT(self, self.OnResult)
+
+        # And indicate we don't have a worker thread yet
 #         self.rowDic = dict()
         self.diffView(self.currentBook)
         
@@ -54,7 +132,20 @@ class ReviewMetadataPanel(wx.Panel):
         self.SetProperties()
         self.doLayout()
         self.BindEvents()
-
+        
+    def OnResult(self, event):
+        """Show Result status."""
+        if event.data is None:
+            # Thread aborted (using our convention of None return)
+            print('Computation aborted')
+        else:
+            
+            # Process results here
+            print('Computation Result: %s' % event.data)
+            self.thumbnail.ShowDir(event.data)
+        # In either event, the worker is done
+        self.info.Dismiss()
+        self.worker = None
     def OnDoSearch(self, evt):
         print("OnDoSearch: " + self.search.GetValue())
 #         listOfBooks = self.doGoogleSearch()
@@ -69,11 +160,16 @@ class ReviewMetadataPanel(wx.Panel):
     def defaultSearch(self, searchText='python'):
         listOfBooks = list()
 #         self.doAmazonBookSerach()
-        searchListOfBook = self.doSearch(searchText)
+        # Trigger the worker thread unless it's already busy
+        if not self.worker:
+            self.info.ShowMessage('Searching...', wx.ICON_INFORMATION)
+            print('Starting Search for ', searchText)
+            self.worker = WorkerThread(self, searchText)
+#         searchListOfBook = self.doSearch(searchText)
         
-        print len(listOfBooks)
-        if len(searchListOfBook) > 0:
-            listOfBooks = searchListOfBook
+#         print len(listOfBooks)
+#         if len(searchListOfBook) > 0:
+        listOfBooks = []
         self.thumbnail.ShowDir(listOfBooks)
 
     def doSearch(self, searchText=None):
@@ -111,7 +207,7 @@ class ReviewMetadataPanel(wx.Panel):
                 pass
             
             authorNameString = ','.join(authorName)
-            publisher=''
+            publisher = ''
             try:
                 if book.publisher :
                     publisher = book.publisher 
@@ -183,6 +279,8 @@ class ReviewMetadataPanel(wx.Panel):
         #------search and thumbnail-----------
         searchVbox = wx.BoxSizer(wx.VERTICAL)
         searchVbox.Add(self.search, 0, wx.EXPAND | wx.ALL, 0)
+#         self.info = wx.InfoBar(self)
+        searchVbox.Add(self.info, 0, wx.EXPAND | wx.ALL, 0)
         searchVbox.Add(self.thumbnail, 1, wx.EXPAND | wx.ALL, 0)
         #-------------------------------------------------------
         
@@ -260,9 +358,27 @@ class ReviewMetadataPanel(wx.Panel):
         self.Bind(wx.EVT_CLOSE, self.onClose)
 #         self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch, self.search)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnDoSearch, self.search)
+        self.rejectAll.Bind(wx.EVT_BUTTON, self.onRejectAll)
+        self.previous.Bind(wx.EVT_BUTTON, self.onPrevious)
+        self.next.Bind(wx.EVT_BUTTON, self.onNext)
+        self.done.Bind(wx.EVT_BUTTON, self.onDone)
+        
+#                 rowsizer.Add(self.acceptAll, 1)
+#         rowsizer.Add(self.rejectAll, 1)
+#         rowsizer.Add(self.previous, 1)
+#         rowsizer.Add(self.next, 1)
+#         rowsizer.Add(self.done, 1)
         
     def onClose(self, event):
         self.Destroy()
+    def onRejectAll(self, event):
+        print 'rejectAll'
+    def onPrevious(self, event):
+        print 'previous'
+    def onNext(self, event):
+        print 'next'
+    def onDone(self, event):
+        print 'done'
         
         
     def getABook(self):

@@ -1,6 +1,7 @@
 import wx
 import os
 from src.logic.search_book import FindingBook
+import traceback
 
 
 class PropertyPhotoPanel(wx.Panel):
@@ -92,17 +93,19 @@ class PropertyPhotoPanel(wx.Panel):
 #         relevant_path = "/docs/LiClipse Workspace/img/wallpaper"
 #         imgFileName=self.getImgFileName(relevant_path)
 #         imgFilePath=os.path.join(relevant_path,imgFileName[0] )
-        imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
-#         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
-#         imgFilePath="cat.bmp"
-        print '---------->', self.GetSize()
-        NewW, NewH = self.GetSize()
-        if  NewW > 0 and NewH > 0:
-            img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
-            img = img.Scale(NewW, NewH)
-            self.bitmap = wx.BitmapFromImage(img)
-            self.Refresh()
-            
+        try:
+            imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
+    #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
+    #         imgFilePath="cat.bmp"
+            print '---------->', self.GetSize()
+            NewW, NewH = self.GetSize()
+            if  NewW > 0 and NewH > 0:
+                img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
+                img = img.Scale(NewW, NewH)
+                self.bitmap = wx.BitmapFromImage(img)
+                self.Refresh()
+        except:
+            traceback.print_exc()   
 class ReviewFrame(wx.Frame):
     def __init__(self, parent, book):
         wx.Frame.__init__(self, parent, -1, title='Photo', size=(600, 400))
