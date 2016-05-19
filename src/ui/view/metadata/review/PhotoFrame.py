@@ -1,5 +1,6 @@
 import wx
 import os
+from src.logic.search_book import FindingBook
 
 
 class PropertyPhotoPanel(wx.Panel):
@@ -15,7 +16,8 @@ class PropertyPhotoPanel(wx.Panel):
         self.currentBook = book
         
     def OnRightClick(self, event):
-        print("OnRightClick\n")
+        print("PropertyPhotoPanel.OnRightClick()\n")
+        self.createMenu()
         
     def OnContextMenu(self, event):
         print("OnContextMenu\n")
@@ -25,6 +27,9 @@ class PropertyPhotoPanel(wx.Panel):
         # Yet another anternate way to do IDs. Some prefer them up top to
         # avoid clutter, some prefer them close to the object of interest
         # for clarity. 
+        self.createMenu()
+    
+    def createMenu(self):
         if not hasattr(self, "popupID1"):
             self.popupID1 = wx.NewId()
             self.popupID2 = wx.NewId()
@@ -52,6 +57,7 @@ class PropertyPhotoPanel(wx.Panel):
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
+        
     def downloadCover(self, event):
         print 'downloadCover'
     def generateCover(self, event):
@@ -98,11 +104,17 @@ class PropertyPhotoPanel(wx.Panel):
             self.Refresh()
             
 class ReviewFrame(wx.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, book):
         wx.Frame.__init__(self, parent, -1, title='Photo', size=(600, 400))
-        self.panel = PropertyPhotoPanel(self)          
+        self.panel = PropertyPhotoPanel(self, book)          
         self.Show()            
 if __name__ == '__main__':
+    books = FindingBook().findAllBooks()
+    book = None
+    for b in books:
+        book = b
+        break
+    print book
     app = wx.App(0)
-    frame = ReviewFrame(None)
+    frame = ReviewFrame(None, book)
     app.MainLoop()  

@@ -45,7 +45,7 @@ class ReviewMetadataPanel(wx.Panel):
         self.defaultSearch(self.currentBook.bookName)
         
 #         self.rowDic = dict()
-        self.diffView()
+        self.diffView(self.currentBook)
         
 #         bitmap = wx.ArtProvider_GetBitmap(wx.ART_GO_BACK)
 #         self.okButton = wx.Button(self.mainPanel, -1, 'ok') 
@@ -110,22 +110,28 @@ class ReviewMetadataPanel(wx.Panel):
             except:
                 pass
             
-            authorNameString=','.join(authorName)
-                
+            authorNameString = ','.join(authorName)
+            publisher=''
+            try:
+                if book.publisher :
+                    publisher = book.publisher 
+            except:
+                pass
+            
             self.keyValue = {
                            'Title':book.bookName,
                            'Authors':authorNameString,
                            'Series':str(book.tag or ''),
                            'Tags':str(book.tag or ''),
                            'Rating':str(book.rating or ''),
-                           'Publisher':str(book.publisher or ''),
+                           'Publisher':publisher,
                            'ISBN-13':str(book.isbn_13 or ''),
                            'ISBN-10':str(book.isbn_10 or ''),
                            'Language':str(book.inLanguage or ''),
                            'Description':str(book.bookDescription or ''),
                            'Cover':'',
                            }
-            decodedProperty=self.keyValue[key]
+            decodedProperty = self.keyValue[key]
         return decodedProperty
 
     def createButtonBar(self):
@@ -138,10 +144,10 @@ class ReviewMetadataPanel(wx.Panel):
     def diffView(self, lefBookInfo=None, rightBookInfo=None):
 #         rowList = ["Title", "Authors", 'Series', 'Tags', 'Rating', 'Publisher', 'ISBN-13', 'ISBN-10', 'Language', 'Description', 'Cover']
 #         rowList=[]
-        b = self.getABook()
-        book = Book()
-        book.bookPath = b.bookPath
-        book.bookImgName = b.bookImgName
+#         b = self.getABook()
+#         book = Book()
+#         book.bookPath = b.bookPath
+#         book.bookImgName = b.bookImgName
         self.rowDict = dict()
         for idx, item in enumerate(self.rowList):
             print idx, item
@@ -150,11 +156,11 @@ class ReviewMetadataPanel(wx.Panel):
             self.reviewRow.label = wx.StaticText(self.mainPanel, -1, item)
             self.reviewRow.copyRightToLeftButton = wx.BitmapButton(self.mainPanel, -1, bitmap, (10, 10), style=wx.BORDER_DEFAULT)    
             if item == 'Cover':
-                self.reviewRow.leftText = PropertyPhotoPanel(self.mainPanel, book)
-                self.reviewRow.rightText = PropertyPhotoPanel(self.mainPanel, book)
+                self.reviewRow.leftText = PropertyPhotoPanel(self.mainPanel, lefBookInfo)
+                self.reviewRow.rightText = PropertyPhotoPanel(self.mainPanel, rightBookInfo)
             else:
                 
-                self.reviewRow.leftText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(b, item), size=(200, -1))
+                self.reviewRow.leftText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(lefBookInfo, item), size=(200, -1))
                 self.reviewRow.rightText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(rightBookInfo, item), size=(200, -1))
                  
             self.rowDict[idx] = self.reviewRow
@@ -174,7 +180,7 @@ class ReviewMetadataPanel(wx.Panel):
         rowsizer.Add(self.next, 1)
         rowsizer.Add(self.done, 1)
         #-------------------------------------------------------
-        #------searchand thumbnail-----------
+        #------search and thumbnail-----------
         searchVbox = wx.BoxSizer(wx.VERTICAL)
         searchVbox.Add(self.search, 0, wx.EXPAND | wx.ALL, 0)
         searchVbox.Add(self.thumbnail, 1, wx.EXPAND | wx.ALL, 0)
