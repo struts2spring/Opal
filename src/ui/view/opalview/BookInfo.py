@@ -19,7 +19,7 @@ class GenerateBookInfo():
         This function is going to provide book info html.
         '''
 #         os.chdir(book.bookPath)
-        path = os.path.dirname(__file__) + os.sep + "images" + os.sep
+        path = os.path.join(Workspace().appPath, "images")
 #         path='/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images'
         listOfIcons = os.listdir(path)
         iconDict = {}

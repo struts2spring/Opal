@@ -10,6 +10,7 @@ import os
 import sys
 import subprocess
 import traceback
+from src.static.constant import Workspace
 
 #---------------------------------------------------------------------------
 
@@ -223,11 +224,11 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
 
 
 
-        self._choices = {'pdf': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "pdf.png"),
-                         'chm': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "chm.png"),
-                         'mobi': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "mobi.png"),
-                         'epub': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "epub.png"),
-                         'doc': wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "doc.png")
+        self._choices = {'pdf': wx.Bitmap(os.path.join(Workspace().appPath, "images","pdf.png")),
+                         'chm': wx.Bitmap(os.path.join(Workspace().appPath, "images", "chm.png")),
+                         'mobi': wx.Bitmap(os.path.join(Workspace().appPath, "images", "mobi.png")),
+                         'epub': wx.Bitmap(os.path.join(Workspace().appPath, "images", "epub.png")),
+                         'doc': wx.Bitmap(os.path.join(Workspace().appPath, "images", "doc.png"))
                          }
 
         self.colSize = None
