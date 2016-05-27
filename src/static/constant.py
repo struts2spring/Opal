@@ -39,16 +39,17 @@ class Workspace(object):
 #                 x=OpalStart(workspace)
                 print workspace['platform']
                 if sys.platform == workspace['platform']:
+                    self.appPath = os.path.join(os.path.dirname(__file__),"..")
                     self.path = str(workspace['path'][0])
                     if not os.path.exists(self.path):
                         os.mkdir(self.path)
-                    self.libraryPath = os.path.join(str(workspace['path'][0]),workspace['library'])
+                    self.libraryPath = os.path.join(str(workspace['path'][0]), workspace['library'])
                     if not os.path.exists(self.libraryPath):
                         os.mkdir(self.libraryPath)
-                    self.imagePath = os.path.join(str(workspace['path'][0]),workspace['image'])
+                    self.imagePath = os.path.join(str(workspace['path'][0]), workspace['image'])
                     if not os.path.exists(self.imagePath):
                         os.mkdir(self.imagePath)
-                    self.searchedPath = os.path.join(str(workspace['path'][0]),workspace['searched'])
+                    self.searchedPath = os.path.join(str(workspace['path'][0]), workspace['searched'])
                     if not os.path.exists(self.searchedPath):
                         os.mkdir(self.searchedPath)
             print self.path
@@ -62,9 +63,9 @@ class Workspace(object):
                     print data[k]
                     for d in data[k]:
                         if sys.platform == d['platform']:
-                            d['library']='library'
-                            d['image']='image'
-                            d['searched']='searched'
+                            d['library'] = 'library'
+                            d['image'] = 'image'
+                            d['searched'] = 'searched'
                             d['path'].insert(0, newPath)
 #                             print data[k]['path']
                             self.path = str(d['path'][0])

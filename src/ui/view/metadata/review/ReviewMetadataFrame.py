@@ -12,6 +12,11 @@ from src.ui.view.metadata.review.ReviewThumbCrtl import ThumbnailCtrl, \
 from src.metadata.DownloadMetadata import DownloadMetadataInfo
 from src.dao.online.OnlineBookDaoImpl import OnlineDatabase
 from threading import Thread
+import copy
+from src.logic.ReadWriteJson import ReadWriteJsonInfo
+from src.dao.Author import Author
+import shutil
+import os
 
 class BookMetadata():
     
@@ -21,76 +26,11 @@ class BookMetadata():
 class ReviewRow():
     pass
 
-# Define notification event for thread completion
-EVT_RESULT_ID = wx.NewId()
 
-def EVT_RESULT(win, func):
-    """Define Result Event."""
-    win.Connect(-1, -1, EVT_RESULT_ID, func)
 
-class ResultEvent(wx.PyEvent):
-    """Simple event to carry arbitrary result data."""
-    def __init__(self, data):
-        """Init Result Event."""
-        wx.PyEvent.__init__(self)
-        self.SetEventType(EVT_RESULT_ID)
-        self.data = data
 
-# Thread class that executes processing
-class WorkerThread(Thread):
-    """Worker Thread Class."""
-    def __init__(self, notify_window, searchText):
-        """Init Worker Thread Class."""
-        Thread.__init__(self)
-        self._notify_window = notify_window
-        self.searchText = searchText
-        self._want_abort = 0
-        # This starts the thread running on creation, but you could
-        # also make the GUI thread responsible for calling this
-        self.start()
+#----------------------------------------------------------------------------------------------------------------
 
-    def run(self):
-        """Run Worker Thread."""
-        # This is the code executing in the new thread. Simulation of
-        # a long process (well, 10s here) as a simple loop - you will
-        # need to structure your processing so that you periodically
-        # peek at the abort variable
-#         for i in range(10):
-#             time.sleep(1)
-#             if self._want_abort:
-#                 # Use a result of None to acknowledge the abort (of
-#                 # course you can use whatever you'd like or even
-#                 # a separate event type)
-#                 wx.PostEvent(self._notify_window, ResultEvent(None))
-#                 return
-        listOfBooks = self.doSearch(self.searchText )
-        # Here's where the result would be returned (this is an
-        # example fixed result of the number 10, but it could be
-        # any Python object)
-        wx.PostEvent(self._notify_window, ResultEvent(listOfBooks))
-    def doSearch(self,searchText):
-#         searchText = 'python'
-        downloadMetadataInfo = DownloadMetadataInfo()
-        onlineDatabase = OnlineDatabase()
-#         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
-
-        downloadMetadataInfo.doAmazonBookSerach(searchText)
-        listOfBooks = downloadMetadataInfo.listOfBook
-            
-            
-        
-        onlineDatabase.addingData(listOfBooks)
-        if downloadMetadataInfo.bookListInDatabase:
-            for book in downloadMetadataInfo.bookListInDatabase:
-                book.localImagePath = '/docs/new/image'
-                book.imageFileName = book.bookImgName
-                listOfBooks.append(book)
-        
-        return listOfBooks  
-    def abort(self):
-        """abort worker thread."""
-        # Method for use by main thread to signal an abort
-        self._want_abort = 1
 
 class ReviewMetadataPanel(wx.Panel):
     '''
@@ -99,7 +39,9 @@ class ReviewMetadataPanel(wx.Panel):
     def __init__(self, parent, book):
         wx.Panel.__init__(self, parent)
         self.currentBook = book
-        
+        self.tempRowDict = None
+        self.downloadMetadataInfo = DownloadMetadataInfo()
+        self.onlineDatabase = OnlineDatabase()
         self.mainPanel = wx.Panel(self, -1, style=wx.SIMPLE_BORDER)
         self.rowList = ["Title", "Authors", 'Series', 'Tags', 'Rating', 'Publisher', 'ISBN-13', 'ISBN-10', 'Language', 'Description', 'Cover']
         
@@ -119,7 +61,7 @@ class ReviewMetadataPanel(wx.Panel):
         self.worker = None
         self.defaultSearch(self.currentBook.bookName)
         # Set up event handler for any worker thread results
-        EVT_RESULT(self, self.OnResult)
+#         EVT_RESULT(self, self.OnResult)
 
         # And indicate we don't have a worker thread yet
 #         self.rowDic = dict()
@@ -145,55 +87,54 @@ class ReviewMetadataPanel(wx.Panel):
             self.thumbnail.ShowDir(event.data)
         # In either event, the worker is done
         self.info.Dismiss()
-        self.worker = None
+#         self.worker = None
     def OnDoSearch(self, evt):
         print("OnDoSearch: " + self.search.GetValue())
+        searchText = self.search.GetValue()
+        self.defaultSearch(searchText)
 #         listOfBooks = self.doGoogleSearch()
-        listOfBooks = list()
-#         self.doAmazonBookSerach()
-        searchListOfBook = self.doSearch(self.search.GetValue())
-        
-        print len(listOfBooks)
-        if len(searchListOfBook) > 0:
-            listOfBooks = searchListOfBook
-        self.thumbnail.ShowDir(listOfBooks)    
-    def defaultSearch(self, searchText='python'):
-        listOfBooks = list()
-#         self.doAmazonBookSerach()
-        # Trigger the worker thread unless it's already busy
-        if not self.worker:
-            self.info.ShowMessage('Searching...', wx.ICON_INFORMATION)
-            print('Starting Search for ', searchText)
-            self.worker = WorkerThread(self, searchText)
-#         searchListOfBook = self.doSearch(searchText)
-        
+#         listOfBooks = list()
+# #         self.doAmazonBookSerach()
+#         searchListOfBook = self.doSearch(self.search.GetValue())
+#         
 #         print len(listOfBooks)
 #         if len(searchListOfBook) > 0:
-        listOfBooks = []
-        self.thumbnail.ShowDir(listOfBooks)
-
+#             listOfBooks = searchListOfBook
+#         self.thumbnail.ShowDir(listOfBooks)    
+        
     def doSearch(self, searchText=None):
-        downloadMetadataInfo = DownloadMetadataInfo()
-        onlineDatabase = OnlineDatabase()
+         
+#         onlineDatabase = OnlineDatabase()
 #         listOfBooks = downloadMetadataInfo.doGoogleSearch(searchText)
         if self.searchCache.has_key(searchText):
             listOfBooks = self.searchCache[searchText]
             print listOfBooks
         else:
-            downloadMetadataInfo.doAmazonBookSerach(searchText)
-            listOfBooks = downloadMetadataInfo.listOfBook
-            
-            
+            self.downloadMetadataInfo.doAmazonBookSerach(searchText, self.onlineDatabase)
+            listOfBooks = self.downloadMetadataInfo.listOfBook
+             
+             
         self.searchCache[searchText] = listOfBooks
-        
-        onlineDatabase.addingData(listOfBooks)
-        if downloadMetadataInfo.bookListInDatabase:
-            for book in downloadMetadataInfo.bookListInDatabase:
+         
+        self.onlineDatabase.addingData(listOfBooks)
+        if self.downloadMetadataInfo.bookListInDatabase:
+            for book in self.downloadMetadataInfo.bookListInDatabase:
                 book.localImagePath = '/docs/new/image'
                 book.imageFileName = book.bookImgName
                 listOfBooks.append(book)
-        
+         
         return listOfBooks       
+    
+    def defaultSearch(self, searchText='python'):
+        listOfBooks = list()
+#         self.downloadMetadataInfo.doAmazonBookSerach(searchText, self.onlineDatabase)
+        searchListOfBook = self.doSearch(searchText)
+        
+        print len(listOfBooks)
+        if len(searchListOfBook) > 0:
+            listOfBooks = []
+        self.thumbnail.ShowDir(listOfBooks)
+
             
     def decodeProperty(self, book, key):
         decodedProperty = ''
@@ -245,25 +186,50 @@ class ReviewMetadataPanel(wx.Panel):
 #         book.bookPath = b.bookPath
 #         book.bookImgName = b.bookImgName
         self.rowDict = dict()
+        self.tempRowDict = dict()
         for idx, item in enumerate(self.rowList):
             print idx, item
             bitmap = wx.ArtProvider_GetBitmap(wx.ART_GO_BACK)
             self.reviewRow = ReviewRow()
             self.reviewRow.label = wx.StaticText(self.mainPanel, -1, item)
-            self.reviewRow.copyRightToLeftButton = wx.BitmapButton(self.mainPanel, -1, bitmap, (10, 10), style=wx.BORDER_DEFAULT)    
+            self.reviewRow.copyRightToLeftButton = wx.BitmapButton(self.mainPanel, -1, bitmap, (10, 10), style=wx.BORDER_DEFAULT, name=str(idx))  
+            self.reviewRow.copyRightToLeftButton.Bind(wx.EVT_BUTTON, self.onCopyRightToLeftButton)  
             if item == 'Cover':
+                self.tempRowDict[idx] = lefBookInfo
                 self.reviewRow.leftText = PropertyPhotoPanel(self.mainPanel, lefBookInfo)
                 self.reviewRow.rightText = PropertyPhotoPanel(self.mainPanel, rightBookInfo)
             else:
+                leftTextValue = self.decodeProperty(lefBookInfo, item)
+                self.tempRowDict[idx] = leftTextValue
                 
-                self.reviewRow.leftText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(lefBookInfo, item), size=(200, -1))
+                self.reviewRow.leftText = wx.TextCtrl(self.mainPanel, -1, value=leftTextValue, size=(200, -1))
                 self.reviewRow.rightText = wx.TextCtrl(self.mainPanel, -1, value=self.decodeProperty(rightBookInfo, item), size=(200, -1))
                  
             self.rowDict[idx] = self.reviewRow
 #         return self.rowDict
 
 
-    
+    def onCopyRightToLeftButton(self, event):
+        """
+        This method is fired when its corresponding button is pressed
+        """
+        button = event.GetEventObject()
+        labelText = self.rowDict[int(button.GetName())].label.GetLabel()
+#         print "The button you pressed was labeled: " + button.GetLabel()
+#         print "The button's name is " + button.GetName()
+        if labelText == 'Cover':
+            rightBookInfo = self.rowDict[int(button.GetName())].rightText.currentBook
+            rightBookInfo.bookPath = rightBookInfo.localImagePath
+            self.rowDict[int(button.GetName())].leftText.currentBook = rightBookInfo
+            self.rowDict[int(button.GetName())].leftText.changeBitmapWorker()
+        else:
+            rightValue = self.rowDict[int(button.GetName())].rightText.GetValue()
+            self.rowDict[int(button.GetName())].leftText.SetValue(rightValue)
+#         button_id = event.GetId()
+#         button_by_id = self.FindWindowById(button_id)
+#         print "The button you pressed was labeled: " + button_by_id.GetLabel()
+#         print "The button's name is " + button_by_id.GetName()
+        
     def SetProperties(self):
         self.helptext.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.BOLD, 0, "Verdana"))
     def doLayout(self):
@@ -354,14 +320,18 @@ class ReviewMetadataPanel(wx.Panel):
         topsizer.Layout()  
     
 #----------------------------------------------------------------------
+
     def BindEvents(self):
         self.Bind(wx.EVT_CLOSE, self.onClose)
 #         self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch, self.search)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnDoSearch, self.search)
+        self.acceptAll.Bind(wx.EVT_BUTTON, self.onAcceptAll)
         self.rejectAll.Bind(wx.EVT_BUTTON, self.onRejectAll)
         self.previous.Bind(wx.EVT_BUTTON, self.onPrevious)
         self.next.Bind(wx.EVT_BUTTON, self.onNext)
         self.done.Bind(wx.EVT_BUTTON, self.onDone)
+        
+        
         
 #                 rowsizer.Add(self.acceptAll, 1)
 #         rowsizer.Add(self.rejectAll, 1)
@@ -371,14 +341,66 @@ class ReviewMetadataPanel(wx.Panel):
         
     def onClose(self, event):
         self.Destroy()
+    def onAcceptAll(self, event):
+        print 'onAcceptAll'
+        for key, row in self.rowDict.items():
+            if row.label.GetLabel() == 'Cover':
+                self.rowDict[key].leftText.currentBook = row.rightText.currentBook
+                self.rowDict[key].leftText.changeBitmapWorker()                    
+            else:
+                self.rowDict[key].leftText.SetValue(row.rightText.GetValue())
+        
     def onRejectAll(self, event):
         print 'rejectAll'
+        if self.tempRowDict != None:
+#             self.rowDict = self.tempRowDict
+            for key, val in self.tempRowDict.items():
+                if self.rowDict[key].label.GetLabel() == 'Cover':
+                    self.rowDict[key].leftText.currentBook = val
+                    self.rowDict[key].leftText.changeBitmapWorker()                    
+                else:
+                    self.rowDict[key].leftText.SetValue(val)
+                
+            
     def onPrevious(self, event):
         print 'previous'
     def onNext(self, event):
         print 'next'
     def onDone(self, event):
         print 'done'
+        authorList = list()
+        
+        for key, row in self.rowDict.items():
+            if row.label.GetLabel() == 'Cover':
+                imgFilePath = os.path.join(row.leftText.currentBook.bookPath, row.leftText.currentBook.bookImgName)
+                destinationImgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.imageFileName)
+                shutil.copy (imgFilePath, destinationImgFilePath)
+            elif row.label.GetLabel() == 'Title':
+                self.currentBook.bookName = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'Authors':
+                author = Author()
+                author.authorName = row.leftText.GetValue()
+                authorList.append(author)
+                self.currentBook.authors = authorList
+            elif row.label.GetLabel() == 'Series':
+                self.currentBook.series = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'Tags':
+                self.currentBook.tag = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'Rating':
+                self.currentBook.rating = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'Publisher':
+                self.currentBook.publisher = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'ISBN-13':
+                self.currentBook.isbn_13 = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'ISBN-10':
+                self.currentBook.isbn_10 = row.leftText.GetValue()
+            elif row.label.GetLabel() == 'Language':
+                self.currentBook.inLanguage = row.leftText.GetValue()
+                
+
+                
+                
+        ReadWriteJsonInfo().writeJsonToDir(self.currentBook.bookPath, self.currentBook)
         
         
     def getABook(self):

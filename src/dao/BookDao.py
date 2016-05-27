@@ -239,8 +239,10 @@ class CreateDatabase():
 
         '''
         books = None
-        maxBookId = self.session.query(func.max(Book.id)).one()
-        return maxBookId[0]
+#         maxBookId = self.session.query(func.max(Book.id)).one()
+        maxBookId = self.session.execute('select  max(substr(book_path,19), id) from book order by id desc').first()
+        print int(maxBookId[0])
+        return int(maxBookId[0])
 
 if __name__ == '__main__':
 #     session = CreateDatabase().creatingDatabase()
@@ -252,8 +254,10 @@ if __name__ == '__main__':
         
     try:
         createdb = CreateDatabase()
-        createdb.creatingDatabase()
-        createdb.addingData()
+#         createdb.creatingDatabase()
+#         createdb.addingData()
+        x=createdb.getMaxBookID()
+        print x
 #         createdb.findAllBook()
     except:
         print traceback.print_exc()

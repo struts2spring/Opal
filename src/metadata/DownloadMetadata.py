@@ -12,6 +12,7 @@ import uuid
 import traceback
 from src.static.constant import Workspace
 from src.logic.online.OnlineBookLogic import OnlineBookInfoLogic
+import random
 
 class DownloadMetadataInfo():
     '''
@@ -21,7 +22,7 @@ class DownloadMetadataInfo():
         self.searchText = None
         self.session = requests.Session()
         self.payload = {
-                   'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
+                   'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0",
                    'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                    'Accept-Language':"en-US,en;q=0.5",
                    'Accept-Encoding':"gzip, deflate",
@@ -30,21 +31,49 @@ class DownloadMetadataInfo():
         self.requestHeader = None
         self.isbnUrlDict = None
         self.bookListInDatabase = None
+        print 'DownloadMetadataInfo construction completed'
     
-    def doAmazonBookSerach(self, searchText=None):
+    def generatePayload(self):
+        choices = [
+            'Mozilla/5.0 (Windows NT 5.2; rv:2.0.1) Gecko/20100101 Firefox/4.0.1',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0.1) Gecko/20100101 Firefox/4.0.1',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1',
+            'Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20110814 Firefox/6.0',
+            'Mozilla/5.0 (Windows NT 6.2; rv:9.0.1) Gecko/20100101 Firefox/9.0.1',
+            'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3',
+            'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.0.249.78 Safari/532.5',
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+        ]
+
+        choose = random.randint(0, len(choices)-1)
+        
+        payload = {'User-agent':choices[choose]}
+        osType=['X11; Ubuntu; Linux x86_64', 'Windows NT']
+        browserType=['Firefox', '']
+        return payload
+    def doAmazonBookSerach(self, searchText=None, onlineDatabase=None):
         
         if searchText:
             self.searchText = searchText
 #             searchUrl = 'http://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Ddigital-text&field-keywords=' + searchText
             searchUrl = "http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords={}&sprefix={},aps,319".format(searchText, searchText)
 #             print searchUrl
-            payload = {'Host':"www.amazon.com",
-                       'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
-                       'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                       'Accept-Language':"en-US,en;q=0.5",
-                       'Accept-Encoding':"gzip, deflate",
-                       'Referer':"http://www.amazon.com/",
-                       'Connection':"keep-alive"}
+#             payload = {'Host':"www.amazon.com",
+#                        'User-Agent':"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0",
+#                        'Accept':"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+#                        'Accept-Language':"en-US,en;q=0.5",
+#                        'Accept-Encoding':"gzip, deflate",
+#                        'Connection':"keep-alive"}
+            self.payload = self.generatePayload()
+            
+#             Host: www.amazon.com
+# User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0
+# Accept: image/png,image/*;q=0.8,*/*;q=0.5
+# Accept-Language: en-US,en;q=0.5
+# Accept-Encoding: gzip, deflate
+# Referer: http://www.amazon.com/s/ref=nb_sb_ss_i_1_6?url=search-alias=stripbooks&field-keywords=Scrum%20Wegwijzer:%20Een%20kompas%20voor%20de%20bewuste%20reiziger%20(Dutch%20Edition)&sprefix=Scrum%20Wegwijzer:%20Een%20kompas%20voor%20de%20bewuste%20reiziger%20(Dutch%20Edition),aps,319&Connection=keep-alive&Accept-Language=en-US%2Cen%3Bq%3D0.5&Accept-Encoding=gzip%2C+deflate&Accept=text%2Fhtml%2Capplication%2Fxhtml%2Bxml%2Capplication%2Fxml%3Bq%3D0.9%2C%2A%2F%2A%3Bq%3D0.8&User-Agent=Mozilla%2F5.0+%28X11%3B+Ubuntu%3B+Linux+x86_64%3B+rv%3A44.0%29+Gecko%2F20100101+Firefox%2F44.0
+# Cookie: p90x-info=A; x-wl-uid=1Ti6kmu7EbBlC8tFxFzWZ0/ODBjISYJ7qQ808eBft64aiz6RNAp/YuhCRV5Wx89seUw+Kz1LKTCE=; session-id-time=2082787201l; session-id=179-1840368-5373456; ubid-main=187-1126592-4490122; csm-hit=1HZNZXZGMZDE1Z3HQ4BZ+s-1VXKK7JQT8T5ZT78NW4E|1463819299758; session-token=AVoLNIMokageMbshCqpLxYUzbv0F9AX0NU0Y1TElFyYXj2OGe2gXtAmXejTaJE3c4p+uan73+BILNG0bdkFouJk9tK9erhvgyQmvpj1l7uAvwvtN9u6Aimqrv2L7EfsA7NVE0u599ZZQZca1Kwvn8pJam7W+PIw/3ap5vk+DfStDoBz+oC+pB+yMmckFXf2PN/s8riCJm1wEmgxhxw7+Ssk3hsRObUC875JljKUfDx4RKJyfsHeMVZxjQU8QO2Yr
+# Connection: keep-alive
 #             with requests.Session() as c:
             
             try:
@@ -67,7 +96,7 @@ class DownloadMetadataInfo():
                         
                     print urlList
                     print isbnList
-                    onlineBookInfoLogic = OnlineBookInfoLogic()
+                    onlineBookInfoLogic = OnlineBookInfoLogic(onlineDatabase)
                     
                     isbnListInDatabase = onlineBookInfoLogic.bookListInOnlineDatabase(isbnList)
                     self.bookListInDatabase = onlineBookInfoLogic.getBookInfoObjects(isbnListInDatabase)
@@ -85,7 +114,7 @@ class DownloadMetadataInfo():
                         url = self.isbnUrlDict[isbn]
                         self.getAmazonSingleBookInfo(bookImgName=bookImgName, bookUrl=url)
                 else:
-                    self.doAmazonBookSerach(searchText)    
+                    self.doAmazonBookSerach(searchText,onlineDatabase)    
             except:
                 print traceback.print_exc()
                 
@@ -109,7 +138,7 @@ class DownloadMetadataInfo():
 #            'Connection':"keep-alive"}
 #         searchUrl = ''
         if self.requestHeader:
-            payload = self.requestHeader
+            self.payload = self.generatePayload()
         print bookUrl, bookImgName 
 #         with requests.Session() as c:.
         
@@ -267,6 +296,6 @@ if __name__ == '__main__':
 #     bookUrl = 'http://www.amazon.com/Learning-Python-5th-Mark-Lutz/dp/1449355730'
     downloadMetadataInfo = DownloadMetadataInfo()
 #     downloadMetadataInfo.getAmazonSingleBookInfo(bookImgName='1449355730.jpg', bookUrl=bookUrl)
-    downloadMetadataInfo.doAmazonBookSerach(searchText='time')
+    downloadMetadataInfo.doAmazonBookSerach(searchText='Software in 30 Days How Agile Managers Beat the Odds, Delight Their Customers, And Leave Competitors In the Dust')
     print downloadMetadataInfo.listOfBook
     pass

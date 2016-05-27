@@ -95,6 +95,8 @@ class ReadWriteJsonInfo(object):
             authors = []
             if type(row2dict['publishedOn']) == datetime or type(row2dict['publishedOn']) == datetime.datetime:
                 row2dict['publishedOn'] = str(row2dict['publishedOn'])
+            if type(row2dict['createdOn']) == datetime or type(row2dict['createdOn']) == datetime.datetime:
+                row2dict['createdOn'] = str(row2dict['createdOn'])
 #                 row2dict['publishedOn']=datetime.datetime.strptime(row2dict['publishedOn'][0:19], "%Y-%m-%d %H:%M:%S")
             for a in row2dict['authors']:
                 author = {}
@@ -102,8 +104,24 @@ class ReadWriteJsonInfo(object):
                     author['authorName'] = a
                 else:
                     author = a.__dict__
-                
+                if author.has_key('_sa_instance_state'):
+                    del author['_sa_instance_state']
+                if author.has_key('book_assoc'):
+                    del author['book_assoc']
+                    
                 authors.append(author)
+                
+            if row2dict.has_key('_sa_instance_state'):
+                del row2dict['_sa_instance_state']
+            if row2dict.has_key('authors'):   
+                del row2dict['authors']
+            if row2dict.has_key('book_assoc'):  
+                del row2dict['book_assoc']  
+            if row2dict.has_key('__len__'):  
+                del row2dict['__len__']  
+            if row2dict.has_key('id'):  
+                del row2dict['id']  
+                  
             row2dict['authors'] = authors
             f.write(json.dumps(row2dict, sort_keys=False, indent=4))
             f.close()     

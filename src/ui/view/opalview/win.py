@@ -118,8 +118,10 @@ class MainFrame(wx.Frame):
         self._mgr = wx.aui.AuiManager()
         self._mgr.SetManagedWindow(self)
         print '1----------------------->', os.getcwd()
-        print os.path.dirname(__file__)
-        image = wx.Image(os.path.dirname(__file__) + os.sep + "images" + os.sep + "Library-icon.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        
+        print '1----------------------->'
+        image = wx.Image(os.path.join(Workspace().appPath, "images", "Library-icon.png"), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(image)
         self.SetIcon(icon)
@@ -180,9 +182,9 @@ class MainFrame(wx.Frame):
         tb1.AddSeparator()
         tb1.AddLabelTool(id=ID_search, label="Search", shortHelp="Search" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_FIND))
         tb1.AddLabelTool(id=ID_editMetadata, label="Edit metadata", shortHelp="Edit metadata", bitmap=wx.ArtProvider_GetBitmap(wx.ART_WARNING))
-        tb1.AddLabelTool(id=ID_addBook, label="Add book", shortHelp="Add book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "add_book.png"))
-        tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "delete_book.png"))
-        tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.dirname(__file__) + os.sep + "images" + os.sep + "database_refresh.png"))
+        tb1.AddLabelTool(id=ID_addBook, label="Add book", shortHelp="Add book", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "add_book.png")))
+        tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "delete_book.png")))
+        tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "database_refresh.png")))
         tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
         tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
         tb1.Realize()
@@ -283,7 +285,7 @@ class MainFrame(wx.Frame):
     def OnCoverFlow(self, event):
         print 'OnCoverFlow'
         try:
-            thread.start_new_thread( self.startShell, (1, ) )
+            thread.start_new_thread(self.startShell, (1,))
 #             MyApp().run()
         except:
             print "Error: unable to start thread"

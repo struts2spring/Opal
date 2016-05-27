@@ -50,6 +50,7 @@ class AddBook():
 
         if sourcePath:
             maxBookId = self.createDatabase.getMaxBookID()
+            
             if maxBookId == None:
                 maxBookId = 0
             workspacePath = Workspace().libraryPath
