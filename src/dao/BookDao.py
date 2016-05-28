@@ -241,9 +241,11 @@ class CreateDatabase():
         '''
         books = None
 #         maxBookId = self.session.query(func.max(Book.id)).one()
-        sql='select  max(substr(book_path,length('+Workspace().libraryPath+')), id) from book order by id desc'
+        length=len(Workspace().libraryPath)+2
+        print length
+        sql='select max(substr(book_path,'+str(length)+'), id) from book order by id desc'
         print 'getMaxBookID----sql: > ',sql
-        maxBookId = self.session.execute('select  max(substr(book_path,19), id) from book order by id desc').first()
+        maxBookId = self.session.execute(sql).first()
         print int(maxBookId[0])
         return int(maxBookId[0])
 
