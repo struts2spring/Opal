@@ -10,7 +10,7 @@ from src.logic.search_book import FindingBook
 import os
 import wx.html
 from PIL import Image
-from src.dao.BookDao import Workspace
+from src.static.constant import Workspace
 
 class GenerateBookInfo():
 
@@ -36,7 +36,7 @@ class GenerateBookInfo():
                 break
         print book.bookPath, name
         filepath=os.path.join(path, 'noCover.png')
-        print '--->',filepath
+        print 'GenerateBookInfo.getHtmlContent--->',filepath
         if name!=None and book.bookName!=None: 
             filepath = os.path.join(book.bookPath, name)
             im = Image.open(filepath)
@@ -146,7 +146,7 @@ class GenerateBookInfo():
                             with tag('td'):
                                 with tag('p'):
 #                                     text(book.bookFormat)
-                                    imagePath = os.path.dirname(__file__) + os.sep + "images" + os.sep +str(book.bookFormat).lower()+'.png'
+                                    imagePath = os.path.join(Workspace().appPath, "images",str(book.bookFormat).lower()+'.png')
                                     print imagePath
 #                                     if book.bookFormat == 'PDF':
 #                                         imagePath = pdfImage

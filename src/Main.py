@@ -5,10 +5,9 @@ Created on 14-Nov-2015
 '''
 
 import wx
-from src.ui.view.windowMgr import PyAUIFrame
-import os
+
+
 from src.ui.view.opalview.win import MainFrame
-from src.static.constant import Workspace
 # 
 global appPath 
 

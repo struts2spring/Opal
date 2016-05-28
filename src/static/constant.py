@@ -39,7 +39,8 @@ class Workspace(object):
 #                 x=OpalStart(workspace)
                 print workspace['platform']
                 if sys.platform == workspace['platform']:
-                    self.appPath = os.path.join(os.path.dirname(__file__),"..")
+                    self.appPath = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+                    print 'readWorkspace---->', os.path.abspath(self.appPath)
                     self.path = str(workspace['path'][0])
                     if not os.path.exists(self.path):
                         os.mkdir(self.path)

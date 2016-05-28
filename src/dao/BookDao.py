@@ -36,7 +36,7 @@ class CreateDatabase():
         '''
         Creating database for library.
         '''
-        self.engine = create_engine('sqlite:///' + Workspace().libraryPath + os.sep + '_opal.sqlite', echo=True)
+        self.engine = create_engine('sqlite:///' + Workspace().libraryPath + os.sep + '_opal.sqlite', echo=False)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = SingletonSession().session
         
