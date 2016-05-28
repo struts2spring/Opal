@@ -25,7 +25,10 @@ import thread
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
 # from kivy.uix.textinput import TextInput
-from src.ui.view.kivy.x import MyApp
+try:
+    from src.ui.view.kivy.x import MyApp
+except:
+    print 'error in loading kivy'
 try:
     from src.dao.BookDao import CreateDatabase
 except:
