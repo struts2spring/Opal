@@ -110,6 +110,7 @@ class CreateDatabase():
         return book
     
     def readJsonFile(self, dirName=None):
+        print 'readJsonFile----->',os.path.join(Workspace().libraryPath, dirName , 'book.json')
         bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
@@ -240,6 +241,8 @@ class CreateDatabase():
         '''
         books = None
 #         maxBookId = self.session.query(func.max(Book.id)).one()
+        sql='select  max(substr(book_path,length('+Workspace().libraryPath+')), id) from book order by id desc'
+        print 'getMaxBookID----sql: > ',sql
         maxBookId = self.session.execute('select  max(substr(book_path,19), id) from book order by id desc').first()
         print int(maxBookId[0])
         return int(maxBookId[0])

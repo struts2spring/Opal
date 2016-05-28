@@ -12,6 +12,7 @@ from src.metadata import DownloadMetadata
 from src.metadata.DownloadMetadata import DownloadMetadataInfo
 from src.dao.online import OnlineBookDaoImpl
 from src.dao.online.OnlineBookDaoImpl import OnlineDatabase
+from src.static.constant import Workspace
 
 #----------------------------------------------------------------------
 sampleList = ['google book', 'amazon book', 'IT ebook', 'Tubebl', 'Lit2go', 'Project Gutenberg',
@@ -33,7 +34,7 @@ class SearchBookPanel(wx.Panel):
         '''
         self.searchCache = dict()
         
-        os.chdir(os.path.join(os.path.dirname(__file__), '..', '..', 'opalview', "images"))
+        os.chdir(os.path.join(Workspace(), "images"))
 
         image = wx.Image('pdf.png', wx.BITMAP_TYPE_ANY)
         img = image.Scale(18, 18)
