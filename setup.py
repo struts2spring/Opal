@@ -27,7 +27,8 @@ setup(
     	'Pillow==2.6.1',
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
-        'PyPDF2'
+        'PyPDF2',
+        'wand'
     ],
     classifiers=[
         # Indicate who your project is intended for
