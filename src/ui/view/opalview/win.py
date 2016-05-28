@@ -360,8 +360,10 @@ class MainFrame(wx.Frame):
 #         self.fileDropTarget = FileDropTarget(self)
         
 #         print 'CreateThumbCtrl', len(self.books)
-
-        self.thumbnail.ShowDir(self.books)
+        try:
+            self.thumbnail.ShowDir(self.books)
+        except:
+            traceback.print_exc()
         return self.thumbnail
 
     def CreateTextCtrl(self):

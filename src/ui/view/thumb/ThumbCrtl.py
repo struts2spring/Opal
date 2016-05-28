@@ -1464,11 +1464,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         :param `directory`: the folder containing the images to thumbnail;
         :param `fileExtList`: a Python list of file extensions to consider.
         """
-
-        fileList = [os.path.normcase(f) for f in os.listdir(directory)]
-        fileList = [f for f in fileList \
-                    if os.path.splitext(f)[1] in fileExtList]
-
+        fileList=list()
+        try:
+            fileList = [os.path.normcase(f) for f in os.listdir(directory)]
+            fileList = [f for f in fileList \
+                        if os.path.splitext(f)[1] in fileExtList]
+        except:
+            traceback.print_exc()
         return fileList
 
 

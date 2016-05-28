@@ -1,1 +1,1 @@
-{"workspace": [{"platform": "win32", "image": "image", "path": ["e:\\docs\\new"], "library": "library", "searched": "searched"}, {"platform": "linux2", "image": "image", "path": ["/docs/new", "/docs/new"], "library": "library", "searched": "searched"}]}
+{"workspace": [{"platform": "win32", "image": "image", "searched": "searched", "library": "library", "path": ["e:\\docs\\new"]}, {"platform": "linux2", "image": "image", "searched": "searched", "library": "library", "path": ["/docs/new", "/docs/new", "/docs/new"]}]}
