@@ -305,7 +305,7 @@ class DownloadItEbook(threading.Thread):
         baseUrl = 'http://it-ebooks.info'
         miss = Missing()
 #         lst = miss.missingNumbers()
-        lst = [7103, 7102]
+        lst = [1464348534, 7102]
         for number in lst:
             print number
 #         for number in range(6998, 0, -1):
@@ -368,5 +368,6 @@ if __name__ == "__main__":
 #         t = DownloadItEbook(args=(i,), kwargs={'a':1, 'b':2})
 #         t.start()
     it = DownloadItEbook()
-    it.updateBooksMetadata()
+#     it.updateBooksMetadata()
+    it.startDownload()
     print ' completed'

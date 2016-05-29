@@ -93,10 +93,12 @@ class ReadWriteJsonInfo(object):
             f = open(os.path.join(bookPath, 'book.json'), 'w')
             row2dict = book.__dict__
             authors = []
-            if type(row2dict['publishedOn']) == datetime or type(row2dict['publishedOn']) == datetime.datetime:
-                row2dict['publishedOn'] = str(row2dict['publishedOn'])
-            if type(row2dict['createdOn']) == datetime or type(row2dict['createdOn']) == datetime.datetime:
-                row2dict['createdOn'] = str(row2dict['createdOn'])
+            if row2dict.has_key('publishedOn'):
+                if type(row2dict['publishedOn']) == datetime or type(row2dict['publishedOn']) == datetime.datetime:
+                    row2dict['publishedOn'] = str(row2dict['publishedOn'])
+            if row2dict.has_key('createdOn'):
+                if type(row2dict['createdOn']) == datetime or type(row2dict['createdOn']) == datetime.datetime:
+                    row2dict['createdOn'] = str(row2dict['createdOn'])
 #                 row2dict['publishedOn']=datetime.datetime.strptime(row2dict['publishedOn'][0:19], "%Y-%m-%d %H:%M:%S")
             for a in row2dict['authors']:
                 author = {}
