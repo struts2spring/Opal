@@ -10,11 +10,20 @@ class BookImage():
     def __init__(self):
         pass
 
-    def getPdfBookImage(self, sourcePdf=None, destImg=None):
+    def getPdfBookImage(self, name=None):
         # Converting first page into JPG
-        with Image(filename=sourcePdf) as img:
-            img.save(filename=destImg)
-    
+#         with Image(filename=sourcePdf) as img:
+#             img.save(filename=destImg)
+        cmd = 'convert -background white -alpha remove "' + name + '.pdf[0]' + '" "' + name + '.jpg' + '"'
+        subprocess.call(cmd, shell=True)
+        
+    def getDjuvBookImage(self, name=None):
+        cmd = 'ddjvu -page=1 -format=pnm "' + name + '.djvu" 1.pnm && pnmtojpeg 1.pnm > "' + name + '.jpg" && rm *.pnm'
+        subprocess.call(cmd, shell=True)
+        
+    def getChmBookImage(self, name=None):
+        print 'getChmBookImage'
+        
     def getBookImage(self, filePath=None, name=None, bookFormat=None):
 
         '''
@@ -23,10 +32,14 @@ class BookImage():
         '''
         os.chdir(filePath)
         if 'pdf' == bookFormat:
-            self.getPdfBookImage(sourcePdf=name + '.pdf[0]', destImg=name + '.jpg')
-#             cmd = 'convert -background white -alpha remove "' + name + '.pdf[0]" "' + name + '.jpg"'
-#             print cmd
-#             print subprocess.call(cmd, shell=True)
+            self.getPdfBookImage(name)
+
+        elif 'djvu' == bookFormat:
+            self.getDjuvBookImage(name)
+            
+        elif 'chm' == bookFormat:
+            self.getChmBookImage(name)
+            
         elif 'epub' == bookFormat:
             file_name = name + '.epub'
             epubBook = EpubBook()

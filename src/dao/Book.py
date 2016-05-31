@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func, \
+from sqlalchemy import Column, DateTime, String, Integer, ForeignKey,UnicodeText, func, \
     Column, Integer, String, Column, Integer, String, create_engine, create_engine
 
 from sqlalchemy.ext.declarative import declarative_base, declarative_base
@@ -15,7 +15,7 @@ class Book(Base):
     """A Book class is an entity having database table."""
     __tablename__ = 'book'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    bookName = Column('book_name', String(46), nullable=False)  # bookName
+    bookName = Column('book_name', String(convert_unicode=True), nullable=False)  # bookName
     subTitle = Column('sub_title', String)  # Title
     isbn_10 = Column(String)  # isbn_10
     isbn_13 = Column(String, unique=True)  # isbn_13
@@ -24,7 +24,7 @@ class Book(Base):
     customerReview = Column('customer_review', String)  # customerReview
     bookDescription = Column('book_description', String)  # bookDescription
     editionNo = Column('edition_no', String)  # editionNo
-    publisher = Column(String)  # publisher
+    publisher = Column(UnicodeText)  # publisher
     bookFormat = Column("book_format", String)  # bookFormat
     fileSize = Column('file_size', String)  # fileSize
     numberOfPages = Column('number_of_pages', Integer)  # numberOfPages

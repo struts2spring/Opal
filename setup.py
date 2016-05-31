@@ -28,7 +28,9 @@ setup(
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
-        'wand'
+        'python-djvulibre >= 0.7.2',
+        'pychm >=0.8.4.1'
+#         'wand'
     ],
     classifiers=[
         # Indicate who your project is intended for

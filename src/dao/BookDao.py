@@ -63,9 +63,9 @@ class CreateDatabase():
         try:    
             single = {}
             duplicate = {}
-            self.duplicateBooks=list()
+            self.duplicateBooks = list()
             for dirName in listOfDir:
-                addDatabase=True
+                addDatabase = True
                 b = self.readJsonFile(dirName=dirName)
                 book = self.createBookFromJson(bookJson=b)
                 book.bookPath = os.path.join(directory_name , dirName)
@@ -75,7 +75,7 @@ class CreateDatabase():
                         
                     else:
                         duplicate[book.isbn_13] = book
-                        addDatabase=False
+                        addDatabase = False
                         self.duplicateBooks.append(duplicate)
 #                 print single
                 if addDatabase:
@@ -110,14 +110,14 @@ class CreateDatabase():
         return book
     
     def readJsonFile(self, dirName=None):
-        print 'readJsonFile----->',os.path.join(Workspace().libraryPath, dirName , 'book.json')
+        print 'readJsonFile----->', os.path.join(Workspace().libraryPath, dirName , 'book.json')
         bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
         for line in bookJsonFile:
             rep = rep + line
         bookJsonFile.close
-        b=None
+        b = None
         try:
             b = json.loads(rep)
         except:
@@ -131,8 +131,11 @@ class CreateDatabase():
 
     def saveBook(self, book):
         self.session.add(book)
-        self.session.commit()
-        self.session.flush()
+        try:
+            self.session.commit()
+        except:
+            self.session.rollback()
+            raise
 
     def findAllBook(self):
         bs = self.session.query(Book).all()
@@ -154,7 +157,7 @@ class CreateDatabase():
         '''
         This method removes entry from database. 
         '''
-        isBookDeleted=False
+        isBookDeleted = False
         try:
             if book:
                 query = self.session.query(Book).filter(Book.id == book.id)
@@ -185,12 +188,12 @@ class CreateDatabase():
 #                 if path and os.path.exists(path):
 #                     shutil.rmtree(path)
 #                     print 'deleting path'
-                isBookDeleted=True
+                isBookDeleted = True
         except:
             traceback.print_exc()
             self.session.flush()
             self.session.close()
-            isBookDeleted=False
+            isBookDeleted = False
             
 
         return isBookDeleted
@@ -241,11 +244,13 @@ class CreateDatabase():
         '''
         books = None
 #         maxBookId = self.session.query(func.max(Book.id)).one()
-        length=len(Workspace().libraryPath)+2
+        length = len(Workspace().libraryPath) + 2
         print length
-        sql='select max(substr(book_path,'+str(length)+'), id) from book order by id desc'
-        print 'getMaxBookID----sql: > ',sql
+        sql = 'select max(substr(book_path,' + str(length) + '), id) from book order by id desc'
+        print 'getMaxBookID----sql: > ', sql
         maxBookId = self.session.execute(sql).first()
+        if maxBookId == None:
+            maxBookId = [0]
         print int(maxBookId[0])
         return int(maxBookId[0])
 
@@ -261,7 +266,7 @@ if __name__ == '__main__':
         createdb = CreateDatabase()
 #         createdb.creatingDatabase()
 #         createdb.addingData()
-        x=createdb.getMaxBookID()
+        x = createdb.getMaxBookID()
         print x
 #         createdb.findAllBook()
     except:

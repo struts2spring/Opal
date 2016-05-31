@@ -54,7 +54,11 @@ class MegaTable(Grid.PyGridTableBase):
         try:
             value = str(self.data[row][1].get(self.GetColLabelValue(col), ""))
         except:
-            traceback.print_exc()
+            try:
+                value=self.data[row][1].get(self.GetColLabelValue(col), "").encode('utf-8')
+            except:
+                pass
+            pass
 #             print '------------------------------------------------>',self.data[row][1]
         if 'authors' == self.GetColLabelValue(col):
             authorsName=list()

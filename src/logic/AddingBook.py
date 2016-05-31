@@ -184,15 +184,42 @@ class AddBook():
         print path
 
         if path:
-            input = PdfFileReader(open(path, "rb"))
-            print 'getPdfMetadata', input.getIsEncrypted()
-        if path :
-            pdf_toread = PdfFileReader(open(path, "rb"))
-            if pdf_toread.isEncrypted:
-                pdf_toread.decrypt('')
-            pdf_info = pdf_toread.getDocumentInfo()
-            print str(pdf_info)
-            print 'Pages:', pdf_toread.getNumPages()
+            try:
+                input = PdfFileReader(open(path, "rb"))
+                print 'getPdfMetadata', input.getIsEncrypted()
+            except:
+                pass
+            pdf_info = None
+            try:
+                pdf_toread = PdfFileReader(open(path, "rb"))
+                if pdf_toread.isEncrypted:
+                    try:
+                        pdf_toread.decrypt('')
+                    except:
+                        traceback.print_exc()
+            except:
+                pass
+            try:
+                pdf_info = pdf_toread.getDocumentInfo()
+                print 'Pages:', pdf_toread.getNumPages()
+                self.book.numberOfPages = pdf_toread.getNumPages()
+                #             value = pdf_info.subject
+                if type(pdf_info.subject) == str:
+                    # Ignore errors even if the string is not proper UTF-8 or has
+                    # broken marker bytes.
+                    # Python built-in function unicode() can do this.
+                    value = unicode(pdf_info.subject, "utf-8", errors="ignore")
+                    
+                else:
+                    # Assume the value object has proper __unicode__() method
+                    value = unicode(pdf_info.subject)
+                    print 'else'
+                if not self.book.tag :
+                    self.book.tag = value
+                else:
+                    self.book.tag = self.book.tag + '' + value
+            except:
+                traceback.print_exc()
             try:
                 if pdf_info.title != None and pdf_info.title.strip() != '':
                     self.book.bookName = str(pdf_info.title)
@@ -215,33 +242,21 @@ class AddBook():
             print path
             print Util().convert_bytes(os.path.getsize(path))
             self.book.fileSize = Util().convert_bytes(os.path.getsize(path))
-            self.book.numberOfPages = pdf_toread.getNumPages()
+            
 
-#             value = pdf_info.subject
-            if type(pdf_info.subject) == str:
-                # Ignore errors even if the string is not proper UTF-8 or has
-                # broken marker bytes.
-                # Python built-in function unicode() can do this.
-                value = unicode(pdf_info.subject, "utf-8", errors="ignore")
-                
-            else:
-                # Assume the value object has proper __unicode__() method
-                value = unicode(pdf_info.subject)
-                print 'else'
-            if not self.book.tag :
-                self.book.tag = value
-            else:
-                self.book.tag = self.book.tag + '' + value
+
 
 #             if 'ISBN'.lower() in str(pdf_info['/Subject']).lower():
 #                 self.book.isbn_13 = str(pdf_info['/Subject'])[6:]
 
             author = Author()
-            val = pdf_info.author
-            if val:
-                val = val.encode("utf8", "ignore")
-            else :
-                val = 'Unknown'
+            val = 'Unknown'
+            try:
+                if pdf_info.author !=None and pdf_info.author.strip()!='':
+                    val = pdf_info.author
+                    val = val.encode("utf8", "ignore")
+            except:
+                pass
             author.authorName = val
             
 
