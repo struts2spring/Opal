@@ -232,6 +232,7 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
                          'chm': wx.Bitmap(os.path.join(Workspace().appPath, "images", "chm.png")),
                          'mobi': wx.Bitmap(os.path.join(Workspace().appPath, "images", "mobi.png")),
                          'epub': wx.Bitmap(os.path.join(Workspace().appPath, "images", "epub.png")),
+                         'djvu': wx.Bitmap(os.path.join(Workspace().appPath, "images", "djvu.png")),
                          'doc': wx.Bitmap(os.path.join(Workspace().appPath, "images", "doc.png"))
                          }
 

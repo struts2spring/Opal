@@ -28,8 +28,7 @@ setup(
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
-        'python-djvulibre >= 0.7.2',
-        'pychm >=0.8.4.1'
+        'python-djvulibre >= 0.7.2'
 #         'wand'
     ],
     classifiers=[

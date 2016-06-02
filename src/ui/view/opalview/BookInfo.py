@@ -100,10 +100,10 @@ class GenerateBookInfo():
                             with tag('td'):
                                 with tag('p'):
                                     authors = book.authors
-                                    s = ''
+                                    authorNameList = list()
                                     for a in authors:
-                                        s = s + ',' + a.authorName
-                                    text(s)
+                                        authorNameList.append( a.authorName)
+                                    text(','.join(authorNameList))
 
                         if book.isbn_13:
                             with tag('tr','BGCOLOR="'+lightGray+'"'):
@@ -128,7 +128,8 @@ class GenerateBookInfo():
                                     text('Pages:')
                             with tag('td'):
                                 with tag('p'):
-                                    text(book.numberOfPages)
+                                    if book.numberOfPages:
+                                        text(book.numberOfPages)
 
                         with tag('tr','BGCOLOR="'+lightGray+'"'):
                             with tag('td'):

@@ -55,4 +55,29 @@ class FindingBook():
             BookTerminal().removeBook(bookPath=bookPath)
             
         print 'Book deleted'
-        
+    def findFolderWithoutBook(self):
+        '''
+        this method will find all the folder without book.
+        '''
+        directory_name=Workspace().libraryPath
+        os.chdir(directory_name)
+        listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
+        if listOfDir:
+            listOfDir.sort(key=int)
+        defaulterList=list()
+        for dir in listOfDir:
+            lst=list()
+            levelOne=os.path.join(directory_name, dir)
+            for sName in os.listdir(levelOne):
+                if os.path.isfile(os.path.join(levelOne, sName)):
+                    print sName
+                    lst.append(sName.split('.')[-1:][0])
+#             if 'pdf' not in lst:
+#                 defaulterList.append(levelOne)
+            if len(lst)<3:
+                defaulterList.append(levelOne)
+        print defaulterList
+if __name__=='__main__':
+    print 'hi'
+    findingBook=FindingBook()
+    findingBook.findFolderWithoutBook()
