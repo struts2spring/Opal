@@ -209,7 +209,7 @@ class EpubBook:
                 continue
 
             # Make the new node:
-            #newnode = tag.cloneNode(False)
+            # newnode = tag.cloneNode(False)
             newnode = self.dom.createElement(self.subjectTag)
 
             # Make a text node inside it:
@@ -285,7 +285,7 @@ class EpubBook:
         print "Wrote", self.filename
         os.remove(bakfile)
 
-    def extract_cover_image(self, outdir=''):
+    def extract_cover_image(self, name=None, outdir=''):
         '''Extract just an image named cover.*.
            Return (newfilename, filename_in_zip_archive)
         '''
@@ -433,9 +433,12 @@ class EpubBook:
             return None, None
 
         outfilename = os.path.join(outdir, base)
-        outfp = open(outfilename, 'w')
-        outfp.write(infp.read())
-        infp.close()
+        if name == None:
+            return None, None
+        else:
+            outfp = open(name, 'w')
+            outfp.write(infp.read())
+            infp.close()
         outfp.close()
         return outfilename, coverimg
 

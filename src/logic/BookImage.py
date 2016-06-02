@@ -46,7 +46,7 @@ class BookImage():
             epubBook.open(file_name)
         
             epubBook.parse_contents()
-            epubBook.extract_cover_image(outdir='.')
+            epubBook.extract_cover_image(name+'.jpg', outdir='.',)
             
         elif 'mobi' == bookFormat:
             print 'work in progress'
