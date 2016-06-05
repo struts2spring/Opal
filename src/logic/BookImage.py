@@ -3,7 +3,6 @@ import subprocess
 import sys
 from src.ui.view.epub.opal_epub_worker import EpubBook
 
-from wand.image import Image
 
 class BookImage():
 
