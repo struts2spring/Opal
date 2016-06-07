@@ -2,7 +2,11 @@ import os
 import subprocess
 import sys
 from src.ui.view.epub.opal_epub_worker import EpubBook
+from src.audit.singletonLoggerLogging import Logger
+import traceback
+import rarfile
 
+logger = Logger(__name__)
 
 class BookImage():
 
@@ -22,7 +26,21 @@ class BookImage():
         
     def getChmBookImage(self, name=None):
         print 'getChmBookImage'
+    def getCbrBookImage(self, name=None):
         
+        logger.info('getCbrBookImage')
+        rar = rarfile.RarFile(name+".cbr")
+        nameList= rar.namelist()
+        nameList.sort()
+        try:
+            cmd = '''
+            unrar e -v "''' + name + '''.cbr" "''' + nameList[0]+'''"
+            mv "'''+nameList[0]+'''" "'''+name +'''.jpg"
+            '''
+            logger.info(cmd)
+            subprocess.call(cmd, shell=True)
+        except:
+            traceback.print_exc()
     def getBookImage(self, filePath=None, name=None, bookFormat=None):
 
         '''
@@ -45,8 +63,10 @@ class BookImage():
             epubBook.open(file_name)
         
             epubBook.parse_contents()
-            epubBook.extract_cover_image(name+'.jpg', outdir='.',)
-            
+            epubBook.extract_cover_image(name + '.jpg', outdir='.',)
+        elif 'cbr' == bookFormat:
+            logger.info('bookFormat:' + bookFormat)
+            self.getCbrBookImage(name)    
         elif 'mobi' == bookFormat:
             print 'work in progress'
         print 'getBookImage completed'
@@ -57,13 +77,14 @@ if __name__ == "__main__":
     if sys.platform == 'win32':
         filePath = 'c://new_1//3'
     else:
-        filePath = '/docs/new_1/3'
+#         filePath = '/docs/new_1/3'
+        filePath = '/docs/github/Opal/src/viewer/cbr/'
         
 
-    name = 'Java Test-Driven Development'
+    name = '1.cbr'
     print 'started'
 #     pdfFilePath=os.path.join(filePath, name+'.pdf')
 #     imageFilePath=os.path.join(filePath, name+'.jpg')
-    BookImage().getBookImage(filePath, name)
+    BookImage().getBookImage(filePath, name, bookFormat='cbr')
     print 'e'
     pass

@@ -4,6 +4,8 @@ from src.audit.singletonLoggerLogging import Logger
 from src.viewer.cbr.PhotoFrame import PropertyPhotoPanel
 from src.viewer.cbr.ThumbCrtl import ThumbnailCtrl, NativeImageHandler
 from src.viewer.cbr.imgUtil import ImageUtil
+from src.viewer.cbr.ExtractImage import Extractor
+import os
 
 logger = Logger('cbr')
 
@@ -81,13 +83,13 @@ class SizeReportCtrl(wx.PyControl):
 
 
 
-class MainFrame(wx.Frame):
+class CbrFrame(wx.Frame):
 
-    def __init__(self, parent, pos=wx.DefaultPosition,
+    def __init__(self, parent, book=None, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER,):
         title = "Opal"
         wx.Frame.__init__(self, parent, wx.ID_ANY, title, pos, size, style)
-
+        self.book = book
         self._mgr = aui.AuiManager()
 
         # tell AuiManager to manage this frame
@@ -111,6 +113,7 @@ class MainFrame(wx.Frame):
         self.BuildPanes()
         self.CreateMenuBar()
         self.BindEvents()
+        self.Show()
         
     def BuildPanes(self):
 
@@ -136,7 +139,7 @@ class MainFrame(wx.Frame):
 
         # create some toolbars
         ID_SampleItem = wx.ID_ANY
-        print '--------->',ID_SampleItem
+        print '--------->', ID_SampleItem
         tb1 = aui.AuiToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
                              agwStyle=aui.AUI_TB_DEFAULT_STYLE | aui.AUI_TB_OVERFLOW)
         tb1.SetToolBitmapSize(wx.Size(48, 48))
@@ -145,7 +148,7 @@ class MainFrame(wx.Frame):
         tb1.AddSimpleTool(ID_SampleItem + 3, "Test", wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD))
         tb1.AddSimpleTool(ID_SampleItem + 5, "Test", wx.ArtProvider.GetBitmap(wx.ART_MISSING_IMAGE))
         tb1.AddSeparator()
-        tb1.AddSimpleTool(tool_id=(ID_SampleItem + 1),label= "bookmark",  short_help_string="Bookmark", bitmap=wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK))
+        tb1.AddSimpleTool(tool_id=(ID_SampleItem + 1), label="bookmark", short_help_string="Bookmark", bitmap=wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK))
         tb1.SetCustomOverflowItems(prepend_items, append_items)
         tb1.Realize()
         
@@ -258,24 +261,28 @@ class MainFrame(wx.Frame):
         pass
 #         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
     def CreateSizeReportCtrl(self, width=500, height=80):
-
+        filePath = os.path.join(self.book.bookPath, self.book.bookName+"."+self.book.bookFormat)
+        extractor = Extractor(filePath=filePath)
+        extractor.extractFirstPageCbrImage()
 #         ctrl = SizeReportCtrl(self, -1, wx.DefaultPosition, wx.Size(width, height), self._mgr)
         self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
         self.thumbnail._scrolled.EnableToolTips(enable=True)
         
 #         thumbnail = TC.ThumbnailCtrl(self, imagehandler=TC.NativeImageHandler)
 
-        self.thumbnail.ShowDir("/docs/github/Opal/src/viewer/cbr/ext/1")
+        self.thumbnail.ShowDir("/tmp/1")
         return self.thumbnail
     
+    
+    
     def photoCtrl(self):
-        self.photoPanel = PropertyPhotoPanel(self, imagePath='/docs/github/Opal/src/viewer/cbr/ext/1/All Star Superman 001-000.jpg') 
+        self.photoPanel = PropertyPhotoPanel(self, imagePath='/tmp/1/All Star Superman 001-000.jpg') 
         return self.photoPanel
 if __name__ == "__main__":
     
     logger = Logger('cbr')
     logger.info("this testname.")
     app = wx.App()
-    frame = MainFrame(None)
+    frame = CbrFrame(None, book=None)
     frame.Show()
     app.MainLoop()

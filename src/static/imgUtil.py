@@ -22,6 +22,14 @@ class ImageUtil():
         result = wx.BitmapFromImage(image)
         return result
 
+
+    def commandLine(self):
+        '''
+        convert -quality 100 -resize 32x34 "cbr.png" "cbr.png"
+        '''
+        pass
+        
+
 if __name__ == "__main__":
     x = ImageUtil()
     

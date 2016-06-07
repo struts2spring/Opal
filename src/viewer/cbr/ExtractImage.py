@@ -34,12 +34,27 @@ class Extractor():
         for info in infoList:
             print info
         # print rar.printdir()
-        os.mkdir("./ext/1")
+        if not os.path.exists("/tmp/1"):
+            os.mkdir("/tmp/1")
         try:
-            rar.extractall("./ext/1")
+            rar.extractall("/tmp/1")
         except:
             traceback.print_exc()
-            
+    
+    def extractFirstPageCbrImage(self):
+        print rarfile.is_rarfile(self.filePath)
+        rar = rarfile.RarFile(self.filePath)
+        print rar.namelist()
+        infoList = rar.infolist()
+        for info in infoList:
+            print info
+        # print rar.printdir()
+        if not os.path.exists("/tmp/1"):
+            os.mkdir("/tmp/1")
+        try:
+            rar.extract("/tmp/1")
+        except:
+            traceback.print_exc()        
     def archiveMimeType(self):
         """Return the archive type of <path> or None for non-archives."""
         
@@ -77,6 +92,6 @@ class Extractor():
         """
         return self._files[:]
 if __name__ == '__main__':
-    extractor=Extractor()
-    extractor.extractCbrImage()
+    extractor=Extractor(filePath='/docs/github/Opal/src/viewer/cbr/1.cbr')
+    extractor.extractFirstPageCbrImage()
     pass

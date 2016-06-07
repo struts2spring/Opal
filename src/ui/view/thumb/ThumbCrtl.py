@@ -37,7 +37,10 @@ from src.logic import search_book
 from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.ReviewMetadataFrame import ReviewFrame
+from src.audit.singletonLoggerLogging import Logger
+from src.viewer.cbr.CbrMainFrame import CbrFrame
 
+logger = Logger(__name__)
 
 """
 Thumbnailctrl is a widget that can be used to display a series of images in
@@ -2392,16 +2395,22 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             print self._selected
             bookPath=book.bookPath
             for name in os.listdir(bookPath):
-                if ".pdf" in name:
-                    print name
+                if "."+book.bookFormat in name:
                     file=os.path.join(bookPath,name)
-                elif  ".epub" in name:
-                    file=os.path.join(bookPath,name)
+                    break
 
-        if sys.platform == 'linux2':
-            subprocess.call(["xdg-open", file])
-        elif sys.platform == 'win32':
-            os.startfile(file)
+            if sys.platform == 'linux2':
+                if book.bookFormat !='cbr':
+                    try:
+                        subprocess.call(["xdg-open", file])
+                    except:
+                        traceback.print_exc()
+                        logger.info('unable to open file')
+                else:
+                    frame = CbrFrame(None, book)
+                    pass
+            elif sys.platform == 'win32':
+                os.startfile(file)
         print ("OpenBook \n")
 
     def OnLeftMouseDown(self, event):
