@@ -263,7 +263,8 @@ class CbrFrame(wx.Frame):
     def CreateSizeReportCtrl(self, width=500, height=80):
         filePath = os.path.join(self.book.bookPath, self.book.bookName+"."+self.book.bookFormat)
         extractor = Extractor(filePath=filePath)
-        extractor.extractFirstPageCbrImage()
+        firstPage=extractor.extractFirstPageCbrImage()
+        self.firstPage="/tmp/1/"+firstPage
 #         ctrl = SizeReportCtrl(self, -1, wx.DefaultPosition, wx.Size(width, height), self._mgr)
         self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
         self.thumbnail._scrolled.EnableToolTips(enable=True)
@@ -276,7 +277,8 @@ class CbrFrame(wx.Frame):
     
     
     def photoCtrl(self):
-        self.photoPanel = PropertyPhotoPanel(self, imagePath='/tmp/1/All Star Superman 001-000.jpg') 
+        
+        self.photoPanel = PropertyPhotoPanel(self, imagePath=self.firstPage) 
         return self.photoPanel
 if __name__ == "__main__":
     

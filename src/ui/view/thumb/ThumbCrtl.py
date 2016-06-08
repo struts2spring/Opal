@@ -270,7 +270,7 @@ Y\xcb\xbd\x8b\xdfs\xe3[\xd6\xed\xe5\x9b}\x99\xe6=:\xbd\xed\xfc\xedu|\xfcq\
 \x9e?\xf7\xfb+\xb7\xfdnLN\xf5\xc6\xb7g\xfd\xca_\x9a\x7f?\x7f\xe0\xfe\xe3\xaa\
 \xe5\x0b\xf4\xb7\xcb\xea\x97\xed\n\xb7\xbf\xff\xadh\xf9\xe3\x1d\xd5f\x7fb\
 \xdf\x95Y\x15\xc6\xe7\xee\xfe\xcbz7Y\xbd\xde[\xf3y\x1f0\xd72x\xba\xfa\xb9\
-\xacsJh\x02\x00\xc4i\x8dN' )
+\xacsJh\x02\x00\xc4i\x8dN')
 
 
 def getDataBL():
@@ -282,7 +282,7 @@ def getDataBL():
 \xea\x9e\xde\xcb\xd9` \xc2\xf0P\xdf~\xc9y\xaeu\x0f\xfe1\xdf\xcc\x14\x1482A\
 \xe9\xfd\x83\x1d\xaf\x84\xac\xf8\xe6\\\x8c3\xfc\x98\xf8\xa0\xb1\xa9K\xec\x9f\
 \xc4\xd1\xb4GG{\xb5\x15\x8f_|t\x8a[a\x1fWzG\xa9\xc4,\xa0Q\x0c\x9e\xae~.\xeb\
-\x9c\x12\x9a\x00\x7f1,7" )
+\x9c\x12\x9a\x00\x7f1,7")
 
 
 def getDataTR():
@@ -294,7 +294,7 @@ def getDataTR():
 \xe6\x9e\xd9\xc8\xd9` \xc2p\x91\xbd\xaei\xeeL\x85\xdcUo\xf6\xf7\xd6\xb2\x88\
 \x0bp\x9a\x89i\x16=-\x94\xe16\x93\xb9!\xb8y\xcd\t\x0f\x89\n\xe6\xb7\xfcV~6\
 \x8dFo\xf5\xee\xc8\x1fOaw\xc9\x88\x0c\x16\x05\x1a\xc4\xe0\xe9\xea\xe7\xb2\
-\xce)\xa1\t\x00"\xf9$\x83' )
+\xce)\xa1\t\x00"\xf9$\x83')
 
 
 def getShadow():
@@ -589,11 +589,11 @@ class Thumb(object):
         self._lastmod = lastmod
         self._parent = parent
         self._captionbreaks = []
-        self._bitmap = wx.EmptyBitmap(1,1)
-        self._image = wx.EmptyImage(1,1)
+        self._bitmap = wx.EmptyBitmap(1, 1)
+        self._image = wx.EmptyImage(1, 1)
         self._rotation = 0
         self._alpha = None
-        self.book=book
+        self.book = book
 
 
     def SetCaption(self, caption=""):
@@ -690,7 +690,7 @@ class Thumb(object):
         :param `height`: the associated bitmap height.
         """
 
-        if self.GetRotation() % (2*pi) < 1e-6:
+        if self.GetRotation() % (2 * pi) < 1e-6:
             if not self._bitmap.Ok():
                 if not hasattr(self, "_threadedimage"):
                     img = GetMondrianImage()
@@ -713,12 +713,12 @@ class Thumb(object):
             imgwidth, imgheight = (img.GetWidth(), img.GetHeight())
 
         if width < imgwidth or height < imgheight:
-            scale = float(width)/imgwidth
+            scale = float(width) / imgwidth
 
-            if scale > float(height)/imgheight:
-                scale = float(height)/imgheight
+            if scale > float(height) / imgheight:
+                scale = float(height) / imgheight
 
-            newW, newH = int(imgwidth*scale), int(imgheight*scale)
+            newW, newH = int(imgwidth * scale), int(imgheight * scale)
             if newW < 1:
                 newW = 1
             if newH < 1:
@@ -817,12 +817,12 @@ class Thumb(object):
         if len(self._caption) == 0:
             return
 
-        pos = width/16
+        pos = width / 16
         beg = 0
         end = 0
 
         dc = wx.MemoryDC()
-        bmp = wx.EmptyBitmap(10,10)
+        bmp = wx.EmptyBitmap(10, 10)
         dc.SelectObject(bmp)
 
         while 1:
@@ -832,7 +832,7 @@ class Thumb(object):
                 self._captionbreaks.append(len(self._caption))
                 break
 
-            sw, sh = dc.GetTextExtent(self._caption[beg:pos-beg])
+            sw, sh = dc.GetTextExtent(self._caption[beg:pos - beg])
 
             if  sw > width:
 
@@ -846,7 +846,7 @@ class Thumb(object):
                     self._captionbreaks.append(pos)
                     beg = pos
 
-                pos = beg + width/16
+                pos = beg + width / 16
                 end = 0
 
             if pos < len(self._caption) and self._caption[pos] in [" ", "-", ",", ".", "_"]:
@@ -920,7 +920,7 @@ class ThumbnailCtrl(wx.Panel):
 
         self._combo = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
         self._scrolled = ScrolledThumbnail(self, -1, thumboutline=thumboutline,
-                                           thumbfilter=thumbfilter, imagehandler = imagehandler)
+                                           thumbfilter=thumbfilter, imagehandler=imagehandler)
 
         subsizer = wx.BoxSizer(wx.HORIZONTAL)
         subsizer.Add((3, 0), 0)
@@ -1399,14 +1399,14 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         if thumb >= 0:
 #             print 'thumb info', self._items[thumb]
-            bookName=self._items[thumb].book.bookName
-            author=''
-            fileSize=''
+            bookName = self._items[thumb].book.bookName
+            author = ''
+            fileSize = ''
             for a in self._items[thumb].book.authors:
-                author=author+a.authorName+'\n'
+                author = author + a.authorName + '\n'
 
             if self._items[thumb].book.fileSize:
-                fileSize=str(self._items[thumb].book.fileSize)
+                fileSize = str(self._items[thumb].book.fileSize)
 
             thumbinfo = "Name: " + bookName + "\n"\
                         "Author: " + author + "" \
@@ -1438,10 +1438,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self._tWidth = width
         self._tHeight = height
         self._tBorder = border
-        self.SetScrollRate((self._tWidth + self._tBorder)/4,
-                           (self._tHeight + self._tBorder)/4)
-        self.SetSizeHints(self._tWidth + self._tBorder*2 + 16,
-                          self._tHeight + self._tBorder*2 + 8)
+        self.SetScrollRate((self._tWidth + self._tBorder) / 4,
+                           (self._tHeight + self._tBorder) / 4)
+        self.SetSizeHints(self._tWidth + self._tBorder * 2 + 16,
+                          self._tHeight + self._tBorder * 2 + 8)
 
 
     def GetThumbSize(self):
@@ -1467,7 +1467,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         :param `directory`: the folder containing the images to thumbnail;
         :param `fileExtList`: a Python list of file extensions to consider.
         """
-        fileList=list()
+        fileList = list()
         try:
             fileList = [os.path.normcase(f) for f in os.listdir(directory)]
             fileList = [f for f in fileList \
@@ -1496,7 +1496,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.LoadImages(filenames[count], count)
             if count < 4:
                 self.Refresh()
-            elif count%4 == 0:
+            elif count % 4 == 0:
                 self.Refresh()
 
             count = count + 1
@@ -1617,46 +1617,46 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 #         thumbs.append(Thumb(self, folder2, file2, file2, size, lastmod))
         for book in books:
             
-            imageName=''
+            imageName = ''
             if book.bookPath:
-                self._dir=book.bookPath
-                imagePath=book.bookPath
+                self._dir = book.bookPath
+                imagePath = book.bookPath
                 filenames = self.ListDirectory(imagePath, extensions)
                 if filenames:
-                    imageName=filenames[0]
+                    imageName = filenames[0]
                     
-                imagePath_1=os.path.join(imagePath,book.bookImgName)
+                imagePath_1 = os.path.join(imagePath, book.bookImgName)
                 if os.path.exists(imagePath_1):
-                    imageName=book.bookImgName
+                    imageName = book.bookImgName
             else:
-                imagePath=book.localImagePath
-                self._dir=book.localImagePath
-                imageName=book.imageFileName
-            bookName=book.bookName
+                imagePath = book.localImagePath
+                self._dir = book.localImagePath
+                imageName = book.imageFileName
+            bookName = book.bookName
 #                 imagePath=os.path.join(book.bookPath,imageName);
 
                 
-            stats = os.stat(os.path.join(imagePath,imageName))
+            stats = os.stat(os.path.join(imagePath, imageName))
             size = stats[6]
 
             if size < 1000:
                 size = str(size) + " bytes"
             elif size < 1000000:
-                size = str(int(round(size/1000.0))) + " Kb"
+                size = str(int(round(size / 1000.0))) + " Kb"
             else:
-                size = str(round(size/1000000.0, 2)) + " Mb"
+                size = str(round(size / 1000000.0, 2)) + " Mb"
 
             lastmod = time.strftime(TIME_FMT, time.localtime(stats[8]))
 
 #             if self._filter & THUMB_FILTER_IMAGES:
 #                 thumbs.append(Thumb(self, folder, files, caption, size, lastmod))
 #                 pass
-            thumbs.append(Thumb(self, imagePath, imageName, bookName, size, lastmod,book))
+            thumbs.append(Thumb(self, imagePath, imageName, bookName, size, lastmod, book))
 
-        caption=None
+        caption = None
         try:
             if self._dir:
-                caption=self._dir
+                caption = self._dir
         except:
             pass
 
@@ -1788,7 +1788,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self._caption = caption
         if self._labelcontrol:
 
-            maxWidth = self._labelcontrol.GetSize().GetWidth()/8
+            maxWidth = self._labelcontrol.GetSize().GetWidth() / 8
             if len(caption) > maxWidth:
                 caption = "..." + caption[len(caption) + 3 - maxWidth]
 
@@ -1836,10 +1836,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 #         print 'GetCaptionHeight',begRow, count,len(self._tCaptionHeight)
 
         for ii in xrange(begRow, begRow + count):
-            if ii < len(self._tCaptionHeight) and len(self._tCaptionHeight) >0:
+            if ii < len(self._tCaptionHeight) and len(self._tCaptionHeight) > 0:
                 capHeight = capHeight + self._tCaptionHeight[ii]
 
-        return capHeight*self._tTextHeight
+        return capHeight * self._tTextHeight
 
  
     def GetItemIndex(self, x, y):
@@ -1850,7 +1850,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         :param `y`: the mouse `y` position.
         """
 
-        col = (x - self._tBorder)/(self._tWidth + self._tBorder)
+        col = (x - self._tBorder) / (self._tWidth + self._tBorder)
 
         if col >= self._cols:
             col = self._cols - 1
@@ -1866,7 +1866,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if row < 0:
             row = 0
 
-        index = row*self._cols + col
+        index = row * self._cols + col
 
         if index >= len(self._items):
             index = -1
@@ -1883,13 +1883,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         """
 
         width = self.GetClientSize().GetWidth()
-        self._cols = (width - self._tBorder)/(self._tWidth + self._tBorder)
+        self._cols = (width - self._tBorder) / (self._tWidth + self._tBorder)
 
         if self._cols == 0:
             self._cols = 1
 
-        tmpvar = (len(self._items)%self._cols and [1] or [0])[0]
-        self._rows = len(self._items)/self._cols + tmpvar
+        tmpvar = (len(self._items) % self._cols and [1] or [0])[0]
+        self._rows = len(self._items) / self._cols + tmpvar
 
         self._tCaptionHeight = []
 
@@ -1899,7 +1899,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
             for col in xrange(self._cols):
 
-                ii = row*self._cols + col
+                ii = row * self._cols + col
 
                 if len(self._items) > ii and \
                    self._items[ii].GetCaptionLinesCount(self._tWidth - self._tCaptionBorder) > capHeight:
@@ -1908,12 +1908,12 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
             self._tCaptionHeight.append(capHeight)
 
-        self.SetVirtualSize((self._cols*(self._tWidth + self._tBorder) + self._tBorder,
-                            self._rows*(self._tHeight + self._tBorder) + \
+        self.SetVirtualSize((self._cols * (self._tWidth + self._tBorder) + self._tBorder,
+                            self._rows * (self._tHeight + self._tBorder) + \
                             self.GetCaptionHeight(0, self._rows) + self._tBorder))
 
-        self.SetSizeHints(self._tWidth + 2*self._tBorder + 16,
-                          self._tHeight + 2*self._tBorder + 8 + \
+        self.SetSizeHints(self._tWidth + 2 * self._tBorder + 16,
+                          self._tHeight + 2 * self._tBorder + 8 + \
                           (self._rows and [self.GetCaptionHeight(0)] or [0])[0])
 
         if checkSize and width != self.GetClientSize().GetWidth():
@@ -1954,8 +1954,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         paintRect = wx.Rect(0, 0, size.GetWidth(), size.GetHeight())
         paintRect.x, paintRect.y = self.GetViewStart()
         xu, yu = self.GetScrollPixelsPerUnit()
-        paintRect.x = paintRect.x*xu
-        paintRect.y = paintRect.y*yu
+        paintRect.x = paintRect.x * xu
+        paintRect.y = paintRect.y * yu
 
         return paintRect
 
@@ -2002,26 +2002,26 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             return
 
         # get row
-        row = self.GetSelection()/self._cols
+        row = self.GetSelection() / self._cols
         # calc position to scroll view
 
         paintRect = self.GetPaintRect()
-        y1 = row*(self._tHeight + self._tBorder) + self.GetCaptionHeight(0, row)
+        y1 = row * (self._tHeight + self._tBorder) + self.GetCaptionHeight(0, row)
         y2 = y1 + self._tBorder + self._tHeight + self.GetCaptionHeight(row)
 
         if y1 < paintRect.GetTop():
-            sy = y1 # scroll top
+            sy = y1  # scroll top
         elif y2 > paintRect.GetBottom():
-            sy = y2 - paintRect.height # scroll bottom
+            sy = y2 - paintRect.height  # scroll bottom
         else:
             return
 
         # scroll view
         xu, yu = self.GetScrollPixelsPerUnit()
-        sy = sy/yu + (sy%yu and [1] or [0])[0] # convert sy to scroll units
+        sy = sy / yu + (sy % yu and [1] or [0])[0]  # convert sy to scroll units
         x, y = self.GetViewStart()
 
-        self.Scroll(x,sy)
+        self.Scroll(x, sy)
 
 
     def CalculateBestCaption(self, dc, caption, sw, width):
@@ -2056,8 +2056,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         dc.SelectObject(bmp)
         dc.BeginDrawing()
 
-        x = self._tBorder/2
-        y = self._tBorder/2
+        x = self._tBorder / 2
+        y = self._tBorder / 2
 
         # background
         dc.SetPen(wx.Pen(wx.BLACK, 0, wx.TRANSPARENT))
@@ -2073,12 +2073,12 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             factor = 1.5
             img = self._imageHandler.HighlightImage(img.ConvertToImage(), factor).ConvertToBitmap()
 
-        imgRect = wx.Rect(x + (self._tWidth - img.GetWidth())/2,
-                          y + (self._tHeight - img.GetHeight())/2,
+        imgRect = wx.Rect(x + (self._tWidth - img.GetWidth()) / 2,
+                          y + (self._tHeight - img.GetHeight()) / 2,
                           img.GetWidth(), img.GetHeight())
 
         if not thumb._alpha and self._dropShadow:
-            dc.Blit(imgRect.x+5, imgRect.y+5, imgRect.width, imgRect.height, self.shadow, 500-ww, 500-hh)
+            dc.Blit(imgRect.x + 5, imgRect.y + 5, imgRect.width, imgRect.height, self.shadow, 500 - ww, 500 - hh)
         dc.DrawBitmap(img, imgRect.x, imgRect.y, True)
 
         colour = self.GetSelectionColour()
@@ -2099,17 +2099,17 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 sw = self._tWidth
 
             textWidth = sw + 8
-            tx = x + (self._tWidth - textWidth)/2
+            tx = x + (self._tWidth - textWidth) / 2
             ty = y + self._tHeight
 
             txtcolour = "#7D7D7D"
             dc.SetTextForeground(txtcolour)
 
-            tx = x + (self._tWidth - sw)/2
+            tx = x + (self._tWidth - sw) / 2
             if hh >= self._tHeight:
-                ty = y + self._tHeight + (self._tTextHeight - sh)/2 + 3
+                ty = y + self._tHeight + (self._tTextHeight - sh) / 2 + 3
             else:
-                ty = y + hh + (self._tHeight-hh)/2 + (self._tTextHeight - sh)/2 + 3
+                ty = y + hh + (self._tHeight - hh) / 2 + (self._tTextHeight - sh) / 2 + 3
 
             dc.DrawText(mycaption, tx, ty)
 
@@ -2190,16 +2190,16 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         for ii in xrange(len(self._items)):
 
-            col = ii%self._cols
+            col = ii % self._cols
             if col == 0:
                 row = row + 1
             
 #             print self._cols
             if self._cols != -1:
-                xwhite = ((w - self._cols*(self._tWidth + self._tBorder)))/(self._cols+1)
-            tx = xwhite + col*(self._tWidth + self._tBorder)
+                xwhite = ((w - self._cols * (self._tWidth + self._tBorder))) / (self._cols + 1)
+            tx = xwhite + col * (self._tWidth + self._tBorder)
 
-            ty = self._tBorder/2 + row*(self._tHeight + self._tBorder) + \
+            ty = self._tBorder / 2 + row * (self._tHeight + self._tBorder) + \
                  self.GetCaptionHeight(0, row)
             tw = self._tWidth + self._tBorder
             th = self._tHeight + self.GetCaptionHeight(row) + self._tBorder
@@ -2211,9 +2211,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.DrawThumbnail(thmb, self._items[ii], ii)
             dc.DrawBitmap(thmb, tx, ty)
 
-        rect = wx.Rect(xwhite, self._tBorder/2,
-                       self._cols*(self._tWidth + self._tBorder),
-                       self._rows*(self._tHeight + self._tBorder) + \
+        rect = wx.Rect(xwhite, self._tBorder / 2,
+                       self._cols * (self._tWidth + self._tBorder),
+                       self._rows * (self._tHeight + self._tBorder) + \
                        self.GetCaptionHeight(0, self._rows))
 
         w = max(self.GetClientSize().GetWidth(), rect.width)
@@ -2223,11 +2223,11 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         dc.DrawRectangle(rect.GetRight(), 0, w - rect.GetRight(), h + 50)
         dc.DrawRectangle(0, rect.GetBottom(), w, h - rect.GetBottom() + 50)
 
-        col = len(self._items)%self._cols
+        col = len(self._items) % self._cols
 
         if col > 0:
-            rect.x = rect.x + col*(self._tWidth + self._tBorder)
-            rect.y = rect.y + (self._rows - 1)*(self._tHeight + self._tBorder) + \
+            rect.x = rect.x + col * (self._tWidth + self._tBorder)
+            rect.y = rect.y + (self._rows - 1) * (self._tHeight + self._tBorder) + \
                      self.GetCaptionHeight(0, self._rows - 1)
             dc.DrawRectangleRect(rect)
 
@@ -2247,24 +2247,24 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def OnRightMouseDown(self, event):
         print 'OnRightMouseDown'
 
-        print ' previous printing all _selected',self._selected
-        print 'printing all _selectedarray',self._selectedarray
+        print ' previous printing all _selected', self._selected
+        print 'printing all _selectedarray', self._selectedarray
         x = event.GetX()
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
         # get item number to select
         lastselected = self._selected
         self._selected = self.GetItemIndex(x, y)
-        print ' previous printing all _selected',self._selected
-        if self._selected!=-1:
-            name=self._items[self._selected].book.bookName
-            id=self._items[self._selected].book.id
+        print ' previous printing all _selected', self._selected
+        if self._selected != -1:
+            name = self._items[self._selected].book.bookName
+            id = self._items[self._selected].book.id
         print 'updating info'
         menu = wx.Menu()
         # checking if it is not an internte searched book.
         if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
             try:
-                page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+                page = GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
             except:
                 traceback.print_exc()
             self.popupID1 = wx.NewId()
@@ -2339,25 +2339,25 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     
     def OnDownloadMetadata(self, event):
         print ("OnDownloadMetadata\n")
-        selectedBooks=[]
-        book=None
+        selectedBooks = []
+        book = None
         for selectedBookIndex in self._selectedarray:
-            book=self._items[selectedBookIndex].book
+            book = self._items[selectedBookIndex].book
             selectedBooks.append(book)
         frame = ReviewFrame(None, book)
 
-    def onCopy(self,event):
+    def onCopy(self, event):
         print 'copy'
     def deleteBook(self, event):
         print ("On deleteBook Path \n")
-        deleteBooks=[]
+        deleteBooks = []
         for selectedBookIndex in self._selectedarray:
-            book=self._items[selectedBookIndex].book
+            book = self._items[selectedBookIndex].book
             deleteBooks.append(book)
         for book in deleteBooks:
             try:
                 FindingBook().deleteBook(book)
-                text= self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
+                text = self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
                 self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
             except :
                 
@@ -2369,9 +2369,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("OnOpenFolderPath \n")
         print self._selected
         if self._selected != None:
-            book=self._items[self._selected].book
+            book = self._items[self._selected].book
             print self._selected
-            file=book.bookPath
+            file = book.bookPath
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':
@@ -2383,7 +2383,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def showBookProperties(self, event):
         print ("showBookProperties \n")
         if self._selected != None:
-            book=self._items[self._selected].book
+            book = self._items[self._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
             frame = BookPropertyFrame(None, book)
         
@@ -2391,16 +2391,17 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def OpenBook(self, event):
         print self._selected
         if self._selected != None:
-            book=self._items[self._selected].book
+            book = self._items[self._selected].book
             print self._selected
-            bookPath=book.bookPath
+            bookPath = book.bookPath
             for name in os.listdir(bookPath):
-                if "."+book.bookFormat in name:
-                    file=os.path.join(bookPath,name)
-                    break
+                if book.bookFormat != None:
+                    if "." + (book.bookFormat).lower() in name:
+                        file = os.path.join(bookPath, name)
+                        break
 
             if sys.platform == 'linux2':
-                if book.bookFormat !='cbr':
+                if book.bookFormat != None and  book.bookFormat.lower() != 'cbr':
                     try:
                         subprocess.call(["xdg-open", file])
                     except:
@@ -2447,7 +2448,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                     endindex = self._selected
                 self._selectedarray = []
 
-                for ii in xrange(begindex, endindex+1):
+                for ii in xrange(begindex, endindex + 1):
                     self._selectedarray.append(ii)
 
                 update = True
@@ -2463,7 +2464,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 self._mouseeventhandled = True
             elif len(self._selectedarray) <= 1:
                 try:
-                    update = len(self._selectedarray)== 0 or self._selectedarray[0] != self._selected
+                    update = len(self._selectedarray) == 0 or self._selectedarray[0] != self._selected
                 except:
                     update = True
                 self._selectedarray = []
@@ -2475,23 +2476,23 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Refresh()
             eventOut = ThumbnailEvent(wxEVT_THUMBNAILS_SEL_CHANGED, self.GetId())
             self.GetEventHandler().ProcessEvent(eventOut)
-            print 'printing all selected',self._selectedarray
-            if len(self._selectedarray)==1:
+            print 'printing all selected', self._selectedarray
+            if len(self._selectedarray) == 1:
                 # checking if it is not an internte searched book.
                 if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
-                    name=self._items[self._selected].book.bookName
-                    id=self._items[self._selected].book.id
+                    name = self._items[self._selected].book.bookName
+                    id = self._items[self._selected].book.id
                     print 'updating info'
                     try:
-                        page=GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-                        if sys.platform=='win32':
-                            self.GetTopLevelParent().browser.SetPage(page,"")
+                        page = GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
+                        if sys.platform == 'win32':
+                            self.GetTopLevelParent().browser.SetPage(page, "")
                         else:
                             self.GetTopLevelParent().browser.SetPage(page)
                     except:
                         traceback.print_exc()
                     print 'selecting grid'
-                    row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
+                    row = self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
                     self.GetTopLevelParent().grid.SelectRow(row=row)
                     self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
 
@@ -2512,7 +2513,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
         lastselected = self._selected
-        self._selected = self.GetItemIndex(x,y)
+        self._selected = self.GetItemIndex(x, y)
 
         if not self._mouseeventhandled:
             # set new selection
@@ -2701,23 +2702,23 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         dlg = wx.ProgressDialog("Thumbnail Rotation",
                                 "Rotating Thumbnail... Please Wait",
-                                maximum = len(selected)+1,
+                                maximum=len(selected) + 1,
                                 parent=None)
 
         for thumb in selected:
             count = count + 1
             if TN_USE_PIL:
-                newangle = thumb.GetRotation()*180/pi + angle
+                newangle = thumb.GetRotation() * 180 / pi + angle
                 fil = opj(thumb.GetFullFileName())
                 pil = Image.open(fil).rotate(newangle)
                 img = wx.EmptyImage(pil.size[0], pil.size[1])
                 img.SetData(pil.convert('RGB').tostring())
-                thumb.SetRotation(newangle*pi/180)
+                thumb.SetRotation(newangle * pi / 180)
             else:
                 img = thumb._threadedimage
-                newangle = thumb.GetRotation() + angle*pi/180
+                newangle = thumb.GetRotation() + angle * pi / 180
                 thumb.SetRotation(newangle)
-                img = img.Rotate(newangle, (img.GetWidth()/2, img.GetHeight()/2), True)
+                img = img.Rotate(newangle, (img.GetWidth() / 2, img.GetHeight() / 2), True)
 
             thumb.SetRotatedImage(img)
             dlg.Update(count)
@@ -2804,8 +2805,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             return
 
         zoom = self.GetZoomFactor()
-        neww = float(w)/zoom
-        newh = float(h)/zoom
+        neww = float(w) / zoom
+        newh = float(h) / zoom
 
         self.SetThumbSize(int(neww), int(newh))
         self.OnResize(None)
@@ -2821,17 +2822,17 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         w, h, b = self.GetThumbSize()
         zoom = self.GetZoomFactor()
 
-        if w*zoom + b > size.GetWidth() or h*zoom + b > size.GetHeight():
-            if w*zoom + b > size.GetWidth():
-                neww = size.GetWidth() - 2*self._tBorder
-                newh = (float(h)/w)*neww
+        if w * zoom + b > size.GetWidth() or h * zoom + b > size.GetHeight():
+            if w * zoom + b > size.GetWidth():
+                neww = size.GetWidth() - 2 * self._tBorder
+                newh = (float(h) / w) * neww
             else:
-                newh = size.GetHeight() - 2*self._tBorder
-                neww = (float(w)/h)*newh
+                newh = size.GetHeight() - 2 * self._tBorder
+                neww = (float(w) / h) * newh
 
         else:
-            neww = float(w)*zoom
-            newh = float(h)*zoom
+            neww = float(w) * zoom
+            newh = float(h) * zoom
 
         self.SetThumbSize(int(neww), int(newh))
         self.OnResize(None)

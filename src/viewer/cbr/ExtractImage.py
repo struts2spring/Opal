@@ -3,6 +3,7 @@ import traceback
 import os
 import zipfile
 import tarfile
+import shutil
 
 filename = '1.cbr'
 
@@ -23,7 +24,7 @@ class Extractor():
     def __init__(self, filePath=None):
         self.filePath = filePath
         self.fileType=None
-        
+        shutil.rmtree("/tmp/1")
         self.archiveMimeType()
         
     def extractCbrImage(self):
@@ -36,6 +37,7 @@ class Extractor():
         # print rar.printdir()
         if not os.path.exists("/tmp/1"):
             os.mkdir("/tmp/1")
+
         try:
             rar.extractall("/tmp/1")
         except:
@@ -44,17 +46,21 @@ class Extractor():
     def extractFirstPageCbrImage(self):
         print rarfile.is_rarfile(self.filePath)
         rar = rarfile.RarFile(self.filePath)
-        print rar.namelist()
+        nameList= rar.namelist()
         infoList = rar.infolist()
-        for info in infoList:
-            print info
+        nameList.sort()
+        firstPage=None
+        for name in nameList:
+            firstPage= name
+            break
         # print rar.printdir()
         if not os.path.exists("/tmp/1"):
             os.mkdir("/tmp/1")
         try:
-            rar.extract("/tmp/1")
+            rar.extractall("/tmp/1")
         except:
-            traceback.print_exc()        
+            traceback.print_exc()   
+        return firstPage   
     def archiveMimeType(self):
         """Return the archive type of <path> or None for non-archives."""
         
