@@ -24,7 +24,8 @@ class Extractor():
     def __init__(self, filePath=None):
         self.filePath = filePath
         self.fileType=None
-        shutil.rmtree("/tmp/1")
+        if os.path.exists("/tmp/1"):
+            shutil.rmtree("/tmp/1")
         self.archiveMimeType()
         
     def extractCbrImage(self):

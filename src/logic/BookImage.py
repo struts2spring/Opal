@@ -17,6 +17,7 @@ class BookImage():
         # Converting first page into JPG
 #         with Image(filename=sourcePdf) as img:
 #             img.save(filename=destImg)
+
         cmd = 'convert -background white -alpha remove "' + name + '.pdf[0]' + '" "' + name + '.jpg' + '"'
         subprocess.call(cmd, shell=True)
         
@@ -45,6 +46,8 @@ class BookImage():
 
         '''
         @name book_file_name
+        convert -size 30x32 cbr.png cbr.png 
+        convert cbr.png -resize 50% cbr.png
         convert -thumbnail x300 -background white -alpha remove input_file.pdf[0] output_thumbnail.png
         '''
         os.chdir(filePath)

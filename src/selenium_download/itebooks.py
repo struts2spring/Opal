@@ -20,6 +20,7 @@ import datetime
 import traceback
 from datetime import datetime
 import requests
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
 
@@ -211,20 +212,20 @@ class ItEbook(object):
             book.bookImgName = imageFileName
             #writing json file
             self.writeJsonToDir(directory_name, book)
-
+            binary = FirefoxBinary('/docs/python_projects/firefox/firefox')
 
             fp = webdriver.FirefoxProfile()
 
-
+            fp.set_preference("webdriver.log.file", "/tmp/firefox_console");
             fp.set_preference("browser.download.folderList", 2)
-            fp.set_preference('browser.download.manager.showWhenStarting', False)
-            fp.set_preference('browser.download.manager.focusWhenStarting', False)
+            fp.set_preference('browser.download.manager.showWhenStarting', True)
+            fp.set_preference('browser.download.manager.focusWhenStarting', True)
             fp.set_preference("browser.download.dir", directory_name)
-            fp.set_preference("browser.download.manager.scanWhenDone", False)
-            fp.set_preference("browser.download.manager.useWindow", False)
+            fp.set_preference("browser.download.manager.scanWhenDone", True)
+            fp.set_preference("browser.download.manager.useWindow", True)
             fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
             fp.update_preferences()
-            driver = webdriver.Firefox(firefox_profile=fp)
+            driver = webdriver.Firefox(firefox_profile=fp,firefox_binary=binary)
             # driver.find_element_by_xpath("html/body/table/tbody/tr[2]/td/div/table/tbody/tr/td[1]/img")
             driver.get(url)
             efd_link = driver.find_element_by_id(id_='download')
@@ -313,7 +314,7 @@ class ItEbook(object):
         itebook = ItEbook(baseUrl)
             # TODO need to be updated
         logicTrue=True
-        i=2
+        i=42
         while logicTrue:
             subUrl='page-'+str(i)+'.html'
             itebook.findAllBookUrl(subUrl)

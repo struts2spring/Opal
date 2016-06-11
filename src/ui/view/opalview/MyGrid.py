@@ -233,7 +233,9 @@ class MegaImageRenderer(Grid.PyGridCellRenderer):
                          'mobi': wx.Bitmap(os.path.join(Workspace().appPath, "images", "mobi.png")),
                          'epub': wx.Bitmap(os.path.join(Workspace().appPath, "images", "epub.png")),
                          'djvu': wx.Bitmap(os.path.join(Workspace().appPath, "images", "djvu.png")),
-                         'doc': wx.Bitmap(os.path.join(Workspace().appPath, "images", "doc.png"))
+                         'doc': wx.Bitmap(os.path.join(Workspace().appPath, "images", "doc.png")),
+                         'azw': wx.Bitmap(os.path.join(Workspace().appPath, "images", "azw.png")),
+                         'cbr': wx.Bitmap(os.path.join(Workspace().appPath, "images", "cbr.png"))
                          }
 
         self.colSize = None
