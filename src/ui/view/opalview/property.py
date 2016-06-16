@@ -878,11 +878,14 @@ class BookPropertyPanel(wx.Panel):
         
     def onOk(self, event):
         print 'onOk'
+#         props = self.pg.GetPropertyValues(inc_attributes=True)
+        self.save()
+        self.GetParent().OnCloseFrame(event)
+#         self.GetParent().OnCloseFrame(event)
+#         print props['Book name']
+    def save(self):
         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.setValuesToBookFromPropertyGrid(props)
-        self.GetParent().OnCloseFrame(event)
-#         print props['Book name']
-        
     def onCancel(self, event):
         print 'onCancel'    
         self.GetParent().OnCloseFrame(event)
@@ -935,7 +938,7 @@ class BookPropertyPanel(wx.Panel):
         book.subTitle = self.currentBook.subTitle
         book.bookName = props['Book name']
         book.numberOfPages = props['Number of pages']
-        book.bookDescription = props['Book description']
+        book.bookDescription = self.rt.rtc.GetValue()
         book.authors = list()
         if props['Author(s) name']:
             authors = props['Author(s) name'].split(',')
@@ -1008,8 +1011,7 @@ class BookPropertyPanel(wx.Panel):
         
         
         self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
-        self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
-        self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
+#         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         authorNames = list()
         if hasattr(book, 'authors'):
             for a in book.authors:
@@ -1017,6 +1019,7 @@ class BookPropertyPanel(wx.Panel):
         
         self.pg.Append(wxpg.StringProperty("Author(s) name", value=','.join(authorNames)))
         
+        self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
         self.pg.Append(wxpg.IntProperty("Rating", value=long(book.rating or 0)))
         self.pg.SetPropertyEditor("Rating", "SpinCtrl")
         

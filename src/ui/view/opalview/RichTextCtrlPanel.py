@@ -96,7 +96,9 @@ class RichTextPanel(wx.Panel):
 #         self.rtc.LoadFile(path,  type=1)
             
     def OnFileSave(self, evt):
-        self.loadFile()
+#         self.loadFile()
+        self.GetParent().save()
+        
 #         handler = rt.RichTextHTMLHandler()
 #         handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
 #         handler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])

@@ -11,6 +11,7 @@ import os
 import wx.html
 from PIL import Image
 from src.static.constant import Workspace
+import math
 
 class GenerateBookInfo():
 
@@ -75,7 +76,18 @@ class GenerateBookInfo():
                         with tag('tr'):
                             with tag('td'):
                                 with tag('p'):
-                                    doc.stag('img', src=filepath, width='200' , height='250', border="1")
+                                    img = wx.Image(filepath, wx.BITMAP_TYPE_ANY)
+                                    originalWidth,originalHeight=img.GetSize()
+                                    w,h=300,250
+                                    if originalWidth<w :
+                                        print 'increase',str(1+(w-originalWidth)/(float(originalWidth)))
+                                        h=originalHeight * (1+(w-originalWidth)/(float(originalWidth)))
+                                    else:
+                                        h=(originalHeight/float(originalWidth))*w
+                                        print originalWidth,originalHeight,'decrease',w,int(math.ceil(h))
+                                    print '----------- width,height---------->', w,h
+                                    doc.stag('img', src=filepath, width=int(w) , height=int(math.ceil(h)), border="1")
+#                                     doc.stag('img', src=filepath, width='200' , height='259', border="1")
                             with tag('td'):
                                 with tag('h4'):
                                     text('Book Description')
@@ -185,7 +197,7 @@ if __name__ == '__main__':
     try:
         htmlContent = GenerateBookInfo().getHtmlContent(books[0])
         soup = BeautifulSoup(htmlContent, "lxml")
-        print soup.prettify()
+#         print soup.prettify()
     except:
         pass
     # Open a file in witre mode
@@ -199,14 +211,14 @@ if __name__ == '__main__':
 #     html1.bind(wx.EVT_RIGHT_DOWN, id=wx.NewId(), rightClick)
 #     html1.Bind(event, handler, source, id, id2)
 
-    os.chdir(os.path.dirname(__file__))
-    f = open("info2.html", "r")  # opens file with name of "test.txt"
-    lines = f.readlines()
-    s = ''
-    for l in lines:
-        s = s + str(l)
-
-    print s
+#     os.chdir(os.path.dirname(__file__))
+#     f = open("info2.html", "r")  # opens file with name of "test.txt"
+#     lines = f.readlines()
+#     s = ''
+#     for l in lines:
+#         s = s + str(l)
+# 
+#     print s
 
 #     html1.SetPage(s)
     # show the frame
