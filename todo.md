@@ -12,3 +12,4 @@ List of todo items.
 9. left right up down button.
 10. merging two workspace of Opal.
 11. Creating viewer for mobi , chm, epub.
+12. Opal provide support for audio and video ebook.

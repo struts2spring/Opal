@@ -23,17 +23,17 @@ class Window(wx.App):
 #         panel.Layout()
 
 
-html_content = '''
-<html>
-    <head></head>
-    <body>
-        <font face="Ubuntu" size="3" color="#4C4C4C">
-            <p align="center"><font face="Ubuntu" size="3" color="#4C4C4C"><b>asfd </b><b><i>asdf  s</i></b><b><i><u>tream.getvalue()</u></i></b></font></p>
-        </font>
-    </body>
-</html>
-
-'''       
+# html_content = '''
+# <html>
+#     <head></head>
+#     <body>
+#         <font face="Ubuntu" size="3" color="#4C4C4C">
+#             <p align="center"><font face="Ubuntu" size="3" color="#4C4C4C"><b>asfd </b><b><i>asdf  s</i></b><b><i><u>tream.getvalue()</u></i></b></font></p>
+#         </font>
+#     </body>
+# </html>
+# 
+# '''       
 class RichTextPanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
         wx.Panel.__init__(self, parent, id=-1)
@@ -60,6 +60,7 @@ class RichTextPanel(wx.Panel):
 #         sizer.Add(save_button, 1, wx.EXPAND | wx.ALL, 1)
  
         self.SetSizer(sizer)
+        self.book=args[0]
         self.loadFile()
 #         self.Show()
     
@@ -78,11 +79,12 @@ class RichTextPanel(wx.Panel):
         print 'CanHandle', htmlhandler.CanHandle('bookInfo.html')
         rt.RichTextBuffer.AddHandler(htmlhandler)
 #         buffer.AddHandler(htmlhandler)
-        out.write(html_content)
+        out.write(self.book.bookDescription)
         out.seek(0)
 #         htmlhandler.LoadStream(buffer, out)
 #         htmlhandler.LoadFile(path,'text')
-        self.rtc.AppendText(html_content)
+        if self.book.bookDescription !=None:
+            self.rtc.AppendText(self.book.bookDescription)
 #         htmlhandler.LoadStream(buffer, out.getvalue())
         self.rtc.Refresh()
 #         buffer = self.rtc.GetBuffer()

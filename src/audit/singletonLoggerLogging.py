@@ -29,9 +29,10 @@ import sys
 from logging.handlers import RotatingFileHandler
 
 try:
-    LOG_FILENAME = os.path.splitext(__file__)[0] + ".log"
+    LOG_FILENAME = os.path.join('/tmp','opal' + ".log")
+#     LOG_FILENAME = os.path.join('tmp',os.path.splitext(__file__)[0] + ".log")
 except:
-    LOG_FILENAME = __file__ + ".log"
+    LOG_FILENAME =os.path.join( '/tmp',__file__ + ".log")
 
 class Singleton(object):
     """

@@ -776,7 +776,7 @@ class BookPropertyPanel(wx.Panel):
         
         self.photoPanel = PropertyPhotoPanel(self, book=self.currentBook)
 #         self.rt = wx.richtext.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER)
-        self.rt=RichTextPanel(self)
+        self.rt=RichTextPanel(self,book)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         print '-------------->', self.GetParent().GetSize()
@@ -859,6 +859,8 @@ class BookPropertyPanel(wx.Panel):
             self.setValuesToPropetyGrid()
             self.photoPanel.currentBook = b
             self.photoPanel.changeBitmapWorker()
+            if b.bookDescription != None:
+                self.rt.rtc.ChangeValue(b.bookDescription)
         
         
     def onPrevious(self, event):
@@ -871,15 +873,19 @@ class BookPropertyPanel(wx.Panel):
             self.setValuesToPropetyGrid()
             self.photoPanel.currentBook = b
             self.photoPanel.changeBitmapWorker()
+            if b.bookDescription != None:
+                self.rt.rtc.ChangeValue(b.bookDescription)
         
     def onOk(self, event):
         print 'onOk'
         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.setValuesToBookFromPropertyGrid(props)
+        self.GetParent().OnCloseFrame(event)
 #         print props['Book name']
         
     def onCancel(self, event):
         print 'onCancel'    
+        self.GetParent().OnCloseFrame(event)
     
     def onDownloadMetadata(self, event):
         print 'onDownloadMetadata'  
@@ -1270,9 +1276,16 @@ class BookPropertyFrame(wx.Frame):
     def __init__(self, parent, book):
         wx.Frame.__init__(self, parent, -1, title='Edit Book Metadata', size=(1100, 650))
         self.panel = BookPropertyPanel(self, book)
+        self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 #         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Show()
-
+    # Makes sure the user was intending to quit the application
+    def OnCloseFrame(self, event):
+        self.OnExitApp(event)
+        
+    # Destroys the main frame which quits the wxPython application
+    def OnExitApp(self, event):
+        self.Destroy()
 if __name__ == '__main__':
     books = FindingBook().findAllBooks()
     book = None
