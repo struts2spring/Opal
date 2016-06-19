@@ -13,7 +13,7 @@ import os
 import sys
 import traceback
 import wx
-import wx.aui
+from wx.lib.agw import aui
 import wx.grid
 import wx.html
 from wx.wizard import WizardPageSimple, Wizard
@@ -128,12 +128,12 @@ class MainFrame(wx.Frame):
         self.fileDropTarget = FileDropTarget(self)
 #         self.grid = wx.grid.Grid(self, -1, wx.Point(0, 0), wx.Size(150, 250),wx.NO_BORDER | wx.WANTS_CHARS)
 
-        self._mgr = wx.aui.AuiManager()
+        self._mgr = aui.AuiManager()
         # tell AuiManager to manage this frame
         self._mgr.SetManagedWindow(self)
         
         # set up default notebook style
-        self._notebook_style = wx.aui.AUI_NB_DEFAULT_STYLE | wx.aui.AUI_NB_TAB_EXTERNAL_MOVE | wx.NO_BORDER
+        self._notebook_style = aui.AUI_NB_DEFAULT_STYLE | aui.AUI_NB_TAB_EXTERNAL_MOVE | wx.NO_BORDER
         self._notebook_theme = 0
         # Attributes
         self._textCount = 1
@@ -175,25 +175,25 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
         tb1.Realize()
 
-        self._mgr.AddPane(tb1, wx.aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top().LeftDockable(True).RightDockable(False))
+        self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top().LeftDockable(True).RightDockable(False))
 
         # add a bunch of panes
-        bookInfoPan = wx.aui.AuiPaneInfo().Name("bookInfo").Caption("Text Pane").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
+        bookInfoPan = aui.AuiPaneInfo().Name("bookInfo").Caption("Text Pane").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
         self._mgr.AddPane(self.CreateTextCtrl(), bookInfoPan)
 #         self._mgr.AddPane(SettingsPanel(self, self), wx.aui.AuiPaneInfo().Name("settings").Caption("Dock Manager Settings").Dockable(True).Float().Hide().CloseButton(True).MaximizeButton(True))
 
-        self._mgr.AddPane(self.searchCtrl(), wx.aui.AuiPaneInfo().Name("searchCtrl").Top().CaptionVisible(False).CloseButton(False).Show())
+        self._mgr.AddPane(self.searchCtrl(), aui.AuiPaneInfo().Name("searchCtrl").Top().CaptionVisible(False).CloseButton(False).Show())
 #         self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").CenterPane().CloseButton(True).Show())
-        self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").Caption("Grid").Center().CloseButton(True).MaximizeButton(True).LeftDockable(True).Show())
+        self._mgr.AddPane(self.CreateGrid(), aui.AuiPaneInfo().Name("grid_content").Caption("Grid").Center().CloseButton(True).MaximizeButton(True).LeftDockable(True).MinimizeButton(True))
         
-        thumbInfo = wx.aui.AuiPaneInfo().Name("test1").Caption("Pane Caption").Center().Dockable(True).Movable(True).MaximizeButton(True).MinimizeButton(True).PinButton(True).CloseButton(True).MaximizeButton(True).Position(0)
+        thumbInfo = aui.AuiPaneInfo().Name("test1").Caption("Thumb book").Center().Dockable(True).Movable(True).MaximizeButton(True).MinimizeButton(True).PinButton(True).CloseButton(True).Position(0)
         self._mgr.AddPane(self.CreateThumbCtrl(), thumbInfo)
 #         self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().Name("tree_content").CenterPane().Hide())
 
 #         self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("sizereport_content").CenterPane().Show())
 
 #         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().Name("text_content").CenterPane().Show())
-        html_content = wx.aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().RightDockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
+        html_content = aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().LeftDockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MaximizeButton(True)
         self._mgr.AddPane(self.CreateHTMLCtrl(), html_content)
 
 #         perspective_all = self._mgr.SavePerspective()
@@ -251,7 +251,7 @@ class MainFrame(wx.Frame):
         self.SetMenuBar(mb) 
     def BindEvents(self):
         # Show How To Use The Closing Panes Event
-        self.Bind(wx.aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
+        self.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_CLOSE, self.OnClose)  
