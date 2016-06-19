@@ -74,6 +74,7 @@ class SearchPanel(wx.Panel):
         name = text
 #         print 'doSearch', text
         findingBook=FindingBook()
+        totalBookCount=findingBook.countAllBooks()
         books=findingBook.searchingBook(text)
         searchedBooks=books
         print 'doSearch', text,len(searchedBooks)
@@ -94,7 +95,7 @@ class SearchPanel(wx.Panel):
         grid.Reset()
 #         grid.books=searchedBooks
 #         grid.loadBooks()
-        self.GetParent().statusbar.SetStatusText("books count:"+str(len(books)), 1)
+        self.GetParent().statusbar.SetStatusText("selected : "+str(len(books))+ " of "+ str(totalBookCount), 1)
 
 #         self.listbox.Clear()
 #         employees = DAO().findByName(name)

@@ -137,6 +137,10 @@ class CreateDatabase():
             self.session.rollback()
             raise
 
+    def countAllBooks(self):
+        bookCount=self.session.query(Book).count()
+        return bookCount
+    
     def findAllBook(self):
         bs = self.session.query(Book).all()
         print 'completed'

@@ -100,27 +100,28 @@ class PropertyPhotoPanel(wx.Panel):
         try:
     #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
     #         imgFilePath="cat.bmp"
-            print '---------->', self.GetSize()
-            NewW, NewH = self.GetSize()
-            newSize = self.GetSize()
-            if  NewW > 0 and NewH > 0:
-                img = wx.Image(self.imagePath, wx.BITMAP_TYPE_ANY)
-                originalsize = (img.GetWidth(), img.GetHeight())
-                print '-originalsize--------->', originalsize, originalsize[0] / float(originalsize[1])
-                originalRatio = originalsize[0] / float(originalsize[1])
-                print '-new--------->', min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1])
-                minWidthHeight = min(min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1]))
-                if minWidthHeight == min(newSize[0], originalsize[0]):
-                    height = minWidthHeight / originalRatio
-                    width = minWidthHeight
-                else:
-                    height = minWidthHeight
-                    width = minWidthHeight * originalRatio
-                    
-                img.Rescale(width,height, wx.IMAGE_QUALITY_NORMAL)
-#                 img = img.Scale(NewW, NewH)
-                self.bitmap = wx.BitmapFromImage(img)
-                self.Refresh()
+            if self.imagePath !=None:
+                print '---------->', self.GetSize()
+                NewW, NewH = self.GetSize()
+                newSize = self.GetSize()
+                if  NewW > 0 and NewH > 0:
+                    img = wx.Image(self.imagePath, wx.BITMAP_TYPE_ANY)
+                    originalsize = (img.GetWidth(), img.GetHeight())
+                    print '-originalsize--------->', originalsize, originalsize[0] / float(originalsize[1])
+                    originalRatio = originalsize[0] / float(originalsize[1])
+                    print '-new--------->', min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1])
+                    minWidthHeight = min(min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1]))
+                    if minWidthHeight == min(newSize[0], originalsize[0]):
+                        height = minWidthHeight / originalRatio
+                        width = minWidthHeight
+                    else:
+                        height = minWidthHeight
+                        width = minWidthHeight * originalRatio
+                        
+                    img.Rescale(width,height, wx.IMAGE_QUALITY_NORMAL)
+    #                 img = img.Scale(NewW, NewH)
+                    self.bitmap = wx.BitmapFromImage(img)
+                    self.Refresh()
         except:
             traceback.print_exc()   
 class ReviewFrame(wx.Frame):

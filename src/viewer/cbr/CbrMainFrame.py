@@ -198,8 +198,8 @@ class CbrFrame(wx.Frame):
 #                           Name("test3").Caption("Client Size Reporter").
 #                           Bottom().CloseButton(True).MaximizeButton(True).MinimizeButton(True).
 #                           CaptionVisible(True, left=True))
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), aui.AuiPaneInfo().Name("test4").Caption("Thumbnails").Left().BestSize(200, 200))                
-        self._mgr.AddPane(self.photoCtrl(), aui.AuiPaneInfo().Name("photo").Caption("Current page").Center().CloseButton(False))                
+        self._mgr.AddPane(self.CreateSizeReportCtrl(), aui.AuiPaneInfo().Name("thumbnails").Caption("Thumbnails").Left().LeftDockable(True).MinimizeButton(True).BestSize(200, 200))                
+        self._mgr.AddPane(self.photoCtrl(), aui.AuiPaneInfo().Name("photo").Caption("Current page").Center().LeftDockable(True).MinimizeButton(True).CloseButton(False))                
 #         self._mgr.AddPane(self.CreateSizeReportCtrl(), aui.AuiPaneInfo().
 #                           Name("test5").Caption("No Close Button").Right().CloseButton(False))
 #         
@@ -261,17 +261,21 @@ class CbrFrame(wx.Frame):
         pass
 #         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
     def CreateSizeReportCtrl(self, width=500, height=80):
-        filePath = os.path.join(self.book.bookPath, self.book.bookName+"."+self.book.bookFormat)
-        extractor = Extractor(filePath=filePath)
-        firstPage=extractor.extractFirstPageCbrImage()
-        self.firstPage="/tmp/1/"+firstPage
-#         ctrl = SizeReportCtrl(self, -1, wx.DefaultPosition, wx.Size(width, height), self._mgr)
         self.thumbnail = ThumbnailCtrl(self, imagehandler=NativeImageHandler)
         self.thumbnail._scrolled.EnableToolTips(enable=True)
+        self.firstPage = None
+        try:
+            filePath = os.path.join(self.book.bookPath, self.book.bookName + "." + self.book.bookFormat)
+            extractor = Extractor(filePath=filePath)
+            firstPage = extractor.extractFirstPageCbrImage()
+            self.firstPage = "/tmp/1/" + firstPage
+            self.thumbnail.ShowDir("/tmp/1")
+        except:
+            pass
+#         ctrl = SizeReportCtrl(self, -1, wx.DefaultPosition, wx.Size(width, height), self._mgr)
         
 #         thumbnail = TC.ThumbnailCtrl(self, imagehandler=TC.NativeImageHandler)
 
-        self.thumbnail.ShowDir("/tmp/1")
         return self.thumbnail
     
     

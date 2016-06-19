@@ -314,7 +314,7 @@ class ItEbook(object):
         itebook = ItEbook(baseUrl)
             # TODO need to be updated
         logicTrue=True
-        i=42
+        i=91
         while logicTrue:
             subUrl='page-'+str(i)+'.html'
             itebook.findAllBookUrl(subUrl)
