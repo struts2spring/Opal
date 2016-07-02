@@ -310,11 +310,12 @@ class ItEbook(object):
 
 
     def startDownload(self):
-        baseUrl = 'http://itebooks.website'
+#         baseUrl = 'http://itebooks.website'
+        baseUrl = 'http://it-ebooks.directory'
         itebook = ItEbook(baseUrl)
             # TODO need to be updated
         logicTrue=True
-        i=91
+        i=143
         while logicTrue:
             subUrl='page-'+str(i)+'.html'
             itebook.findAllBookUrl(subUrl)

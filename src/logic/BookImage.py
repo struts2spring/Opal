@@ -49,6 +49,7 @@ class BookImage():
         convert -size 30x32 cbr.png cbr.png 
         convert cbr.png -resize 50% cbr.png
         convert -thumbnail x300 -background white -alpha remove input_file.pdf[0] output_thumbnail.png
+        convert azw.png -resize 16% azw3.png
         '''
         os.chdir(filePath)
         if 'pdf' == bookFormat:

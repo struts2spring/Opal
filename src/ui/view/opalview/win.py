@@ -169,7 +169,8 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_search, label="Search", shortHelp="Search" , bitmap=wx.ArtProvider_GetBitmap(wx.ART_FIND))
         tb1.AddLabelTool(id=ID_editMetadata, label="Edit metadata", shortHelp="Edit metadata", bitmap=wx.ArtProvider_GetBitmap(wx.ART_WARNING))
         tb1.AddLabelTool(id=ID_addBook, label="Add book", shortHelp="Add book", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "add_book.png")))
-        tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "delete_book.png")))
+        tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.ArtProvider_GetBitmap(wx.ART_DELETE))
+#         tb1.AddLabelTool(id=ID_deleteBook, label="Delete book", shortHelp="Delete book", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "delete_book.png")))
         tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "database_refresh.png")))
         tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
         tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
@@ -193,7 +194,7 @@ class MainFrame(wx.Frame):
 #         self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("sizereport_content").CenterPane().Show())
 
 #         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().Name("text_content").CenterPane().Show())
-        html_content = aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().LeftDockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MaximizeButton(True)
+        html_content = aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().Dockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MaximizeButton(True)
         self._mgr.AddPane(self.CreateHTMLCtrl(), html_content)
 
 #         perspective_all = self._mgr.SavePerspective()

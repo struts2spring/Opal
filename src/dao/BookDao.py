@@ -50,7 +50,36 @@ class CreateDatabase():
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
-
+    def addSingleBookData(self, dirName):
+        '''
+        Using this method you can update single book info into database.
+        '''
+        try:
+            single = {}
+            duplicate = {}
+            libraryPath = Workspace().libraryPath
+            os.chdir(libraryPath)
+            duplicateBooks = list()
+            addDatabase = True
+            b = self.readJsonFile(dirName=dirName)
+            book = self.createBookFromJson(bookJson=b)
+            book.bookPath = os.path.join(libraryPath , dirName)
+            if book.isbn_13: 
+                if not single.has_key(book.isbn_13):
+                    single[book.isbn_13] = book
+                    
+                else:
+                    duplicate[book.isbn_13] = book
+                    addDatabase = False
+                    duplicateBooks.append(duplicate)
+            if addDatabase:
+                self.session.add(book)
+            self.session.commit()
+        except:
+            traceback.print_exc()
+            self.session.rollback();
+            
+            
     def addingData(self):
 
         directory_name = Workspace().libraryPath
@@ -84,7 +113,7 @@ class CreateDatabase():
             print self.duplicateBooks
     
         except:
-            print duplicate
+#             print duplicate
             traceback.print_exc()
             self.session.rollback();
         print 'data loaded'
@@ -110,7 +139,7 @@ class CreateDatabase():
         return book
     
     def readJsonFile(self, dirName=None):
-        print 'readJsonFile----->', os.path.join(Workspace().libraryPath, dirName , 'book.json')
+#         print 'readJsonFile----->', os.path.join(Workspace().libraryPath, dirName , 'book.json')
         bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
@@ -122,7 +151,7 @@ class CreateDatabase():
             b = json.loads(rep)
         except:
             traceback.print_exc()
-            print rep
+#             print rep
         return b
 
     def saveAuthorBookLink(self, authorBookLink):
@@ -166,7 +195,7 @@ class CreateDatabase():
             if book:
                 query = self.session.query(Book).filter(Book.id == book.id)
                 book = query.first()
-                print book
+#                 print book
 #                 book = books[0]
                 
                 author_id_lst = []

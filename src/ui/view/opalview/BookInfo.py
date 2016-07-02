@@ -42,8 +42,8 @@ class GenerateBookInfo():
             filepath = os.path.join(book.bookPath, name)
             im = Image.open(filepath)
             print im.size
-
-        iconPath = iconDict[book.bookFormat.lower()]
+#         book.bookFormat.split(',')
+#         iconPath = iconDict[book.bookFormat.lower()]
 #         ima= im.resize((200, 250), Image.ANTIALIAS)
 #                 print name
 
@@ -159,12 +159,11 @@ class GenerateBookInfo():
                             with tag('td'):
                                 with tag('p'):
 #                                     text(book.bookFormat)
-                                    imagePath = os.path.join(Workspace().appPath, "images",str(book.bookFormat).lower()+'.png')
-                                    print imagePath
-#                                     if book.bookFormat == 'PDF':
-#                                         imagePath = pdfImage
-#                                     elif book.bookFormat == 'PDF':
-                                    doc.stag('img', src=imagePath, border="0")
+                                    bookFormatList=book.bookFormat.split(',')
+                                    for bookFormat in bookFormatList:
+                                        imagePath = os.path.join(Workspace().appPath, "images",(str(bookFormat).lower()).strip()+'.png')
+                                        print imagePath
+                                        doc.stag('img', src=imagePath, border="0")
 
 
 
