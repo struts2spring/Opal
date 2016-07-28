@@ -1,5 +1,5 @@
 
-#http://itebooks.website/page-1000.html
+# http://itebooks.website/page-1000.html
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -47,12 +47,12 @@ class Book(json.JSONEncoder):
         self.fileSize = fileSize
         self.bookFormat = bookFormat
         self.subTitle = bookSubTitle
-        self.bookImgName=bookImgName
+        self.bookImgName = bookImgName
         self.itEbookUrlNumber = None
-        self.tag=tag
+        self.tag = tag
 
     def __str__(self):
-        rep = self.name + self.publisher + self.author + self.isbn_13 + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat+self.tag
+        rep = self.name + self.publisher + self.author + self.isbn_13 + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat + self.tag
         return rep
 
 class Author(json.JSONEncoder):
@@ -77,14 +77,14 @@ class ItEbook(object):
         '''
         Constructor
         '''
-        self.baseUrl=baseUrl
+        self.baseUrl = baseUrl
         self.directory_name = Workspace().libraryPath
         self.createDatabase = CreateDatabase() 
-        self.header_info={'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0'}
+        self.header_info = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0'}
         
         # book image url
-        self.imageUrl=None
-        self.bookUrl=None
+        self.imageUrl = None
+        self.bookUrl = None
         pass
 
     def getUrl(self, baseUrl):
@@ -96,14 +96,14 @@ class ItEbook(object):
         This method retrive all the book url avaialbe in the page.
         http://itebooks.website/page-2.html
         '''
-        url=self.baseUrl+'/'+subUrl
-        print url
+        url = self.baseUrl + '/' + subUrl
+#         print url
 #         content = urllib2.urlopen(url).read()
-        r = requests.get(url,headers=self.header_info,timeout=30)
-        if r.status_code==200:
+        r = requests.get(url, headers=self.header_info, timeout=30)
+        if r.status_code == 200:
             soup = BeautifulSoup(r.content, "lxml")
         
-            skipList= [
+            skipList = [
                        'HOME',
                         'Category',
                         'Animals',
@@ -163,36 +163,47 @@ class ItEbook(object):
 #                 for line in f:
 #                     skipList.append(line.rstrip('\n'))
 #                 f.close
-            listOfBookName=list()
+            listOfBookName = list()
             for link in soup.find_all('a', 'title'):
-                if link.text.strip() !='' and link.text not in skipList:
+                if link.text.strip() != '' and link.text not in skipList:
                     
                     listOfBookName.append(link.text)
 
-                    isBookAvailable=self.isBookNameAvailableInDatabase(link.text)
-                    print isBookAvailable, link.text
+                    isBookAvailable = self.isBookNameAvailableInDatabase(link.text)
+#                     self.isIsbnAvailableInDatabase()
+#                     print isBookAvailable, link.text
                     if not isBookAvailable :
-                        print link.text, '\t',link.get('href'), isBookAvailable
-                        book, bookUrl= self.findBookDetail(link.get('href'))
+#                         print link.text, '\t', link.get('href'), isBookAvailable
+                        book, bookUrl = self.findBookDetail(link.get('href'))
+                        isBookAvailable= self.isIsbnAvailableInDatabase(book.isbn_13)
     #                     print book
-                        try:
-                            print 'uploading database'
-                            self.downloadEbook(book,  link.get('href'), bookUrl)
-                            self.updateDatabase()
-                        except:
-                            print link.get('href')
-                            traceback.print_exc()
+                        if not isBookAvailable :
+                            try:
+                                print 'uploading database'
+                                directory_name = self.downloadEbook(book, link.get('href'), bookUrl)
+                                self.updateDatabase(directory_name)
+                            except:
+                                print link.get('href')
+                                traceback.print_exc()
         
                         
-    def updateDatabase(self):
-        self.createDatabase.creatingDatabase()  
-        self.createDatabase.addingData() 
+    def updateDatabase(self, directory_name):
+#         self.createDatabase.creatingDatabase()  
+#         self.createDatabase.addingData() 
+        self.createDatabase.addSingleBookData(directory_name)
            
-    def isBookNameAvailableInDatabase(self,bookName=None):
-        isBookPresent=False
-        book= self.createDatabase.findByBookName(bookName)
+    def isIsbnAvailableInDatabase(self, isbn_13=None):
+        isBookPresent = False
+        book = self.createDatabase.findByIsbn_13Name(isbn_13)
         if book:
-            isBookPresent=True
+            isBookPresent = True
+        return isBookPresent
+    
+    def isBookNameAvailableInDatabase(self, bookName=None):
+        isBookPresent = False
+        book = self.createDatabase.findByBookName(bookName)
+        if book:
+            isBookPresent = True
         return isBookPresent
       
     def findBookDetail(self, subUrl):
@@ -200,80 +211,85 @@ class ItEbook(object):
         It will provide book object.
         http://www.ebook777.com/shut-youre-welcome/
          '''
-        book=None
+        book = None
 #         url=self.baseUrl+'/'+subUrl
-        url=subUrl
-        r = requests.get(url,headers=self.header_info,timeout=30)
-        if r.status_code==200:
+        url = subUrl
+        r = requests.get(url, headers=self.header_info, timeout=30)
+        if r.status_code == 200:
             soup = BeautifulSoup(r.content, "lxml")
 
             book = Book()
-            book.bookDescription=soup.find(id="main-content-inner").p.text
-            book.bookName=soup.find(id="main-content-inner").find(class_='article-details').find(class_='title').text
-            book.subTitle=soup.find(id="main-content-inner").find(class_='article-details').find(class_='subtitle').text
-            bookUrl=soup.find(id="main-content-inner").find(class_='download-links').find('a')['href']
-            table_body=soup.find('table')
+            book.bookDescription = soup.find(id="main-content-inner").p.text
+            book.bookName = soup.find(id="main-content-inner").find(class_='article-details').find(class_='title').text
+            book.subTitle = soup.find(id="main-content-inner").find(class_='article-details').find(class_='subtitle').text
+            bookUrl = soup.find(id="main-content-inner").find(class_='download-links').find('a')['href']
+            table_body = soup.find('table')
             rows = table_body.find_all('tr')
             for row in rows:
                 cols = row.find_all('td')
-                if len(cols)==3:
+                if len(cols) == 3:
                     book.bookImgName = cols[0].img.attrs['alt']
-                    self.imageUrl=cols[0].img.attrs['src']
-                    if cols[1].text=='Author':
-                        print cols[2].text
-                        author=Author()
-                        author.authorName=cols[2].text
+                    self.imageUrl = cols[0].img.attrs['src']
+                    if cols[1].text == 'Author':
+#                         print cols[2].text
+                        author = Author()
+                        author.authorName = cols[2].text
                         book.authors.append(author)
 #                         book.authors.append()
                     
-                if len(cols)==2:
-                    if cols[0].text=='File size':
-                        book.fileSize=cols[1].text
-                    if cols[0].text=='Year':
+                if len(cols) == 2:
+                    if cols[0].text == 'File size':
+                        book.fileSize = cols[1].text
+                    if cols[0].text == 'Year':
                         try:
                             date = datetime.strptime(cols[1].text , '%Y')
                         except:
                             date = datetime.now()
                         book.publishedOn = date
-                    if cols[0].text=='Pages':
-                        book.numberOfPages=cols[1].text
-                    if cols[0].text=='Language':
-                        book.inLanguage=cols[1].text
-                    if cols[0].text=='File format':
-                        book.bookFormat=cols[1].text
-                    if cols[0].text=='Category':
-                        book.tag=cols[1].text
-                    if cols[0].text=='File format':
-                        book.bookFormat=cols[1].text
-                    if cols[0].text=='Isbn':
-                        book.isbn_13=cols[1].text
+                    if cols[0].text == 'Pages':
+                        book.numberOfPages = cols[1].text
+                    if cols[0].text == 'Language':
+                        book.inLanguage = cols[1].text
+                    if cols[0].text == 'File format':
+                        book.bookFormat = cols[1].text
+                    if cols[0].text == 'Category':
+                        book.tag = cols[1].text
+                    if cols[0].text == 'File format':
+                        book.bookFormat = cols[1].text
+                    if cols[0].text == 'Isbn':
+                        book.isbn_13 = cols[1].text
 
-                print cols
+#                 print cols
 
         return book, bookUrl
 
-    def downloadEbook(self, book,  refUrl, bookUrl):
+    def downloadEbook(self, book, refUrl, bookUrl):
         directory_name = self.downloadDir()
-        url=refUrl
+        url = refUrl
         bookImagePath = os.path.join(directory_name, book.bookImgName)
         self.downloadBookImage(bookImagePath, self.imageUrl)
         self.writeJsonToDir(directory_name, book)
         
-        r = requests.get(bookUrl,headers=self.header_info,timeout=30)
-        print '--------------->',r.url
-        bookPath=os.path.join(directory_name,bookUrl.split('/')[-1])
+        r = requests.get(bookUrl, headers=self.header_info, timeout=30)
+        print '--------------->', r.url
+        bookPath = os.path.join(directory_name, bookUrl.split('/')[-1])
         with open(bookPath, 'wb') as bookFile:
             bookFile.write(r.content)
-        self.extractRar(directory_name)
+        try:
+            self.extractRar(directory_name)
+        except:
+            traceback.print_exc()   
+            pass
+        return directory_name
         
-    def firefoxDownloadJob(self, book,  refUrl):
+    def firefoxDownloadJob(self, book, refUrl):
         '''The function of this method is to download link of given URL.'''
         # Creating directory
         directory_name = self.downloadDir()
 
         # Creating Actual URL
 #         url = self.baseUrl+refUrl
-        url=refUrl
+        url = refUrl
 
 
         lsFiles = []
@@ -295,7 +311,7 @@ class ItEbook(object):
             bookImagePath = os.path.join(directory_name, book.bookImgName)
             self.downloadBookImage(bookImagePath, self.imageUrl)
 
-            #writing json file
+            # writing json file
             self.writeJsonToDir(directory_name, book)
             binary = FirefoxBinary('/docs/python_projects/firefox/firefox')
 
@@ -309,11 +325,11 @@ class ItEbook(object):
             fp.set_preference("browser.download.manager.scanWhenDone", False)
             fp.set_preference("browser.download.manager.useWindow", False)
 #             fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
-            fp.set_preference("browser.helperApps.neverAsk.saveToDisk","application/octet-stream,application/xml,application/pdf,text/plain,text/xml,image/jpeg,text/csv,application/zip,application/x-rar-compressed");
+            fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream,application/xml,application/pdf,text/plain,text/xml,image/jpeg,text/csv,application/zip,application/x-rar-compressed");
             fp.set_preference("browser.helperApps.alwaysAsk.force", False);
             fp.set_preference("browser.popups.showPopupBlocker", False);
             fp.update_preferences()
-            driver = webdriver.Firefox(firefox_profile=fp,firefox_binary=binary)
+            driver = webdriver.Firefox(firefox_profile=fp, firefox_binary=binary)
             # driver.find_element_by_xpath("html/body/table/tbody/tr[2]/td/div/table/tbody/tr/td[1]/img")
             driver.get(url)
             efd_link = driver.find_element_by_css_selector(".download-links > a:nth-child(1)")
@@ -325,18 +341,18 @@ class ItEbook(object):
                 # # checking part file
                 time.sleep(10)
                 lst = []
-                files=[]
+                files = []
                 for sName in os.listdir(directory_name):
                     if os.path.isfile(os.path.join(directory_name, sName)):
                         lst.append(sName.split('.')[-1:][0])
                         files.append(os.path.join(directory_name, sName))
-                print lst
+#                 print lst
                 if 'part' not in lst:
                     flag = False
                     time.sleep(10)
                     driver.close()
                 else:
-                    #print files
+                    # print files
 #                     if not self.isBookDownloading(files):
 #                         driver.close()
                     pass
@@ -348,8 +364,8 @@ class ItEbook(object):
         '''
         from PIL import Image   
         from StringIO import StringIO
-        r = requests.get(imageUrl,headers=self.header_info,timeout=30)
-        print '--------------->',r.url
+        r = requests.get(imageUrl, headers=self.header_info, timeout=30)
+        print '--------------->', r.url
         with open(bookImagePath, 'wb') as imageFile:
             imageFile.write(r.content)
             
@@ -372,6 +388,9 @@ class ItEbook(object):
                 
                 authors.append(author)
             row2dict['authors'] = authors
+            if not row2dict['isbn_13'] ==None:
+                if str(row2dict['isbn_13']).strip()=='':
+                    row2dict['isbn_13']=None
             f.write(json.dumps(row2dict, sort_keys=False, indent=4))
             f.close()     
         except:
@@ -379,33 +398,33 @@ class ItEbook(object):
             
     def isBookDownloading(self, files):
         ''' This method will inform that book is getting downloading or not.'''
-        #time.sleep(2)
-        dic_files={}
-        time_dic_files={}
-        i=1
-        checkFlagForSize=True
-        isDownloading=True
+        # time.sleep(2)
+        dic_files = {}
+        time_dic_files = {}
+        i = 1
+        checkFlagForSize = True
+        isDownloading = True
         for fl in files:
-            dic_files[fl]=str(os.stat(fl).st_size)
+            dic_files[fl] = str(os.stat(fl).st_size)
         while(checkFlagForSize):
 
-            time_dic_files[i]=dic_files
-            i=i+1
-            if i>4:
-                size=set()
-                for k in time_dic_files[i-1]:
+            time_dic_files[i] = dic_files
+            i = i + 1
+            if i > 4:
+                size = set()
+                for k in time_dic_files[i - 1]:
                     if 'part' in k:
-                        size.add(time_dic_files[i-1][k])
-                for k in time_dic_files[i-2]:
+                        size.add(time_dic_files[i - 1][k])
+                for k in time_dic_files[i - 2]:
                     if 'part' in k:
-                        size.add(time_dic_files[i-2][k])
-                for k in time_dic_files[i-3]:
+                        size.add(time_dic_files[i - 2][k])
+                for k in time_dic_files[i - 3]:
                     if 'part' in k:
-                        size.add(time_dic_files[i-3][k])
+                        size.add(time_dic_files[i - 3][k])
 #                 print len(list(size))
                 if len(list(size)) > 1:
-                    isDownloading=False
-            checkFlagForSize=False
+                    isDownloading = False
+            checkFlagForSize = False
         logging.info('isDownloading:')
         return isDownloading
 
@@ -416,13 +435,13 @@ class ItEbook(object):
         baseUrl = 'http://www.ebook777.com'
         itebook = ItEbook(baseUrl)
             # TODO need to be updated
-        logicTrue=True
-        i=2
+        logicTrue = True
+        i =1100
         while logicTrue:
-            subUrl='page/'+str(i)+'/'
+            subUrl = 'page/' + str(i) + '/'
             itebook.findAllBookUrl(subUrl)
-            i=i+1
-            print 'startDownload---------->',str(i)
+            i = i + 1
+            print 'startDownload---------->', str(i)
 #             if i==4:
 #                 break
 
@@ -442,7 +461,7 @@ class ItEbook(object):
             os.chdir(directory_name)
         return directory_name
 
-    def extractRar(self,directory_name):
+    def extractRar(self, directory_name):
         '''
         extracting rar file
         '''
@@ -451,12 +470,12 @@ class ItEbook(object):
         listOfFiles = [ name for name in os.listdir(directory_name) if not os.path.isdir(os.path.join(directory_name, name)) ]
         for fileName in listOfFiles:
             if fileName.endswith(".rar"):
-                print fileName
+#                 print fileName
                 directory_name
-                rar = rarfile.RarFile(os.path.join(directory_name,fileName))
-                print rar.namelist()
+                rar = rarfile.RarFile(os.path.join(directory_name, fileName))
+#                 print rar.namelist()
                 infoList = rar.infolist()
-                nameList= rar.namelist()
+                nameList = rar.namelist()
                 for name in nameList:
                     if not ((name.endswith('.html')) or (name.endswith('.htm'))or (name.endswith('.txt'))) :
                         rar.extract(name, directory_name)
@@ -467,7 +486,7 @@ if __name__ == "__main__":
 #         ItEbook().startDownload()
 #     ItEbook().startDownload()
 #     http://www.ebook777.com/shut-youre-welcome/
-    itebook=ItEbook()
+    itebook = ItEbook()
     itebook.startDownload()
 #     itebook.baseUrl='http://www.ebook777.com'
 #     subUrl='shut-youre-welcome'

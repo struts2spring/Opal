@@ -32,7 +32,7 @@ class GenerateBookInfo():
             lst = os.listdir(book.bookPath)
         name = None
         for l in lst:
-            if l.endswith('.jpg'):
+            if l.endswith('.jpg') or l.endswith('jpeg'):
                 name = l
                 break
         print book.bookPath, name
