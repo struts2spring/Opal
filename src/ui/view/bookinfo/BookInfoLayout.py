@@ -13,8 +13,8 @@ from src.logic.search_book import FindingBook
 import datetime
 from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
-import threading
-from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
+from src.ui.view.bookinfo.BookDescriptionPanel import RichTextPanel
+import ImagePath
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -741,7 +741,8 @@ class PropertyPhotoPanel(wx.Panel):
             print("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
-        self.changeBitmapWorker()
+        if self.currentBook!=None:
+            self.changeBitmapWorker()
         print 'onsize'
 
     def OnPaint(self, evt):
@@ -774,7 +775,7 @@ class PropertyPhotoPanel(wx.Panel):
 #         return file_names
 class BookPropertyPanel(wx.Panel):
 
-    def __init__(self, parent, book):
+    def __init__(self, parent, book=None):
         wx.Panel.__init__(self, parent)
 
         self.panel = wx.Panel(self, wx.ID_ANY)
@@ -798,10 +799,10 @@ class BookPropertyPanel(wx.Panel):
         self.pg = self.createPropetyGrid(self.currentBook)
         
         vBox= wx.BoxSizer(wx.VERTICAL)
-        vBox.Add(self.pg, 1, wx.EXPAND, 2)
+        vBox.Add(self.pg, 1, wx.EXPAND, 1)
         vBox.Add(self.rt, 1, wx.EXPAND, 1)
-        hBox.Add(vBox, 3, wx.EXPAND, 5)
-        hBox.Add(self.photoPanel, 2, wx.EXPAND, 1)
+        hBox.Add(item=self.photoPanel, proportion=1, flag=wx.EXPAND, border=5)
+        hBox.Add(vBox, 1, wx.EXPAND, 5)
         
         topsizer.Add(hBox, 3, wx.EXPAND)
         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -824,13 +825,13 @@ class BookPropertyPanel(wx.Panel):
         
         
         
-        rowsizer.Add(previous, 1)
-        rowsizer.Add(next, 1)
-        rowsizer.Add(cancel, 1)
-        rowsizer.Add(ok, 1)
-        rowsizer.Add(downloadMetadata, 1)
-        rowsizer.Add(downloadCover, 1)
-        rowsizer.Add(generateCover, 1)
+#         rowsizer.Add(previous, 1)
+#         rowsizer.Add(next, 1)
+#         rowsizer.Add(cancel, 1)
+#         rowsizer.Add(ok, 1)
+#         rowsizer.Add(downloadMetadata, 1)
+#         rowsizer.Add(downloadCover, 1)
+#         rowsizer.Add(generateCover, 1)
         topsizer.Add(rowsizer, 0, wx.EXPAND)
 
 
@@ -848,7 +849,15 @@ class BookPropertyPanel(wx.Panel):
 
         
     def scale_bitmap(self, width=None, height=None):
-        bitmap = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        if self.currentBook !=None:
+            imgPath=self.currentBook.bookPath
+            imgName=self.currentBook.bookImgName
+        else:
+            from src.static.constant import Workspace
+            imgPath=os.path.join(Workspace().appPath, "images")
+            imgName='noCover.png'
+            
+        bitmap = wx.Image(os.path.join(imgPath, imgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
         image = wx.ImageFromBitmap(bitmap)
         if width and height:
             image = image.Scale(width, height, wx.IMAGE_QUALITY_HIGH)
@@ -978,7 +987,7 @@ class BookPropertyPanel(wx.Panel):
         imgCtrl = event.GetEventObject()
         print imgCtrl.GetName()
         
-    def createPropetyGrid(self, book):
+    def createPropetyGrid(self, book=None):
         # Difference between using PropertyGridManager vs PropertyGrid is that
         # the manager supports multiple pages and a description box.
         self.pg = wxpg.PropertyGridManager(self.panel,
@@ -1015,7 +1024,36 @@ class BookPropertyPanel(wx.Panel):
 
         self.pg.Append(wxpg.PropertyCategory("1 - Basic Properties"))
         
+        if book==None:
+            book=self.createBlankBook()
+            
         
+        self.setBookValue(book)
+        
+
+#         self.pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
+       
+        
+        return self.pg
+    
+    def createBlankBook(self):
+        book= lambda: None
+        book.bookName=''
+        book.authors=list()
+        book.numberOfPages=0
+        book.rating=0
+        book.publisher=''
+        book.isbn_13=''
+        book.id=0
+        from src.static.constant import Workspace
+        book.bookPath=os.path.join(Workspace().appPath, "images")
+        book.bookImgName='noCover.png'
+        book.inLanguage=''
+        book.fileSize=''
+        
+        return book
+
+    def setBookValue(self, book):
         self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
 #         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         authorNames = list()
@@ -1051,11 +1089,6 @@ class BookPropertyPanel(wx.Panel):
         
         imgPath = os.path.join(book.bookPath, book.bookImgName)
         self.pg.Append(wxpg.ImageFileProperty(label="Book image", value=imgPath))
-#         self.pg.Append(wxpg.DateProperty("Published date", value=self.pydate2wxdate(book.publishedOn)))
-       
-        
-        return self.pg
-
 
     def pydate2wxdate(self, date):
         assert isinstance(date, (datetime.datetime, datetime.date))
@@ -1303,6 +1336,6 @@ if __name__ == '__main__':
         break
     print book
     app = wx.App(0)
-    frame = BookPropertyFrame(None, book)
+    frame = BookPropertyFrame(None, book=None)
     app.MainLoop() 
 
