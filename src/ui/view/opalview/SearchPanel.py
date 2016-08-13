@@ -34,9 +34,12 @@ class SearchPanel(wx.Panel):
         self.horizental = wx.BoxSizer()
 
         search_btn = wx.Button(self, wx.ID_ANY, 'Search')
+        self.cb = wx.CheckBox(self, -1, 'Search name to find similar book', (10, 10))
+        self.cb.SetValue(True)
         self.Bind(wx.EVT_BUTTON, self.searchBtn, search_btn)
         self.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, self.OnCancel, self.searchCtrl)
         self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch, self.searchCtrl)
+        wx.EVT_CHECKBOX(self, self.cb.GetId(), self.checkboxDefaultClicked)
 #         cancel_btn = wx.Button(self, wx.ID_ANY, 'Cancel')
 #         self.Bind(wx.EVT_BUTTON, self.cancelBtn, cancel_btn)
 
@@ -48,6 +51,7 @@ class SearchPanel(wx.Panel):
 #         dirTreeFrame=DirTreeFrame(False)
 
         self.vertical.Add(searchCaption, 0, wx.EXPAND | wx.ALL, 5)
+        self.vertical.Add(self.cb, 0, wx.EXPAND | wx.ALL, 5)
         self.horizental.Add(self.searchCtrl,proportion=3, flag=wx.CENTER)
         self.horizental.Add(search_btn, flag=wx.EXPAND)
 #         sizer.Add(matchingItem, 0, wx.EXPAND | wx.ALL, 1)
@@ -61,7 +65,10 @@ class SearchPanel(wx.Panel):
         self.SetSizerAndFit(self.vertical)
 
         self.SetSizer(self.vertical)
-
+    
+    def checkboxDefaultClicked(self, event):
+        print 'checkboxDefaultClicked',self.cb.GetValue()
+            
     def OnTextEntered(self, event):
 #         keyCode= event.GetRawKeyCode()
 #         print keyCode
@@ -75,7 +82,7 @@ class SearchPanel(wx.Panel):
 #         print 'doSearch', text
         findingBook=FindingBook()
         totalBookCount=findingBook.countAllBooks()
-        books=findingBook.searchingBook(text)
+        books=findingBook.searchingBook(text, self.cb.GetValue())
         searchedBooks=books
         print 'doSearch', text,len(searchedBooks)
         self.GetParent().books=books

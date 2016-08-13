@@ -171,9 +171,17 @@ class CreateDatabase():
         return bookCount
     
     def findAllBook(self):
-        bs = self.session.query(Book).all()
+#         bs = self.session.query(Book).all()
+        bs=self.pagination(10, 10)
         print 'completed'
         return bs
+    
+    def pagination(self, limit, offset):
+        query=self.session.query(Book).limit(limit).offset(offset)
+        bs = query.all()
+        print 'completed'
+        return bs
+    
     def findBookByIsbn(self, isbn_13):
         bs = self.session.query(Book).filter(Book.isbn_13 == isbn_13).first()
         return bs
@@ -232,6 +240,21 @@ class CreateDatabase():
         return isBookDeleted
 
     def findByBookName(self, bookName=None):
+        '''
+        This method provide search of book name IGNORECASE .
+        '''
+        try:
+            if bookName:
+                query = self.session.query(Book).filter(func.lower(Book.bookName) == func.lower(bookName)).order_by(Book.id.desc())
+                books = query.all()
+                return books
+        except:
+            traceback.print_exc()
+            
+    def findBySimlarBookName(self, bookName=None):
+        '''
+        This method provide search of book name IGNORECASE and similar result like.
+        '''
         try:
             if bookName:
                 query = self.session.query(Book).filter(Book.bookName.ilike('%' + bookName + '%')).order_by(Book.id.desc())
@@ -239,8 +262,6 @@ class CreateDatabase():
                 return books
         except:
             traceback.print_exc()
-
-
     def findByIsbn_13Name(self, isbn_13=None):
         if isbn_13:
             query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
@@ -256,6 +277,8 @@ class CreateDatabase():
             query = self.session.query(Book).filter(Book.bookFileName.ilike('%' + bookFileName + '%'))
             books = query.all()
             return books
+        
+        
     def findBook(self, book=None):
         '''
         This method will find the book in database . It will return true.If book present.
@@ -300,7 +323,8 @@ if __name__ == '__main__':
 #         createdb.creatingDatabase()
 #         createdb.addingData()
         x = createdb.getMaxBookID()
-        print x
+        page=createdb.paginatiion(10, 10)
+        print page
 #         createdb.findAllBook()
     except:
         print traceback.print_exc()

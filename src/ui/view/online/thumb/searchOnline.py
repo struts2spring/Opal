@@ -34,7 +34,7 @@ class SearchBookPanel(wx.Panel):
         '''
         self.searchCache = dict()
         
-        os.chdir(os.path.join(Workspace(), "images"))
+        os.chdir(os.path.join(Workspace().appPath, "images"))
 
         image = wx.Image('pdf.png', wx.BITMAP_TYPE_ANY)
         img = image.Scale(18, 18)

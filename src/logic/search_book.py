@@ -11,7 +11,7 @@ class FindingBook():
         self.createDatabase = CreateDatabase()
         pass
 
-    def searchingBook(self, searchText=None):
+    def searchingBook(self, searchText=None, exactSearchFlag=False):
         '''
         This method return list of books matching with search text.
         @param searchText: may be a book name 
@@ -19,7 +19,10 @@ class FindingBook():
         books = list()
         if searchText != None and searchText != '':
             os.chdir(Workspace().libraryPath)
-            books = self.createDatabase.findByBookName(searchText)
+            if exactSearchFlag:
+                books = self.createDatabase.findByBookName(searchText)
+            else:
+                books = self.createDatabase.findBySimlarBookName(searchText)
         else:
             books = self.findAllBooks()
         return books
@@ -31,6 +34,7 @@ class FindingBook():
         return self.createDatabase.findBookByNextMaxId(bookId)
     def findBookByPreviousMaxId(self, bookId=None):
         return self.createDatabase.findBookByPreviousMaxId(bookId)
+    
     def findAllBooks(self):
         '''
         This method will give all the books list in book library.
