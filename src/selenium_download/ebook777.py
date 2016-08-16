@@ -440,7 +440,7 @@ class ItEbook(object):
         while logicTrue:
             subUrl = 'page/' + str(i) + '/'
             itebook.findAllBookUrl(subUrl)
-            i = i + 1
+            i =  i + 1
             print 'startDownload---------->', str(i)
 #             if i==4:
 #                 break

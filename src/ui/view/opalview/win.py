@@ -67,6 +67,7 @@ ID_reLoadDatabase = wx.NewId()
 ID_search = wx.NewId()
 ID_editMetadata = wx.NewId()
 ID_cover_flow = wx.NewId()
+ID_FullCircle = wx.NewId()
 print '------other id --------', ID_otherWorkspace
 
 # Define File Drop Target class
@@ -174,6 +175,7 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "database_refresh.png")))
         tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
         tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
+        tb1.AddLabelTool(id=ID_FullCircle, label="Full Circle Magazine", shortHelp="download Full Circle Magazine", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
         tb1.Realize()
 
         self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top().LeftDockable(True).RightDockable(False))
@@ -263,6 +265,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
         self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
         self.Bind(wx.EVT_MENU, self.OnCoverFlow, id=ID_cover_flow)
+        self.Bind(wx.EVT_MENU, self.OnFullCircle, id=ID_FullCircle)
         
 
         self.Bind(wx.EVT_MENU, self.onOtherWorkspace, id=ID_otherWorkspace)
@@ -329,6 +332,9 @@ class MainFrame(wx.Frame):
     def OnRestView(self, event):
         print 'OnResetView'
         self._mgr.LoadPerspective(self.perspective_default)
+        
+    def OnFullCircle(self, event):
+        print 'OnFullCircle'
         
     def OnCoverFlow(self, event):
         print 'OnCoverFlow'
