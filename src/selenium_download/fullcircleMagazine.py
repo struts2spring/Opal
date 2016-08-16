@@ -181,7 +181,10 @@ class FullCircleMagazine():
         r = requests.get(completeUrl, headers=self.header_info, timeout=30)
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, "lxml")
-            print soup
+#             print soup
+            alt=soup.find(class_='issuetable').find('img')['alt']
+            if alt=='Cover for Issue 1 in English':
+                print alt
         return imageUrl
     def startDownload(self):
         logic = True
@@ -189,7 +192,7 @@ class FullCircleMagazine():
         while logic:
             pdfUrl = 'http://dl.fullcirclemagazine.org/issue' + str(i) + '_en.pdf'
             completeUrl = 'http://fullcirclemagazine.org/issue-' + str(i) + '/'
-            self.getImageUrl(completeUrl)
+            imageUrl=self.getImageUrl(completeUrl)
             book=self.createBookDetail('Issue'+ str(i))
             status_code = self.downloadFullCircleMagazine(book=book, url=pdfUrl)
             print completeUrl, status_code
