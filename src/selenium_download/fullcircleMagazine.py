@@ -130,12 +130,20 @@ class FullCircleMagazine():
         '''
         this method will download image from imageUrl location and keep it at bookImagePath
         '''
-        from PIL import Image   
-        from StringIO import StringIO
-        r = requests.get(imageUrl, headers=self.header_info, timeout=30)
-        print '--------------->', r.url
-        with open(bookImagePath, 'wb') as imageFile:
-            imageFile.write(r.content)    
+        from binascii import a2b_base64
+
+        data = imageUrl
+        binary_data = a2b_base64(data)
+        
+        fd = open('image.png', 'wb')
+        fd.write(binary_data)
+        fd.close()
+#         from PIL import Image   
+#         from StringIO import StringIO
+#         r = requests.get(imageUrl, headers=self.header_info, timeout=30)
+#         print '--------------->', r.url
+#         with open(bookImagePath, 'wb') as imageFile:
+#             imageFile.write(r.content)    
 
 
     def updateDatabase(self, directory_name):
@@ -184,15 +192,17 @@ class FullCircleMagazine():
 #             print soup
             alt=soup.find(class_='issuetable').find('img')['alt']
             if alt=='Cover for Issue 1 in English':
-                print alt
+                imageUrl=soup.find(class_='issuetable').find('img')['src']
+                print imageUrl
         return imageUrl
+    
     def startDownload(self):
         logic = True
         i = 1
         while logic:
             pdfUrl = 'http://dl.fullcirclemagazine.org/issue' + str(i) + '_en.pdf'
             completeUrl = 'http://fullcirclemagazine.org/issue-' + str(i) + '/'
-            imageUrl=self.getImageUrl(completeUrl)
+            self.imageUrl=self.getImageUrl(completeUrl)
             book=self.createBookDetail('Issue'+ str(i))
             status_code = self.downloadFullCircleMagazine(book=book, url=pdfUrl)
             print completeUrl, status_code
