@@ -42,7 +42,7 @@ class Workspace(object):
                     self.appPath = os.path.join(os.path.dirname(__file__),"..")
                     self.path = str(workspace['path'][0])
                     if not os.path.exists(self.path):
-                        os.mkdir(self.path)
+                        os.makedirs(self.path)
                     self.libraryPath = os.path.join(str(workspace['path'][0]), workspace['library'])
                     if not os.path.exists(self.libraryPath):
                         os.mkdir(self.libraryPath)

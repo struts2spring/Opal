@@ -21,6 +21,7 @@ from wx.lib.filebrowsebutton import DirBrowseButton
 from src.ui.view.opalview.property import BookPropertyFrame
 import subprocess
 import thread
+from src.selenium_download.fullcircleMagazine import FullCircleMagazine
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
@@ -335,6 +336,8 @@ class MainFrame(wx.Frame):
         
     def OnFullCircle(self, event):
         print 'OnFullCircle'
+        fullCircleMagazine = FullCircleMagazine()
+        fullCircleMagazine.startDownload()
         
     def OnCoverFlow(self, event):
         print 'OnCoverFlow'

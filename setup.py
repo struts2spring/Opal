@@ -24,12 +24,12 @@ setup(
         'SQLAlchemy == 1.0.12',
         'selenium >= selenium-2.53.2',
         'requests',
-    	'Kivy==1.9.0',
-    	'Pillow==2.6.1',
+#     	'Kivy==1.9.0',
+#     	'Pillow==2.6.1',
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
-        'python-djvulibre >= 0.7.2'
+#         'python-djvulibre >= 0.7.2'
     ],
     classifiers=[
         # Indicate who your project is intended for
