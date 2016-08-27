@@ -185,7 +185,7 @@ class FullCircleMagazine():
         '''
         directory_name = os.path.join(self.directory_name, str(self.getMaxBookID() + 1))
         if not os.path.exists(directory_name):
-            os.makedirs(directory_name)
+            os.makedirs(directory_name,755)
             os.chdir(directory_name)
         return directory_name
     

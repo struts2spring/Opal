@@ -25,7 +25,7 @@ setup(
         'selenium >= selenium-2.53.2',
         'requests',
 #     	'Kivy==1.9.0',
-#     	'Pillow==2.6.1',
+    	'Pillow',
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
