@@ -67,43 +67,41 @@ class FullCircleMagazine():
     
     def downloadFullCircleMagazine(self, url, book=None, bookUrl=None):
         '''
+        AQGPK3595C
         '''
 #         url = 'http://dl.fullcirclemagazine.org/issue1_en.pdf'
 #         'http://dl.fullcirclemagazine.org/issue3_en.pdf'
         directory_name = self.createDownloadDir()
         bookImagePath = os.path.join(directory_name, book.bookImgName)
         os.chdir(directory_name)
-        self.downloadBookImage(bookImagePath, self.imageUrl)
-#         r = requests.get(url, headers=self.header_info, timeout=30)
-#         if r.status_code == 200:
-#             print r.status_code, url
-#             
-#             
-#             
-#             self.writeJsonToDir(directory_name, book)
-#             
+        r = requests.get(url, headers=self.header_info, timeout=30)
+        if r.status_code == 200:
+            print r.status_code, url
+            print '------->', int(r.headers["content-length"]) / 1000000
+            book.fileSize = str(round(int(r.headers["content-length"]) / 1000000 , 2)) + ' MB'
+            self.writeJsonToDir(directory_name, book)
+            self.downloadBookImage(bookImagePath, self.imageUrl)
 #             r = requests.get(bookUrl, headers=self.header_info, timeout=30)
-#             print '--------------->', r.url
-#             bookPath = os.path.join(directory_name, bookUrl.split('/')[-1])
-#             with open(bookPath, 'wb') as bookFile:
-#                 bookFile.write(r.content)
-#             try:
-#                 self.extractRar(directory_name)
-#             except:
-#                 traceback.print_exc()   
-#                 pass
-#         return r.status_code, directory_name  
+            print '--------------->', r.url
+            bookPath = os.path.join(directory_name, url.split('/')[-1])
+            print bookPath
+            with open(bookPath, 'wb') as bookFile:
+                
+                bookFile.write(r.content)
+            self.updateDatabase(directory_name)
+        return r.status_code, directory_name  
     
     def createBookDetail(self, bookName=None):
         book = Book()   
-        book.bookName="Full Circle"+bookName
-        book.bookFormat='pdf'
-        book.tag='Technology'
-        book.inLanguage='English'
-        book.subTitle='Magazine'
-        book.publisher="Full Circle"
-        book.bookImgName=bookName+'.jpg'
-        
+        book.bookName = "Full Circle "+ bookName
+        book.bookFormat = 'pdf'
+        book.tag = 'Technology'
+        book.inLanguage = 'English'
+        book.subTitle = 'Magazine'
+        book.publisher = "Full Circle"
+        book.bookImgName = bookName + '.jpg'
+        book.hasCover = 'Yes'
+        book.hasCode = 'No'
         return book
             
     def writeJsonToDir(self, bookPath=None, book=None):
@@ -134,6 +132,7 @@ class FullCircleMagazine():
         '''
         this method will download image from imageUrl location and keep it at bookImagePath
         '''
+        print imageUrl
         head, data = imageUrl.split(',', 1)
         bits = head.split(';')
         mime_type = bits[0] if bits[0] else 'text/plain'
@@ -197,16 +196,16 @@ class FullCircleMagazine():
         return maxBookId
     
     
-    def getImageUrl(self, completeUrl):
+    def getImageUrl(self, completeUrl, issueCount):
         print completeUrl
-        imageUrl=None
+        imageUrl = None
         r = requests.get(completeUrl, headers=self.header_info, timeout=30)
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, "lxml")
 #             print soup
-            alt=soup.find(class_='issuetable').find('img')['alt']
-            if alt=='Cover for Issue 1 in English':
-                imageUrl=soup.find(class_='issuetable').find('img')['src']
+            alt = soup.find(class_='issuetable').find('img')['alt']
+            if alt == 'Cover for Issue '+issueCount+' in English':
+                imageUrl = soup.find(class_='issuetable').find('img')['src']
                 print imageUrl
         return imageUrl
     
@@ -216,22 +215,38 @@ class FullCircleMagazine():
         while logic:
             pdfUrl = 'http://dl.fullcirclemagazine.org/issue' + str(i) + '_en.pdf'
             completeUrl = 'http://fullcirclemagazine.org/issue-' + str(i) + '/'
-            self.imageUrl=self.getImageUrl(completeUrl)
-            book=self.createBookDetail('Issue'+ str(i))
-            status_code = self.downloadFullCircleMagazine(book=book, url=pdfUrl)
-            print completeUrl, status_code
-            if status_code != 200:
-                logic = False
+            if not self.isIssuePresent(str(i)):
+                self.imageUrl = self.getImageUrl(completeUrl,str(i))
+                book = self.createBookDetail('Issue ' + str(i))
+                status_code, directory_name = self.downloadFullCircleMagazine(book=book, url=pdfUrl)
+                print completeUrl, status_code
+                if status_code != 200:
+                    logic = False
             i = i + 1
+    
+    
+    def isIssuePresent(self, issue=None):
+        isBookPresent = False
+        bookName="Full Circle Issue " + issue
+        book = self.createDatabase.findByBookName(bookName)
+        if book:
+            isBookPresent = True
+        return isBookPresent
+
+    def getIssueDetail(self):
+        url='https://wiki.ubuntu.com/UbuntuMagazine/FullIssueIndex'
+        r = requests.get(url, headers=self.header_info, timeout=30)
+        if r.status_code == 200:
+            soup = BeautifulSoup(r.content, "lxml") 
+            tables=soup.findAll('table')
+            for table in tables:
+                print table
             
-            logic=False
-        pass
-    
-    
     
 if __name__ == '__main__':
     print 'hi'
     fullCircleMagazine = FullCircleMagazine()
+#     fullCircleMagazine.getIssueDetail()
     fullCircleMagazine.startDownload()
     # bookImagePath='/docs/new/1'
 

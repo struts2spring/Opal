@@ -175,7 +175,7 @@ class MainFrame(wx.Frame):
         tb1.AddLabelTool(id=ID_reLoadDatabase, label="Reload database", shortHelp="Reload database", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "database_refresh.png")))
         tb1.AddLabelTool(id=ID_Rest_view, label="Reset View", shortHelp="Reset View", bitmap=wx.ArtProvider_GetBitmap(wx.ART_LIST_VIEW))
         tb1.AddLabelTool(id=ID_cover_flow, label="Cover Flow", shortHelp="Cover Flow", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
-        tb1.AddLabelTool(id=ID_FullCircle, label="Full Circle Magazine", shortHelp="download Full Circle Magazine", bitmap=wx.ArtProvider_GetBitmap(wx.ART_HELP_BOOK))
+        tb1.AddLabelTool(id=ID_FullCircle, label="Full Circle Magazine", shortHelp="download Full Circle Magazine", bitmap=wx.Bitmap(os.path.join(Workspace().appPath, "images", "fullcircle.png")))
         tb1.Realize()
 
         self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top().LeftDockable(True).RightDockable(False))
