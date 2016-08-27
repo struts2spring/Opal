@@ -29,6 +29,7 @@ setup(
     	'yattag==1.5.3',
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
+        'lxml',
 #         'python-djvulibre >= 0.7.2'
     ],
     classifiers=[
