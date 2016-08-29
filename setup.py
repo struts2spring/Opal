@@ -20,7 +20,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'wxPython ==3.0.2.0',
+#        'wxPython ==3.0.2.0',
         'SQLAlchemy == 1.0.12',
         'selenium >= selenium-2.53.2',
         'requests',
