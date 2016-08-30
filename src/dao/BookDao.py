@@ -172,7 +172,7 @@ class CreateDatabase():
     
     def findAllBook(self):
 #         bs = self.session.query(Book).all()
-        bs=self.pagination(10, 10)
+        bs=self.pagination(10, 0)
         print 'completed'
         return bs
     
