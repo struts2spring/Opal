@@ -921,14 +921,36 @@ class ThumbnailCtrl(wx.Panel):
         self._combo = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
         self._scrolled = ScrolledThumbnail(self, -1, thumboutline=thumboutline,
                                            thumbfilter=thumbfilter, imagehandler=imagehandler)
-
+        
+        pageNumber=[ "1", "2", "3" ]
+        self._toolbar=wx.ToolBar(self)
+        first=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)))
+        back=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)))
+        choice = wx.Choice( self._toolbar, wx.ID_ANY, (-1, -1), (-1, -1), pageNumber )
+        choice.SetSelection(0)
+        page=wx.StaticText(self._toolbar, wx.ID_ANY, label="Page", style=wx.ALIGN_CENTER)
+        self._toolbar.AddControl(page)
+        self._toolbar.AddControl(choice)
+        ofText=wx.StaticText(self._toolbar, wx.ID_ANY, label=" of 1", style=wx.ALIGN_CENTER)
+        self._toolbar.AddControl(ofText)
+        forword=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)))
+        last=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)))
+        
+        self._toolbar.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
+        
+        self.Bind(wx.EVT_TOOL, self.onFirst, first)
+        self.Bind(wx.EVT_TOOL, self.onBack, back)
+        self.Bind(wx.EVT_CHOICE, self.onChoice, choice)
+        self.Bind(wx.EVT_TOOL, self.onForword, forword)
+        self.Bind(wx.EVT_TOOL, self.onLast, last)
+        
         subsizer = wx.BoxSizer(wx.HORIZONTAL)
         subsizer.Add((3, 0), 0)
         subsizer.Add(self._combo, 0, wx.EXPAND | wx.TOP, 3)
         subsizer.Add((3, 0), 0)
         self._sizer.Add(subsizer, 0, wx.EXPAND | wx.ALL, 3)
         self._sizer.Add(self._scrolled, 1, wx.EXPAND)
-
+        self._sizer.Add(self._toolbar, 0, wx.EXPAND| wx.ALL, 3)
         self.SetSizer(self._sizer)
 
         self._sizer.Show(0, False)
@@ -954,7 +976,24 @@ class ThumbnailCtrl(wx.Panel):
 
         self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
 
-
+    def onFirst(self, event):
+        print 'onFirst'
+        pass
+    def onBack(self, event):
+        print 'onBack'
+        pass
+    def onChoice(self, event):
+        print 'onChoice'
+        print event.GetString()
+        pass
+    def onForword(self, event):
+        print 'onForword'
+        pass
+    def onLast(self, event):
+        print 'onLast'
+        pass
+        
+        
     def ShowComboBox(self, show=True):
         """
         Shows/Hide the top folder `wx.ComboBox`.

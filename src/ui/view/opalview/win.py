@@ -59,6 +59,7 @@ except:
 global searchedBooks
 searchedBooks = list()
 ID_About = wx.NewId()
+ID_Preferences = wx.NewId()
 ID_Rest_view = wx.NewId()
 ID_switchWorkspace = wx.NewId()
 ID_otherWorkspace = wx.NewId()
@@ -244,6 +245,9 @@ class MainFrame(wx.Frame):
 
         view_menu = wx.Menu()
         view_menu.Append(ID_Rest_view, "Reset view to default")
+        windowMenu = wx.Menu()
+        windowMenu.Append(ID_Preferences,"Preference")
+        
         help_menu = wx.Menu()
 
         help_menu.Append(ID_About, "&About...")
@@ -251,6 +255,7 @@ class MainFrame(wx.Frame):
 
         mb.Append(file_menu, "File")
         mb.Append(view_menu, "View")
+        mb.Append(windowMenu, "Window")  
         mb.Append(help_menu, "Help")  
         self.SetMenuBar(mb) 
     def BindEvents(self):
@@ -276,6 +281,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onSearch, id=ID_search)
         self.Bind(wx.EVT_MENU, self.onEditMetadata, id=ID_editMetadata)
         self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
+        self.Bind(wx.EVT_MENU, self.OnRestView, id=ID_Rest_view)
+        self.Bind(wx.EVT_MENU, self.OnPreferences, id=ID_Preferences)
         
                        
     def buildStatusBar(self):
@@ -330,6 +337,9 @@ class MainFrame(wx.Frame):
         dlg.ShowModal()
         dlg.Destroy()
 
+    def OnPreferences(self, event):
+        print 'OnPreferences'
+        pass
     def OnRestView(self, event):
         print 'OnResetView'
         self._mgr.LoadPerspective(self.perspective_default)
