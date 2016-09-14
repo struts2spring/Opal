@@ -2,14 +2,43 @@
 import json
 import os
 import sys
+import datetime
 
 
-class workspace(dict):
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
+# class workspace(dict):
+#     __getattr__ = dict.__getitem__
+#     __setattr__ = dict.__setitem__
 
 
-class OpalStart(json.JSONEncoder):
+class Preference():
+    def __init__(self):
+        print 'init'
+
+class workspace(json.JSONEncoder):
+    def __init__(self):
+        pass
+    def default(self, obj):
+        print 'workspace.default() called'
+        if isinstance(obj, datetime):
+            return obj.strftime('dt(%Y-%m-%dT%H:%M:%SZ)')
+        elif isinstance(obj, Preference):
+            return Preference()
+            
+    def encode(self, obj):
+        """
+        encode method gets an original object and returns result string. 
+        obj argument will be the object that is passed to json.dumps function
+        """
+        obj['platform'] = str(obj['platform'])
+        obj['image'] = str(obj['image'])
+        obj['searched'] = str(obj['searched'])
+        obj['library'] = str(obj['library'])
+        obj['path'] = list(obj['path'])
+#         obj['user'] = obj['user']._asdict()
+
+        return super(workspace, self).encode(obj)   
+
+class OpalStart():
 #     __getattr__ = dict.__getitem__
 #     __setattr__ = dict.__setitem__
 
@@ -32,7 +61,7 @@ class OpalStart(json.JSONEncoder):
 
     def objToJson(self):
         print 'to_json', self.__dict__
-        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__, cls=workspace)
 
     @classmethod
     def jsonToObject(cls, json_str):
@@ -57,7 +86,9 @@ if __name__ == "__main__":
     for x in f:
         jsonFileStr = jsonFileStr + x
     f.close()
-    print jsonFileStr
+    a = json.dumps(jsonFileStr, default=workspace.default)
+    print a
+#     print jsonFileStr
 
 #     d=json.loads(jsonFileStr)
 #     val=d['workspace']
