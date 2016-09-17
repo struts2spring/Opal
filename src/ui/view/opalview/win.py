@@ -22,6 +22,7 @@ from src.ui.view.opalview.property import BookPropertyFrame
 import subprocess
 import thread
 from src.selenium_download.fullcircleMagazine import FullCircleMagazine
+from src.ui.view.preference.OpalPreference import OpalPreferenceFrame
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
@@ -339,7 +340,8 @@ class MainFrame(wx.Frame):
 
     def OnPreferences(self, event):
         print 'OnPreferences'
-        pass
+        frame1 = OpalPreferenceFrame(None)
+
     def OnRestView(self, event):
         print 'OnResetView'
         self._mgr.LoadPerspective(self.perspective_default)
