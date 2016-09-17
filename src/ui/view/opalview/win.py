@@ -290,7 +290,7 @@ class MainFrame(wx.Frame):
         
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
-#         self.statusbar.SetStatusText("Ready", 0)
+        self.statusbar.SetStatusText("Opal version 0.1", 0)
 
         self.statusbar.SetStatusText("books count:" + str(len(self.books)), 1)
     def creatingDatabase(self):

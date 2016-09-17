@@ -95,8 +95,8 @@ class OpalPreferenceFrame(wx.Frame):
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
-        self.statusbar.SetStatusText("Ready", 0)
-        self.statusbar.SetStatusText("Welcome To wxPython!", 1)
+        self.statusbar.SetStatusText("Opal version 0.1", 0)
+#         self.statusbar.SetStatusText("Opal Version 1.0", 1)
 
         # min size for the frame itself isn't completely done.
         # see the end up FrameManager::Update() for the test

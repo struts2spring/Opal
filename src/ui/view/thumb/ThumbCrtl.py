@@ -1189,6 +1189,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
         self.Bind(EVT_THUMBNAILS_THUMB_CHANGED, self.OnThumbChanged)
         self.Bind(wx.EVT_CHAR, self.OnChar)
+        
+        self.Bind(wx.EVT_KEY_DOWN, self.onKeyDown )
         self.Bind(wx.EVT_MOUSEWHEEL, self.OnMouseWheel)
 
         self.Bind(wx.EVT_SIZE, self.OnResize)
@@ -2712,6 +2714,20 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         self.Refresh()
 
+    def onKeyDown(self, event):
+        if event.m_keyCode == 316:
+            print 'right key pressed',self._selected
+            self._selected=self._selected+1
+            self.SetFocus()
+            
+        elif event.m_keyCode == 314:
+            print 'left key pressed',self._selected
+            self._selected=self._selected-1
+            self.SetFocus()
+        elif event.m_keyCode == 315:
+            print 'Up key pressed'
+        elif event.m_keyCode == 317:
+            print 'down key pressed'
 
     def OnChar(self, event):
         """
