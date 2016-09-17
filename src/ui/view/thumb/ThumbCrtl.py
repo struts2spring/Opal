@@ -935,6 +935,12 @@ class ThumbnailCtrl(wx.Panel):
         self._toolbar.AddControl(ofText)
         forword=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)))
         last=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)))
+        self.sld = wx.Slider(self._toolbar, -1, 50, 0, 100, wx.DefaultPosition, (250, -1),
+                              wx.SL_AUTOTICKS | wx.SL_HORIZONTAL )
+        
+        
+        self._toolbar.AddControl(self.sld)        
+        self.sld.Bind(wx.EVT_SCROLL, self.OnSliderScroll)
         
         self._toolbar.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
         
@@ -975,6 +981,22 @@ class ThumbnailCtrl(wx.Panel):
         self._subsizer = subsizer
 
         self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
+        self.storeValSequence=[0,0]
+    def OnSliderScroll(self, e):
+        obj = e.GetEventObject()
+        val = obj.GetValue()
+
+        self.storeValSequence[0]=self.storeValSequence[1]
+        self.storeValSequence[1]=val
+        
+        if self.storeValSequence[1] -self.storeValSequence[0] > 0:
+            print '++'
+            self.ZoomIn()
+        elif self.storeValSequence[1] -self.storeValSequence[0] < 0:
+            print '--'
+            self.ZoomOut()
+        
+        print self.storeValSequence
 
     def onFirst(self, event):
         print 'onFirst'
@@ -1139,7 +1161,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self._tOutlineNotSelected = True
         self._mouseeventhandled = False
         self._highlight = False
-        self._zoomfactor = 1.4
+        self._zoomfactor = 1.1#1.4
         self.SetCaptionFont()
         self._items = []
 
@@ -2860,6 +2882,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         size = self.GetClientSize()
         w, h, b = self.GetThumbSize()
         zoom = self.GetZoomFactor()
+        
+        print 'size', size
+        print 'w, h, b', w, h, b
+        print 'zoom', zoom
 
         if w * zoom + b > size.GetWidth() or h * zoom + b > size.GetHeight():
             if w * zoom + b > size.GetWidth():
@@ -2873,6 +2899,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             neww = float(w) * zoom
             newh = float(h) * zoom
 
+        
+        print 'ZoomIn',(int(neww), int(newh))
+        
         self.SetThumbSize(int(neww), int(newh))
         self.OnResize(None)
         self._checktext = True
