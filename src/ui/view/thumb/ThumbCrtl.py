@@ -2114,7 +2114,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         :param `thumb`: an instance of L{Thumb};
         :param `index`: the index of the thumbnail to draw.
         """
-
+#         print 'DrawThumbnail'
         dc = wx.MemoryDC()
         dc.SelectObject(bmp)
         dc.BeginDrawing()
@@ -2236,7 +2236,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.PaintEvent` event to be processed.
         """
-
+#         print 'OnPaint'
         paintRect = self.GetPaintRect()
 
         dc = wx.BufferedPaintDC(self)
@@ -2483,7 +2483,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+        print 'thumbcrtl OnLeftMouseDown'
+        
         x = event.GetX()
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
@@ -2537,8 +2538,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if update:
             self.ScrollToSelected()
             self.Refresh()
-            eventOut = ThumbnailEvent(wxEVT_THUMBNAILS_SEL_CHANGED, self.GetId())
-            self.GetEventHandler().ProcessEvent(eventOut)
+                                                                                  
             print 'printing all selected', self._selectedarray
             if len(self._selectedarray) == 1:
                 # checking if it is not an internte searched book.
@@ -2718,6 +2718,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if event.m_keyCode == 316:
             print 'right key pressed',self._selected
             self._selected=self._selected+1
+            self.ScrollToSelected()
+            self.Refresh()
             self.SetFocus()
             
         elif event.m_keyCode == 314:

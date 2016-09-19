@@ -106,66 +106,22 @@ class OpalPreferenceFrame(wx.Frame):
 
 
         # add a bunch of panes
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("test1").Caption("Pane Caption").Top().CloseButton(True).MaximizeButton(True))
 
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test2").Caption("Client Size Reporter").
-                          Bottom().Position(1).CloseButton(False).MaximizeButton(True))
-
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test3").Caption("Client Size Reporter").
-                          Bottom().CloseButton(False).MaximizeButton(True))
-
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test4").Caption("Pane Caption").
-                          Left().CloseButton(False).MaximizeButton(True))
-
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test5").Caption("Pane Caption").
-                          Right().CloseButton(False).MaximizeButton(True))
-
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test6").Caption("Client Size Reporter").
-                          Right().Row(1).CloseButton(False).MaximizeButton(True))
-
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test7").Caption("Client Size Reporter").
-                          Left().Layer(1).CloseButton(False).MaximizeButton(True))
 
         self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().
                           Name("test8").Caption("Tree Pane 1").
                           Left().Layer(1).Position(1).CloseButton(False).MaximizeButton(True))
 
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test9").Caption("Min Size 200x100").
-                          BestSize(wx.Size(200, 100)).MinSize(wx.Size(200, 100)).
-                          Bottom().Layer(1).CloseButton(False).MaximizeButton(True))
 
         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().
                           Name("test10").Caption("Text Pane").
                           Bottom().Layer(1).Position(1).CloseButton(False).MaximizeButton(True))
 
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test11").Caption("Fixed Pane").
-                          Bottom().Layer(1).Position(2).Fixed().CloseButton(False).MaximizeButton(True))
 
-        self._mgr.AddPane(SettingsPanel(self, self), wx.aui.AuiPaneInfo().
-                          Name("settings").Caption("Dock Manager Settings").
-                          Dockable(True).Float().Hide().CloseButton(True).MaximizeButton(True))
-
-        # create some center panes
-
-#         self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").CenterPane().Hide())
-        self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").CenterPane().Show())
 
         self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().Name("tree_content").
                           CenterPane().Hide())
 
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("sizereport_content").
-                          CenterPane().Hide())
-
-        self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().Name("text_content").
-                          CenterPane().Hide())
 
         self._mgr.AddPane(self.CreateHTMLCtrl(), wx.aui.AuiPaneInfo().Name("html_content").
                           CenterPane())
@@ -224,7 +180,6 @@ class OpalPreferenceFrame(wx.Frame):
         self.Bind(wx.aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
 
         self.Bind(wx.EVT_MENU, self.OnCreateTree, id=ID_CreateTree)
-        self.Bind(wx.EVT_MENU, self.OnCreateGrid, id=ID_CreateGrid)
         self.Bind(wx.EVT_MENU, self.OnCreateText, id=ID_CreateText)
         self.Bind(wx.EVT_MENU, self.OnCreateHTML, id=ID_CreateHTML)
         self.Bind(wx.EVT_MENU, self.OnCreateSizeReport, id=ID_CreateSizeReport)
@@ -542,7 +497,7 @@ class OpalPreferenceFrame(wx.Frame):
         tree = wx.TreeCtrl(self, -1, wx.Point(0, 0), wx.Size(160, 250),
                            wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
 
-        root = tree.AddRoot("AUI Project")
+        root = tree.AddRoot("General")
         items = []
 
         imglist = wx.ImageList(16, 16, True, 2)
@@ -550,7 +505,7 @@ class OpalPreferenceFrame(wx.Frame):
         imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, wx.Size(16, 16)))
         tree.AssignImageList(imglist)
 
-        items.append(tree.AppendItem(root, "Item 1", 0))
+        items.append(tree.AppendItem(root, "Interface", 0))
         items.append(tree.AppendItem(root, "Item 2", 0))
         items.append(tree.AppendItem(root, "Item 3", 0))
         items.append(tree.AppendItem(root, "Item 4", 0))
@@ -559,7 +514,7 @@ class OpalPreferenceFrame(wx.Frame):
         for ii in xrange(len(items)):
 
             id = items[ii]
-            tree.AppendItem(id, "Subitem 1", 1)
+            tree.AppendItem(id, "Main interface", 1)
             tree.AppendItem(id, "Subitem 2", 1)
             tree.AppendItem(id, "Subitem 3", 1)
             tree.AppendItem(id, "Subitem 4", 1)
