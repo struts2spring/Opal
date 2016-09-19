@@ -12,6 +12,9 @@ import wx.aui
 import cStringIO
 from src.ui.view.SettingPanel import SettingsPanel
 from src.ui.view.SizeReportCtrl import SizeReportCtrl
+from src.static.constant import Workspace
+import os
+import random
 # from view.SettingPanel import SettingsPanel
 # from view.SizeReportCtrl import SizeReportCtrl
 
@@ -47,31 +50,6 @@ ID_FirstPerspective = ID_CreatePerspective + 1000
 
 
 
-#----------------------------------------------------------------------
-def GetMondrianData():
-    return \
-'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00 \x00\x00\x00 \x08\x06\x00\
-\x00\x00szz\xf4\x00\x00\x00\x04sBIT\x08\x08\x08\x08|\x08d\x88\x00\x00\x00qID\
-ATX\x85\xed\xd6;\n\x800\x10E\xd1{\xc5\x8d\xb9r\x97\x16\x0b\xad$\x8a\x82:\x16\
-o\xda\x84pB2\x1f\x81Fa\x8c\x9c\x08\x04Z{\xcf\xa72\xbcv\xfa\xc5\x08 \x80r\x80\
-\xfc\xa2\x0e\x1c\xe4\xba\xfaX\x1d\xd0\xde]S\x07\x02\xd8>\xe1wa-`\x9fQ\xe9\
-\x86\x01\x04\x10\x00\\(Dk\x1b-\x04\xdc\x1d\x07\x14\x98;\x0bS\x7f\x7f\xf9\x13\
-\x04\x10@\xf9X\xbe\x00\xc9 \x14K\xc1<={\x00\x00\x00\x00IEND\xaeB`\x82'
-
-
-def GetMondrianBitmap():
-    return wx.BitmapFromImage(GetMondrianImage())
-
-
-def GetMondrianImage():
-    stream = cStringIO.StringIO(GetMondrianData())
-    return wx.ImageFromStream(stream)
-
-
-def GetMondrianIcon():
-    icon = wx.EmptyIcon()
-    icon.CopyFromBitmap(GetMondrianBitmap())
-    return icon
 
 class OpalPreferenceFrame(wx.Frame):
 
@@ -90,7 +68,11 @@ class OpalPreferenceFrame(wx.Frame):
         self.n = 0
         self.x = 0
 
-        self.SetIcon(GetMondrianIcon())
+        image = wx.Image(os.path.join(Workspace().appPath, "images", "Library-icon.png"), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+        icon = wx.EmptyIcon()
+        icon.CopyFromBitmap(image)
+        # set frame icon
+        self.SetIcon(icon)
 
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -134,37 +116,10 @@ class OpalPreferenceFrame(wx.Frame):
 
         perspective_all = self._mgr.SavePerspective()
 
-        all_panes = self._mgr.GetAllPanes()
-
-        for ii in xrange(len(all_panes)):
-            if not all_panes[ii].IsToolbar():
-                all_panes[ii].Hide()
-
-#         self._mgr.GetPane("tb1").Hide()
-#         self._mgr.GetPane("tb5").Hide()
         self._mgr.GetPane("test8").Show().Left().Layer(0).Row(0).Position(0)
         self._mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0)
         self._mgr.GetPane("html_content").Show()
 
-        perspective_default = self._mgr.SavePerspective()
-
-        for ii in xrange(len(all_panes)):
-            if not all_panes[ii].IsToolbar():
-                all_panes[ii].Hide()
-
-        self._mgr.GetPane("tb1").Hide()
-        self._mgr.GetPane("tb5").Hide()
-        self._mgr.GetPane("tbvert").Show()
-        self._mgr.GetPane("grid_content").Show()
-        self._mgr.GetPane("test8").Show().Left().Layer(0).Row(0).Position(0)
-        self._mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0)
-        self._mgr.GetPane("html_content").Show()
-
-        perspective_vert = self._mgr.SavePerspective()
-
-        self._perspectives.append(perspective_default)
-        self._perspectives.append(perspective_all)
-        self._perspectives.append(perspective_vert)
 
         self._mgr.GetPane("tbvert").Hide()
         self._mgr.GetPane("grid_content").Hide()
@@ -177,67 +132,25 @@ class OpalPreferenceFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
         # Show How To Use The Closing Panes Event
-        self.Bind(wx.aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
 
         self.Bind(wx.EVT_MENU, self.OnCreateTree, id=ID_CreateTree)
         self.Bind(wx.EVT_MENU, self.OnCreateText, id=ID_CreateText)
         self.Bind(wx.EVT_MENU, self.OnCreateHTML, id=ID_CreateHTML)
-        self.Bind(wx.EVT_MENU, self.OnCreateSizeReport, id=ID_CreateSizeReport)
         self.Bind(wx.EVT_MENU, self.OnCreatePerspective, id=ID_CreatePerspective)
         self.Bind(wx.EVT_MENU, self.OnCopyPerspective, id=ID_CopyPerspective)
 
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_AllowFloating)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_TransparentHint)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_VenetianBlindsHint)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_RectangleHint)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_NoHint)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_HintFade)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_NoVenetianFade)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_TransparentDrag)
-        self.Bind(wx.EVT_MENU, self.OnManagerFlag, id=ID_AllowActivePane)
 
-        self.Bind(wx.EVT_MENU, self.OnGradient, id=ID_NoGradient)
-        self.Bind(wx.EVT_MENU, self.OnGradient, id=ID_VerticalGradient)
-        self.Bind(wx.EVT_MENU, self.OnGradient, id=ID_HorizontalGradient)
-        self.Bind(wx.EVT_MENU, self.OnSettings, id=ID_Settings)
-        self.Bind(wx.EVT_MENU, self.OnChangeContentPane, id=ID_GridContent)
-        self.Bind(wx.EVT_MENU, self.OnChangeContentPane, id=ID_TreeContent)
-        self.Bind(wx.EVT_MENU, self.OnChangeContentPane, id=ID_TextContent)
-        self.Bind(wx.EVT_MENU, self.OnChangeContentPane, id=ID_SizeReportContent)
-        self.Bind(wx.EVT_MENU, self.OnChangeContentPane, id=ID_HTMLContent)
+
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
 
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_TransparentHint)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_VenetianBlindsHint)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_RectangleHint)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_NoHint)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_HintFade)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_AllowFloating)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_NoVenetianFade)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_TransparentDrag)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_AllowActivePane)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_NoGradient)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_VerticalGradient)
-        self.Bind(wx.EVT_UPDATE_UI, self.OnUpdateUI, id=ID_HorizontalGradient)
 
 
         self.Bind(wx.EVT_MENU_RANGE, self.OnRestorePerspective, id=ID_FirstPerspective,
                   id2=ID_FirstPerspective + 1000)
 
         self.Show()
-    def OnPaneClose(self, event):
 
-        caption = event.GetPane().caption
-
-        if caption in ["Tree Pane", "Dock Manager Settings", "Fixed Pane"]:
-            msg = "Are You Sure You Want To Close This Pane?"
-            dlg = wx.MessageDialog(self, msg, "AUI Question",
-                                   wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
-
-            if dlg.ShowModal() in [wx.ID_NO, wx.ID_CANCEL]:
-                event.Veto()
-            dlg.Destroy()
 
 
     def OnClose(self, event):
@@ -295,94 +208,6 @@ class OpalPreferenceFrame(wx.Frame):
         self._mgr.Update()
 
 
-    def OnGradient(self, event):
-
-        gradient = 0
-
-        if event.GetId() == ID_NoGradient:
-            gradient = wx.aui.AUI_GRADIENT_NONE
-        elif event.GetId() == ID_VerticalGradient:
-            gradient = wx.aui.AUI_GRADIENT_VERTICAL
-        elif event.GetId() == ID_HorizontalGradient:
-            gradient = wx.aui.AUI_GRADIENT_HORIZONTAL
-
-        self._mgr.GetArtProvider().SetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE, gradient)
-        self._mgr.Update()
-
-
-    def OnManagerFlag(self, event):
-
-        flag = 0
-        eid = event.GetId()
-
-        if eid in [ ID_TransparentHint, ID_VenetianBlindsHint, ID_RectangleHint, ID_NoHint ]:
-            flags = self._mgr.GetFlags()
-            flags &= ~wx.aui.AUI_MGR_TRANSPARENT_HINT
-            flags &= ~wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT
-            flags &= ~wx.aui.AUI_MGR_RECTANGLE_HINT
-            self._mgr.SetFlags(flags)
-
-        if eid == ID_AllowFloating:
-            flag = wx.aui.AUI_MGR_ALLOW_FLOATING
-        elif eid == ID_TransparentDrag:
-            flag = wx.aui.AUI_MGR_TRANSPARENT_DRAG
-        elif eid == ID_HintFade:
-            flag = wx.aui.AUI_MGR_HINT_FADE
-        elif eid == ID_NoVenetianFade:
-            flag = wx.aui.AUI_MGR_NO_VENETIAN_BLINDS_FADE
-        elif eid == ID_AllowActivePane:
-            flag = wx.aui.AUI_MGR_ALLOW_ACTIVE_PANE
-        elif eid == ID_TransparentHint:
-            flag = wx.aui.AUI_MGR_TRANSPARENT_HINT
-        elif eid == ID_VenetianBlindsHint:
-            flag = wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT
-        elif eid == ID_RectangleHint:
-            flag = wx.aui.AUI_MGR_RECTANGLE_HINT
-
-        self._mgr.SetFlags(self._mgr.GetFlags() ^ flag)
-
-
-    def OnUpdateUI(self, event):
-
-        flags = self._mgr.GetFlags()
-        eid = event.GetId()
-
-        if eid == ID_NoGradient:
-            event.Check(self._mgr.GetArtProvider().GetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE) == wx.aui.AUI_GRADIENT_NONE)
-
-        elif eid == ID_VerticalGradient:
-            event.Check(self._mgr.GetArtProvider().GetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE) == wx.aui.AUI_GRADIENT_VERTICAL)
-
-        elif eid == ID_HorizontalGradient:
-            event.Check(self._mgr.GetArtProvider().GetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE) == wx.aui.AUI_GRADIENT_HORIZONTAL)
-
-        elif eid == ID_AllowFloating:
-            event.Check((flags & wx.aui.AUI_MGR_ALLOW_FLOATING) != 0)
-
-        elif eid == ID_TransparentDrag:
-            event.Check((flags & wx.aui.AUI_MGR_TRANSPARENT_DRAG) != 0)
-
-        elif eid == ID_TransparentHint:
-            event.Check((flags & wx.aui.AUI_MGR_TRANSPARENT_HINT) != 0)
-
-        elif eid == ID_VenetianBlindsHint:
-            event.Check((flags & wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT) != 0)
-
-        elif eid == ID_RectangleHint:
-            event.Check((flags & wx.aui.AUI_MGR_RECTANGLE_HINT) != 0)
-
-        elif eid == ID_NoHint:
-            event.Check(((wx.aui.AUI_MGR_TRANSPARENT_HINT | 
-                          wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT | 
-                          wx.aui.AUI_MGR_RECTANGLE_HINT) & flags) == 0)
-
-        elif eid == ID_HintFade:
-            event.Check((flags & wx.aui.AUI_MGR_HINT_FADE) != 0);
-
-        elif eid == ID_NoVenetianFade:
-            event.Check((flags & wx.aui.AUI_MGR_NO_VENETIAN_BLINDS_FADE) != 0);
-
-
 
 
     def OnCreatePerspective(self, event):
@@ -431,12 +256,7 @@ class OpalPreferenceFrame(wx.Frame):
         self._mgr.Update()
 
 
-    def OnCreateGrid(self, event):
-        self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().
-                          Caption("Grid").
-                          Float().FloatingPosition(self.GetStartPosition()).
-                          FloatingSize(wx.Size(300, 200)).CloseButton(True).MaximizeButton(True))
-        self._mgr.Update()
+
 
 
     def OnCreateHTML(self, event):
@@ -455,20 +275,9 @@ class OpalPreferenceFrame(wx.Frame):
         self._mgr.Update()
 
 
-    def OnCreateSizeReport(self, event):
-        self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().
-                          Caption("Client Size Reporter").
-                          Float().FloatingPosition(self.GetStartPosition()).
-                          CloseButton(True).MaximizeButton(True))
-        self._mgr.Update()
-
 
     def OnChangeContentPane(self, event):
 
-        self._mgr.GetPane("grid_content").Show(event.GetId() == ID_GridContent)
-        self._mgr.GetPane("text_content").Show(event.GetId() == ID_TextContent)
-        self._mgr.GetPane("tree_content").Show(event.GetId() == ID_TreeContent)
-        self._mgr.GetPane("sizereport_content").Show(event.GetId() == ID_SizeReportContent)
         self._mgr.GetPane("html_content").Show(event.GetId() == ID_HTMLContent)
         self._mgr.Update()
 
@@ -482,45 +291,36 @@ class OpalPreferenceFrame(wx.Frame):
 
 
 
-    def CreateGrid(self):
-
-        grid = wx.grid.Grid(self, -1, wx.Point(0, 0), wx.Size(150, 250),
-                            wx.NO_BORDER | wx.WANTS_CHARS)
-
-        grid.CreateGrid(50, 20)
-
-        return grid
-
-
     def CreateTreeCtrl(self):
 
-        tree = wx.TreeCtrl(self, -1, wx.Point(0, 0), wx.Size(160, 250),
-                           wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
+#         tree = wx.TreeCtrl(self, -1, wx.Point(0, 0), wx.Size(160, 250),
+#                            wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
 
-        root = tree.AddRoot("General")
-        items = []
-
-        imglist = wx.ImageList(16, 16, True, 2)
-        imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, wx.Size(16, 16)))
-        imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, wx.Size(16, 16)))
-        tree.AssignImageList(imglist)
-
-        items.append(tree.AppendItem(root, "Interface", 0))
-        items.append(tree.AppendItem(root, "Item 2", 0))
-        items.append(tree.AppendItem(root, "Item 3", 0))
-        items.append(tree.AppendItem(root, "Item 4", 0))
-        items.append(tree.AppendItem(root, "Item 5", 0))
-
-        for ii in xrange(len(items)):
-
-            id = items[ii]
-            tree.AppendItem(id, "Main interface", 1)
-            tree.AppendItem(id, "Subitem 2", 1)
-            tree.AppendItem(id, "Subitem 3", 1)
-            tree.AppendItem(id, "Subitem 4", 1)
-            tree.AppendItem(id, "Subitem 5", 1)
-
-        tree.Expand(root)
+        tree = LazyTree(self)
+#         root = tree.AddRoot("General")
+#         items = []
+# 
+#         imglist = wx.ImageList(16, 16, True, 2)
+#         imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, wx.Size(16, 16)))
+#         imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, wx.Size(16, 16)))
+#         tree.AssignImageList(imglist)
+# 
+#         items.append(tree.AppendItem(root, "Interface", 0))
+#         items.append(tree.AppendItem(root, "Item 2", 0))
+#         items.append(tree.AppendItem(root, "Item 3", 0))
+#         items.append(tree.AppendItem(root, "Item 4", 0))
+#         items.append(tree.AppendItem(root, "Item 5", 0))
+# 
+#         for ii in xrange(len(items)):
+# 
+#             id = items[ii]
+#             tree.AppendItem(id, "Main interface", 1)
+#             tree.AppendItem(id, "Subitem 2", 1)
+#             tree.AppendItem(id, "Subitem 3", 1)
+#             tree.AppendItem(id, "Subitem 4", 1)
+#             tree.AppendItem(id, "Subitem 5", 1)
+# 
+#         tree.Expand(root)
 
         return tree
 
@@ -543,6 +343,38 @@ class OpalPreferenceFrame(wx.Frame):
     def GetIntroText(self):
         return overview
 
+class LazyTree(wx.TreeCtrl):
+    ''' LazyTree is a simple "Lazy Evaluation" tree, that is, it only adds 
+        items to the tree view when they are needed.'''
+
+    def __init__(self, *args, **kwargs):
+        super(LazyTree, self).__init__(*args, **kwargs)
+        self.Bind(wx.EVT_TREE_ITEM_EXPANDING, self.OnExpandItem)
+        self.Bind(wx.EVT_TREE_ITEM_COLLAPSING, self.OnCollapseItem)
+        self.__collapsing = False
+        root = self.AddRoot('root')
+        self.SetItemHasChildren(root)
+
+    def OnExpandItem(self, event):
+        # Add a random number of children and randomly decide which 
+        # children have children of their own.
+        nrChildren = random.randint(1, 6)
+        for childIndex in range(nrChildren):
+            child = self.AppendItem(event.GetItem(), 'child %d'%childIndex)
+            self.SetItemHasChildren(child, random.choice([True, False]))
+
+    def OnCollapseItem(self, event):
+        # Be prepared, self.CollapseAndReset below may cause
+        # another wx.EVT_TREE_ITEM_COLLAPSING event being triggered.
+        if self.__collapsing:
+            event.Veto()
+        else:
+            self.__collapsing = True
+            item = event.GetItem()
+            self.CollapseAndReset(item)
+            self.SetItemHasChildren(item)
+            self.__collapsing = False
+            
 overview = """\
 <html><body>
 <h3>wx.aui, the Advanced User Interface module</h3>
