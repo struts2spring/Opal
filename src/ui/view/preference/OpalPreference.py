@@ -15,6 +15,7 @@ from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.static.constant import Workspace
 import os
 import random
+from src.ui.view.preference.PreferenceTree import TestTreeCtrlPanel
 # from view.SettingPanel import SettingsPanel
 # from view.SizeReportCtrl import SizeReportCtrl
 
@@ -291,38 +292,7 @@ class OpalPreferenceFrame(wx.Frame):
 
 
 
-    def CreateTreeCtrl(self):
 
-#         tree = wx.TreeCtrl(self, -1, wx.Point(0, 0), wx.Size(160, 250),
-#                            wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
-
-        tree = LazyTree(self)
-#         root = tree.AddRoot("General")
-#         items = []
-# 
-#         imglist = wx.ImageList(16, 16, True, 2)
-#         imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, wx.Size(16, 16)))
-#         imglist.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, wx.Size(16, 16)))
-#         tree.AssignImageList(imglist)
-# 
-#         items.append(tree.AppendItem(root, "Interface", 0))
-#         items.append(tree.AppendItem(root, "Item 2", 0))
-#         items.append(tree.AppendItem(root, "Item 3", 0))
-#         items.append(tree.AppendItem(root, "Item 4", 0))
-#         items.append(tree.AppendItem(root, "Item 5", 0))
-# 
-#         for ii in xrange(len(items)):
-# 
-#             id = items[ii]
-#             tree.AppendItem(id, "Main interface", 1)
-#             tree.AppendItem(id, "Subitem 2", 1)
-#             tree.AppendItem(id, "Subitem 3", 1)
-#             tree.AppendItem(id, "Subitem 4", 1)
-#             tree.AppendItem(id, "Subitem 5", 1)
-# 
-#         tree.Expand(root)
-
-        return tree
 
 
     def CreateSizeReportCtrl(self, width=80, height=80):
@@ -342,38 +312,13 @@ class OpalPreferenceFrame(wx.Frame):
 
     def GetIntroText(self):
         return overview
+    
+    def CreateTreeCtrl(self):
 
-class LazyTree(wx.TreeCtrl):
-    ''' LazyTree is a simple "Lazy Evaluation" tree, that is, it only adds 
-        items to the tree view when they are needed.'''
+        treePanel = TestTreeCtrlPanel(self)
 
-    def __init__(self, *args, **kwargs):
-        super(LazyTree, self).__init__(*args, **kwargs)
-        self.Bind(wx.EVT_TREE_ITEM_EXPANDING, self.OnExpandItem)
-        self.Bind(wx.EVT_TREE_ITEM_COLLAPSING, self.OnCollapseItem)
-        self.__collapsing = False
-        root = self.AddRoot('root')
-        self.SetItemHasChildren(root)
+        return treePanel
 
-    def OnExpandItem(self, event):
-        # Add a random number of children and randomly decide which 
-        # children have children of their own.
-        nrChildren = random.randint(1, 6)
-        for childIndex in range(nrChildren):
-            child = self.AppendItem(event.GetItem(), 'child %d'%childIndex)
-            self.SetItemHasChildren(child, random.choice([True, False]))
-
-    def OnCollapseItem(self, event):
-        # Be prepared, self.CollapseAndReset below may cause
-        # another wx.EVT_TREE_ITEM_COLLAPSING event being triggered.
-        if self.__collapsing:
-            event.Veto()
-        else:
-            self.__collapsing = True
-            item = event.GetItem()
-            self.CollapseAndReset(item)
-            self.SetItemHasChildren(item)
-            self.__collapsing = False
             
 overview = """\
 <html><body>
