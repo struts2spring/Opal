@@ -56,6 +56,7 @@ class TestTreeCtrlPanel(wx.Panel):
         self.Bind(wx.EVT_TIMER, self.OnTime)        
 
     def OnDragBegin(self, evt):
+        print 'OnDragBegin'
         item = evt.GetItem()
         
         if self.tree.GetItemParent(item) == self.root:
@@ -68,6 +69,7 @@ class TestTreeCtrlPanel(wx.Panel):
         self.tree.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         
     def OnDragEnd(self, evt):
+        print 'OnDragEnd'
         target = evt.GetItem()
 
         if not target.IsOk() or target == self.root:
@@ -87,11 +89,13 @@ class TestTreeCtrlPanel(wx.Panel):
         self.tree.EnsureVisible(added)
             
     def OnMouseLeftUp(self, evt):
+        print 'OnMouseLeftUp'
         self.tree.Unbind(wx.EVT_MOTION)
         self.tree.Unbind(wx.EVT_LEFT_UP)
         evt.Skip()
         
     def OnMotion(self, evt):
+        print 'OnMotion'
         size = self.tree.GetSize()
         x,y = evt.GetPosition()
         
@@ -101,6 +105,7 @@ class TestTreeCtrlPanel(wx.Panel):
         evt.Skip()
         
     def OnTime(self, evt):
+        print 'OnTime'
         x,y = self.tree.ScreenToClient(wx.GetMousePosition())
         size = self.tree.GetSize()
 
@@ -114,6 +119,7 @@ class TestTreeCtrlPanel(wx.Panel):
         self.timer.Start(70)
         
     def ScrollUp(self):
+        print 'ScrollUp'
         if "wxMSW" in wx.PlatformInfo:
             self.tree.ScrollLines(-1)
         else:
@@ -133,6 +139,7 @@ class TestTreeCtrlPanel(wx.Panel):
                 self.tree.EnsureVisible(first)
 
     def ScrollDown(self):
+        print 'ScrollDown'
         if "wxMSW" in wx.PlatformInfo:
             self.tree.ScrollLines(1)
         else:
@@ -164,6 +171,7 @@ class TestTreeCtrlPanel(wx.Panel):
                 self.tree.EnsureVisible(last)
 
     def traverse(self, parent=None):
+        print 'traverse'
         if parent is None:
             parent = self.root
         nc = self.tree.GetChildrenCount(parent, False)
@@ -179,15 +187,37 @@ class TestTreeCtrlPanel(wx.Panel):
             yield child
 
     def findItem(self, item):
+        print 'findItem'
         parent = self.tree.GetItemParent(item)
         for n,i in enumerate(self.traverse(parent)):
             if item == i:
                 return n
                 
     def OnSize(self, event):
+        print 'OnSize'
         w,h = self.GetClientSizeTuple()
         self.tree.SetDimensions(0, 0, w, h)
 
     def OnSelChanged(self, event):
+        print 'OnSelChanged'
         self.item = event.GetItem()
         event.Skip()
+        
+class MyFrame(wx.Frame):
+    def __init__(self, *args, **kwds):
+        wx.Frame.__init__(self, *args, **kwds)
+        pnl = TestTreeCtrlPanel(self)
+                  
+class MyApp(wx.App):
+    def OnInit(self):
+        wx.InitAllImageHandlers()
+        frame_1 = MyFrame(None, -1, "")
+        self.SetTopWindow(frame_1)
+        frame_1.Show(1)
+        return 1
+
+# end of class MyApp
+
+if __name__ == "__main__":
+    app = MyApp(0)
+    app.MainLoop()

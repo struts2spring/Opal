@@ -3,27 +3,20 @@ Created on 14-Nov-2015
 
 @author: vijay
 '''
-import wx
-import wx.grid
 import wx.html
 import wx.aui
 
 
-import cStringIO
-from src.ui.view.SettingPanel import SettingsPanel
 from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.static.constant import Workspace
 import os
-import random
 from src.ui.view.preference.PreferenceTree import TestTreeCtrlPanel
 # from view.SettingPanel import SettingsPanel
 # from view.SizeReportCtrl import SizeReportCtrl
 
 ID_CreateTree = wx.NewId()
-ID_CreateGrid = wx.NewId()
 ID_CreateText = wx.NewId()
 ID_CreateHTML = wx.NewId()
-ID_CreateSizeReport = wx.NewId()
 ID_GridContent = wx.NewId()
 ID_TextContent = wx.NewId()
 ID_TreeContent = wx.NewId()
@@ -90,10 +83,9 @@ class OpalPreferenceFrame(wx.Frame):
 
         # add a bunch of panes
 
-
-        self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().
-                          Name("test8").Caption("Tree Pane 1").
-                          Left().Layer(1).Position(1).CloseButton(False).MaximizeButton(True))
+        treePane=wx.aui.AuiPaneInfo().Name("test8").Caption("Tree Pane 1").Left().Layer(1).Position(1).CloseButton(False).MaximizeButton(True)
+        treePane.MinSize(wx.Size(200,200))
+        self._mgr.AddPane(self.CreateTreeCtrl(), treePane)
 
 
         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().
@@ -115,7 +107,6 @@ class OpalPreferenceFrame(wx.Frame):
 
         self._mgr.GetPane("tbvert").Hide()
 
-        perspective_all = self._mgr.SavePerspective()
 
         self._mgr.GetPane("test8").Show().Left().Layer(0).Row(0).Position(0)
         self._mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0)
