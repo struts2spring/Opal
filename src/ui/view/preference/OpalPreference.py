@@ -11,6 +11,7 @@ from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.static.constant import Workspace
 import os
 from src.ui.view.preference.PreferenceTree import TestTreeCtrlPanel
+from src.ui.view.preference.GeneralProperty import GeneralPreferencePanel
 # from view.SettingPanel import SettingsPanel
 # from view.SizeReportCtrl import SizeReportCtrl
 
@@ -94,11 +95,11 @@ class OpalPreferenceFrame(wx.Frame):
 
 
 
-        self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().Name("tree_content").
+        self._mgr.AddPane(self.createPreference(), wx.aui.AuiPaneInfo().Name("tree_content").
                           CenterPane().Hide())
 
 
-        self._mgr.AddPane(self.CreateHTMLCtrl(), wx.aui.AuiPaneInfo().Name("html_content").
+        self._mgr.AddPane(self.createPreference(), wx.aui.AuiPaneInfo().Name("html_content").
                           CenterPane())
 
 
@@ -239,7 +240,8 @@ class OpalPreferenceFrame(wx.Frame):
 
         return wx.Point(pt.x + x, pt.y + x)
 
-
+    
+    
     def OnCreateTree(self, event):
         self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().
                           Caption("Tree Control").
@@ -304,6 +306,11 @@ class OpalPreferenceFrame(wx.Frame):
     def GetIntroText(self):
         return overview
     
+    
+    def createPreference(self):
+        generalPreferencePanel = GeneralPreferencePanel(self)
+        
+        return generalPreferencePanel
     def CreateTreeCtrl(self):
 
         treePanel = TestTreeCtrlPanel(self)

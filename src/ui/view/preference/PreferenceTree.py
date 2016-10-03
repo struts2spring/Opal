@@ -201,8 +201,16 @@ class TestTreeCtrlPanel(wx.Panel):
     def OnSelChanged(self, event):
         print 'OnSelChanged'
         self.item = event.GetItem()
-        event.Skip()
+        print self.tree.GetItemText(self.item)
         
+        event.Skip()
+    def loadPanel(self):
+        try:
+            wx.BeginBusyCursor()
+            self.pnl.Freeze()
+        finally:
+            wx.EndBusyCursor() 
+            self.pnl.Thaw()
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         wx.Frame.__init__(self, *args, **kwds)
