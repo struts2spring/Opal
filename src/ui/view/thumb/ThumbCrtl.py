@@ -922,29 +922,31 @@ class ThumbnailCtrl(wx.Panel):
         self._scrolled = ScrolledThumbnail(self, -1, thumboutline=thumboutline,
                                            thumbfilter=thumbfilter, imagehandler=imagehandler)
         
-        pageNumber=[ "1", "2", "3" ]
-        self._toolbar=wx.ToolBar(self)
-        first=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)))
-        back=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)))
-        choice = wx.Choice( self._toolbar, wx.ID_ANY, (-1, -1), (-1, -1), pageNumber )
+        pageNumber = [ "1", "2", "3" ]
+        self._toolbar = wx.ToolBar(self, style=(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT))
+        first_1 = self._toolbar.AddLabelTool(10, 'Left', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)), shortHelp="New", longHelp="Long help for 'New'" )
+        back = self._toolbar.AddLabelTool(20, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)))
+        choice = wx.Choice(self._toolbar, 30, (-1, -1), (-1, -1), pageNumber)
         choice.SetSelection(0)
-        page=wx.StaticText(self._toolbar, wx.ID_ANY, label="Page", style=wx.ALIGN_CENTER)
+        page = wx.StaticText(self._toolbar, 40, label="Page", style=wx.ALIGN_CENTER)
         self._toolbar.AddControl(page)
         self._toolbar.AddControl(choice)
-        ofText=wx.StaticText(self._toolbar, wx.ID_ANY, label=" of 1", style=wx.ALIGN_CENTER)
+        ofText = wx.StaticText(self._toolbar, 50, label=" of 1", style=wx.ALIGN_CENTER)
         self._toolbar.AddControl(ofText)
-        forword=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)))
-        last=self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)))
+        forword = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)))
+        last = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)))
         self.sld = wx.Slider(self._toolbar, -1, 50, 0, 100, wx.DefaultPosition, (250, -1),
-                              wx.SL_AUTOTICKS | wx.SL_HORIZONTAL )
+                              wx.SL_AUTOTICKS | wx.SL_HORIZONTAL)
         
-        
-        self._toolbar.AddControl(self.sld)        
+        self._toolbar.AddSeparator()
+        self._toolbar.AddControl(control=self.sld)        
+        self._toolbar.AddSeparator()
+        self._toolbar.Realize()
         self.sld.Bind(wx.EVT_SCROLL, self.OnSliderScroll)
         
         self._toolbar.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
         
-        self.Bind(wx.EVT_TOOL, self.onFirst, first)
+        self.Bind(wx.EVT_TOOL, self.onFirst, first_1)
         self.Bind(wx.EVT_TOOL, self.onBack, back)
         self.Bind(wx.EVT_CHOICE, self.onChoice, choice)
         self.Bind(wx.EVT_TOOL, self.onForword, forword)
@@ -954,9 +956,11 @@ class ThumbnailCtrl(wx.Panel):
         subsizer.Add((3, 0), 0)
         subsizer.Add(self._combo, 0, wx.EXPAND | wx.TOP, 3)
         subsizer.Add((3, 0), 0)
-        self._sizer.Add(subsizer, 0, wx.EXPAND | wx.ALL, 3)
-        self._sizer.Add(self._scrolled, 1, wx.EXPAND)
-        self._sizer.Add(self._toolbar, 0, wx.EXPAND| wx.ALL, 3)
+        self._sizer.Add(subsizer, 1, wx.EXPAND)
+#         self._sizer.Add(subsizer, 0, wx.EXPAND | wx.ALL, 3)
+        self._sizer.Add(self._scrolled, 9, wx.EXPAND)
+        self._sizer.Add(self._toolbar, 1, wx.EXPAND | wx.ALL, 3)
+#         self._sizer.Add(self._toolbar, 0, wx.EXPAND| wx.ALL, 3)
         self.SetSizer(self._sizer)
 
         self._sizer.Show(0, False)
@@ -981,18 +985,18 @@ class ThumbnailCtrl(wx.Panel):
         self._subsizer = subsizer
 
         self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
-        self.storeValSequence=[0,0]
+        self.storeValSequence = [0, 0]
     def OnSliderScroll(self, e):
         obj = e.GetEventObject()
         val = obj.GetValue()
 
-        self.storeValSequence[0]=self.storeValSequence[1]
-        self.storeValSequence[1]=val
+        self.storeValSequence[0] = self.storeValSequence[1]
+        self.storeValSequence[1] = val
         
-        if self.storeValSequence[1] -self.storeValSequence[0] > 0:
+        if self.storeValSequence[1] - self.storeValSequence[0] > 0:
             print '++'
             self.ZoomIn()
-        elif self.storeValSequence[1] -self.storeValSequence[0] < 0:
+        elif self.storeValSequence[1] - self.storeValSequence[0] < 0:
             print '--'
             self.ZoomOut()
         
@@ -1161,7 +1165,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self._tOutlineNotSelected = True
         self._mouseeventhandled = False
         self._highlight = False
-        self._zoomfactor = 1.1#1.4
+        self._zoomfactor = 1.1  # 1.4
         self.SetCaptionFont()
         self._items = []
 
@@ -1190,7 +1194,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         self.Bind(EVT_THUMBNAILS_THUMB_CHANGED, self.OnThumbChanged)
         self.Bind(wx.EVT_CHAR, self.OnChar)
         
-        self.Bind(wx.EVT_KEY_DOWN, self.onKeyDown )
+        self.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
         self.Bind(wx.EVT_MOUSEWHEEL, self.OnMouseWheel)
 
         self.Bind(wx.EVT_SIZE, self.OnResize)
@@ -2716,15 +2720,15 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def onKeyDown(self, event):
         if event.m_keyCode == 316:
-            print 'right key pressed',self._selected
-            self._selected=self._selected+1
+            print 'right key pressed', self._selected
+            self._selected = self._selected + 1
             self.ScrollToSelected()
             self.Refresh()
             self.SetFocus()
             
         elif event.m_keyCode == 314:
-            print 'left key pressed',self._selected
-            self._selected=self._selected-1
+            print 'left key pressed', self._selected
+            self._selected = self._selected - 1
             self.SetFocus()
         elif event.m_keyCode == 315:
             print 'Up key pressed'
@@ -2918,7 +2922,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             newh = float(h) * zoom
 
         
-        print 'ZoomIn',(int(neww), int(newh))
+        print 'ZoomIn', (int(neww), int(newh))
         
         self.SetThumbSize(int(neww), int(newh))
         self.OnResize(None)
