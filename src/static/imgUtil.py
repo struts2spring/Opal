@@ -7,7 +7,7 @@ class ImageUtil():
     
     def __init__(self):
         self.icons = {}
-        path = os.path.join(os.path.dirname(__file__) , ".." , 'ui' , 'view' , 'opalview' , "images")
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__) , ".." ,  "images"))
         ls = os.listdir(path)
         for l in ls:
             x = l.split('.')[0:1][0]
