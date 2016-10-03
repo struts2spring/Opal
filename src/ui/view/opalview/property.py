@@ -1030,9 +1030,10 @@ class BookPropertyPanel(wx.Panel):
         
 
         
-        
-        self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
-        
+        try:
+            self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
+        except:
+            pass
         self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
         self.pg.Append(wxpg.StringProperty("Language", value=str(book.inLanguage or '')))
         
