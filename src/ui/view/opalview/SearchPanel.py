@@ -23,7 +23,8 @@ class SearchPanel(wx.Panel):
         searchCaption = wx.StaticText(self, wx.ID_ANY, str('Search name to open (?= any character, * = any string)'))
 #         matchingItem = wx.StaticText(self, wx.ID_ANY, str('Matching names:'))
         self.searchCtrl = wx.SearchCtrl(self , id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TE_PROCESS_ENTER)
-        self.searchCtrl.SetToolTip(wx.ToolTip('Search'))
+        self.searchCtrl.SetToolTip(wx.ToolTip('Search Title (book name) or Author'))
+        self.searchCtrl.SetDescriptiveText('Search Title (book name) or Author')
         self.searchCtrl.ShowCancelButton(True)
         self.searchCtrl.Bind(wx.EVT_TEXT_ENTER, self.OnTextEntered)
 
