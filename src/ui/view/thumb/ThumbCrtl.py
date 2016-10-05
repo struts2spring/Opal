@@ -924,8 +924,8 @@ class ThumbnailCtrl(wx.Panel):
         
         pageNumber = [ "1", "2", "3" ]
         self._toolbar = wx.ToolBar(self, style=(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT))
-        first_1 = self._toolbar.AddLabelTool(10, 'Left', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)), shortHelp="New", longHelp="Long help for 'New'" )
-        back = self._toolbar.AddLabelTool(20, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)))
+        first_1 = self._toolbar.AddLabelTool(10, 'Left', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)), shortHelp="First", longHelp="Long help for 'New'" )
+        back = self._toolbar.AddLabelTool(20, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)), shortHelp="Previous")
         choice = wx.Choice(self._toolbar, 30, (-1, -1), (-1, -1), pageNumber)
         choice.SetSelection(0)
         page = wx.StaticText(self._toolbar, 40, label="Page", style=wx.ALIGN_CENTER)
@@ -933,8 +933,8 @@ class ThumbnailCtrl(wx.Panel):
         self._toolbar.AddControl(choice)
         ofText = wx.StaticText(self._toolbar, 50, label=" of 1", style=wx.ALIGN_CENTER)
         self._toolbar.AddControl(ofText)
-        forword = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)))
-        last = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)))
+        forword = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)), shortHelp="Next")
+        last = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)), shortHelp="Last")
         self.sld = wx.Slider(self._toolbar, -1, 50, 0, 100, wx.DefaultPosition, (250, -1),
                               wx.SL_AUTOTICKS | wx.SL_HORIZONTAL)
         
