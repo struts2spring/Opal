@@ -735,7 +735,10 @@ class PropertyPhotoPanel(wx.Panel):
             print("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
-        self.changeBitmapWorker()
+	try:
+		self.changeBitmapWorker()
+	except Exception as e:
+		print e
         print 'onsize'
 
     def OnPaint(self, evt):
@@ -780,7 +783,11 @@ class BookPropertyPanel(wx.Panel):
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         print '-------------->', self.GetParent().GetSize()
-        img1 = self.scale_bitmap()
+	try:
+        	img1 = self.scale_bitmap()
+	except Exception as e:
+		print e
+
         img = wx.EmptyImage(240, 240)
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1, name="anotherEmptyImage")
