@@ -28,7 +28,7 @@ from src.ui.view.preference.OpalPreference import OpalPreferenceFrame
 # from kivy.uix.label import Label
 # from kivy.uix.textinput import TextInput
 try:
-    from src.ui.view.kivy.x import MyApp
+    from src.ui.view.kivy.main import PicturesApp
 except:
     print 'error in loading kivy'
 try:
@@ -369,7 +369,11 @@ class MainFrame(wx.Frame):
 #         MyApp().run()
 #         self._mgr.LoadPerspective(self.perspective_default)
     def startShell(self, a):
-        MyApp().run()
+#         books = FindingBook().findAllBooks()
+        self.picture=PicturesApp()
+        self.picture.setValue(books=self.books)
+        self.picture.run()
+#         PicturesApp(self.books).run()
 #         from subprocess import call
 #         os.chdir('/docs/github/Opal/src/ui/view/kivy')
 #         print '-----1----1------','---> ',os.getcwd()

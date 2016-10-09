@@ -3,6 +3,10 @@
 import wx
 import wx.lib.agw.genericmessagedialog as GMD
 from src.logic.search_book import FindingBook
+import os
+from kivy.logger import Logger
+from random import randint
+from src.ui.view.kivy.main import PicturesApp, Picture
 # from seleniumx.calling_db import DAO
 
 
@@ -100,6 +104,26 @@ class SearchPanel(wx.Panel):
 
         grid._table.data=data
         self.GetParent().grid.bookId_rowNo_dict=bookId_rowNo_dict
+        self.GetParent().picture.root.clear_widgets()
+#         for child in self.GetParent().picture.root..clear_widgets()vchildren:
+#             if type(child) == type(Picture):
+#                 self.GetParent().picture.root.children.remove(child)
+#         self.GetParent().picture.books=books
+#         try:
+#             self.GetParent().picture.root.clear_widgets(children=None)
+#             for book in self.books:
+#                 filename=os.path.join(book.bookPath, book.bookImgName)
+#     #         for filename in glob(join(curdir, 'images', '*')):
+#                 try:
+#                     # load the image
+#                     picture = PicturesApp(source=filename, rotation=randint(-30, 30))
+#                     # add to the main field
+#                     self.GetParent().picture.root.add_widget(picture)
+#                 except Exception as e:
+#                     Logger.exception('Pictures: Unable to load <%s>' % filename)
+#         except Exception as e:
+#             print e
+            
         grid.Reset()
 #         grid.books=searchedBooks
 #         grid.loadBooks()
