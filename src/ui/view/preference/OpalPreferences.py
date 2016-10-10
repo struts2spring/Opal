@@ -62,7 +62,7 @@ import wx.html
 from wx.lib.msgpanel import MessagePanel
 
 import wx.lib.mixins.inspection
-from src.images import  WXPdemo, catalog
+from src.ui.view.preference.images import  WXPdemo, catalog
 
 # import version
 
