@@ -64,15 +64,14 @@ class PicturesApp(App):
         curdir = dirname(__file__)
 #         books = FindingBook().findAllBooks()
         for book in self.books:
-            filename=os.path.join(book.bookPath, book.bookImgName)
+            filename=str(os.path.join(book.bookPath, str(book.bookImgName)))
 #         for filename in glob(join(curdir, 'images', '*')):
             try:
                 # load the image
-                picture = Picture(source=filename, rotation=randint(-30, 30))
+                picture = Picture(source=str(filename), rotation=randint(-30, 30))
                 # add to the main field
                 root.add_widget(picture)
             except Exception as e:
-                Logger.exception(e)
                 Logger.exception('Pictures: Unable to load <%s>' % filename)
 
     def on_pause(self):
@@ -82,5 +81,5 @@ class PicturesApp(App):
 if __name__ == '__main__':
     books = FindingBook().findAllBooks()
     pic=PicturesApp()
-    pic.setValue(x=2)
+    pic.setValue(books)
     pic.run()

@@ -3,18 +3,17 @@ Created on 14-Nov-2015
 
 @author: vijay
 '''
-import wx.html
-import wx.aui
-
-
-from src.ui.view.SizeReportCtrl import SizeReportCtrl
-from src.static.constant import Workspace
 import os
-from src.ui.view.preference.PreferenceTree import TestTreeCtrlPanel
+from src.static.constant import Workspace
+from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.ui.view.preference.GeneralProperty import GeneralPreferencePanel
+from src.ui.view.preference.PreferenceTree import PreferenceTreeCtrlPanel
+import wx.aui
+import wx.html
+
+
 # from view.SettingPanel import SettingsPanel
 # from view.SizeReportCtrl import SizeReportCtrl
-
 ID_CreateTree = wx.NewId()
 ID_CreateText = wx.NewId()
 ID_CreateHTML = wx.NewId()
@@ -313,7 +312,7 @@ class OpalPreferenceFrame(wx.Frame):
         return generalPreferencePanel
     def CreateTreeCtrl(self):
 
-        treePanel = TestTreeCtrlPanel(self)
+        treePanel = PreferenceTreeCtrlPanel(self)
 
         return treePanel
 

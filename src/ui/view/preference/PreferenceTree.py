@@ -1,4 +1,20 @@
 import wx
+
+
+#---------------------------------------------------------------------------
+
+class MainPanel(wx.Panel):
+    """
+    Just a simple derived panel where we override Freeze and Thaw so they are
+    only used on wxMSW.    
+    """
+    def Freeze(self):
+        if 'wxMSW' in wx.PlatformInfo:
+            return super(MainPanel, self).Freeze()
+                         
+    def Thaw(self):
+        if 'wxMSW' in wx.PlatformInfo:
+            return super(MainPanel, self).Thaw()
 #---------------------------------------------------------------------------
 
 class MyTreeCtrl(wx.TreeCtrl):
@@ -14,7 +30,7 @@ class MyTreeCtrl(wx.TreeCtrl):
 
 #---------------------------------------------------------------------------
 
-class TestTreeCtrlPanel(wx.Panel):
+class PreferenceTreeCtrlPanel(wx.Panel):
     def __init__(self, parent):
         # Use the WANTS_CHARS style so the panel doesn't eat the Return key.
         wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
@@ -22,11 +38,11 @@ class TestTreeCtrlPanel(wx.Panel):
 
         self.tree = MyTreeCtrl(self, -1, wx.TR_HAS_BUTTONS)
 
-        isz = (16,16)
+        isz = (16, 16)
         il = wx.ImageList(isz[0], isz[1])
-        self.fldridx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
-        self.fldropenidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN,   wx.ART_OTHER, isz))
-        self.fileidx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
+        self.fldridx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, isz))
+        self.fldropenidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, isz))
+        self.fileidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
 
         self.tree.SetImageList(il)
         self.il = il
@@ -43,7 +59,7 @@ class TestTreeCtrlPanel(wx.Panel):
             self.tree.SetItemImage(child, self.fldropenidx, wx.TreeItemIcon_Expanded)
 
             for y in range(5):
-                last = self.tree.AppendItem(child, "item %d-%s" % (x, chr(ord("a")+y)))
+                last = self.tree.AppendItem(child, "item %d-%s" % (x, chr(ord("a") + y)))
                 self.tree.SetPyData(last, None)
                 self.tree.SetItemImage(last, self.fileidx, wx.TreeItemIcon_Normal)
 
@@ -97,7 +113,7 @@ class TestTreeCtrlPanel(wx.Panel):
     def OnMotion(self, evt):
         print 'OnMotion'
         size = self.tree.GetSize()
-        x,y = evt.GetPosition()
+        x, y = evt.GetPosition()
         
         if y < 0 or y > size[1] and not hasattr(self, 'timer'):
             self.timer = wx.Timer(self)
@@ -106,7 +122,7 @@ class TestTreeCtrlPanel(wx.Panel):
         
     def OnTime(self, evt):
         print 'OnTime'
-        x,y = self.tree.ScreenToClient(wx.GetMousePosition())
+        x, y = self.tree.ScreenToClient(wx.GetMousePosition())
         size = self.tree.GetSize()
 
         if y < 0:
@@ -189,22 +205,24 @@ class TestTreeCtrlPanel(wx.Panel):
     def findItem(self, item):
         print 'findItem'
         parent = self.tree.GetItemParent(item)
-        for n,i in enumerate(self.traverse(parent)):
+        for n, i in enumerate(self.traverse(parent)):
             if item == i:
                 return n
                 
     def OnSize(self, event):
         print 'OnSize'
-        w,h = self.GetClientSizeTuple()
+        w, h = self.GetClientSizeTuple()
         self.tree.SetDimensions(0, 0, w, h)
 
     def OnSelChanged(self, event):
         print 'OnSelChanged'
         self.item = event.GetItem()
+        preferenceName = self.tree.GetItemText(self.item)
         print self.tree.GetItemText(self.item)
+        self.loadPanel(preferenceName)
         
         event.Skip()
-    def loadPanel(self):
+    def loadPanel(self, preferenceName):
         try:
             wx.BeginBusyCursor()
             self.pnl.Freeze()
@@ -214,7 +232,8 @@ class TestTreeCtrlPanel(wx.Panel):
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         wx.Frame.__init__(self, *args, **kwds)
-        pnl = TestTreeCtrlPanel(self)
+        self.pnl = pnl = MainPanel(self)
+        pnl = PreferenceTreeCtrlPanel(self)
                   
 class MyApp(wx.App):
     def OnInit(self):

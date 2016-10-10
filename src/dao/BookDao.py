@@ -140,8 +140,17 @@ class CreateDatabase():
     
     def readJsonFile(self, dirName=None):
 #         print 'readJsonFile----->', os.path.join(Workspace().libraryPath, dirName , 'book.json')
-        bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
-
+        try:
+            if os.path.exists(os.path.join(Workspace().libraryPath, dirName , 'book.json')):
+                bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
+            else:
+                os.removedirs(os.path.join(Workspace().libraryPath, dirName)) 
+        except Exception as e:
+            print e
+            print os.path.join(Workspace().libraryPath, dirName)
+            
+            
+        
         rep = ''
         for line in bookJsonFile:
             rep = rep + line
