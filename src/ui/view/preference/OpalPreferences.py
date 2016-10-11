@@ -89,266 +89,14 @@ _demoPngs = ["overview", "recent", "frame", "dialog", "moredialog", "core",
 
 _treeList = [
     # new stuff
-    ('Recent Additions/Updates', [
-        'PropertyGrid',
-        'SystemSettings',
-        'GridLabelRenderer',
-        'InfoBar',
-        'WrapSizer',
-        'UIActionSimulator',
-        'GraphicsGradient',
-        'PDFViewer',
-        'ItemsPicker',
-        'CommandLinkButton',
-        'DVC_DataViewModel',
-        'DVC_IndexListModel',
-        'DVC_ListCtrl',
-        'DVC_TreeCtrl',
-        'DVC_CustomRenderer',
-        'PenAndBrushStyles',
-        'HTML2_WebView',
+    ('General', [
+        'Appearance',
+        'Search',
+        'workspace',
+
         ]),
 
-    # managed windows == things with a (optional) caption you can close
-    ('Frames and Dialogs', [
-        'AUI_DockingWindowMgr',
-        'AUI_MDI',
-        'Dialog',
-        'Frame',
-        'MDIWindows',
-        'MiniFrame',
-        'Wizard',
-        ]),
-
-    # the common dialogs
-    ('Common Dialogs', [
-        'AboutBox',
-        'ColourDialog',
-        'DirDialog',
-        'FileDialog',
-        'FindReplaceDialog',
-        'FontDialog',
-        'MessageDialog',
-        'MultiChoiceDialog',
-        'PageSetupDialog',
-        'PrintDialog',
-        'ProgressDialog',
-        'SingleChoiceDialog',
-        'TextEntryDialog',
-        ]),
-
-    # dialogs from libraries
-    ('More Dialogs', [
-        'ImageBrowser',
-        'ScrolledMessageDialog',
-        ]),
-
-    # core controls
-    ('Core Windows/Controls', [
-        'BitmapButton',
-        'Button',
-        'CheckBox',
-        'CheckListBox',
-        'Choice',
-        'ComboBox',
-        'CommandLinkButton',
-        'DVC_CustomRenderer',
-        'DVC_DataViewModel',
-        'DVC_IndexListModel',
-        'DVC_ListCtrl',
-        'DVC_TreeCtrl',
-        'Gauge',
-        'Grid',
-        'Grid_MegaExample',
-        'GridLabelRenderer',
-        'ListBox',
-        'ListCtrl',
-        'ListCtrl_virtual',
-        'ListCtrl_edit',
-        'Menu',
-        'PopupMenu',
-        'PopupWindow',
-        'RadioBox',
-        'RadioButton',
-        'SashWindow',
-        'ScrolledWindow',
-        'SearchCtrl',        
-        'Slider',
-        'SpinButton',
-        'SpinCtrl',
-        'SpinCtrlDouble',
-        'SplitterWindow',
-        'StaticBitmap',
-        'StaticBox',
-        'StaticText',
-        'StatusBar',
-        'StockButtons',
-        'TextCtrl',
-        'ToggleButton',
-        'ToolBar',
-        'TreeCtrl',
-        'Validator',
-        ]),
-    
-    ('"Book" Controls', [
-        'AUI_Notebook',
-        'Choicebook',
-        'FlatNotebook',
-        'Listbook',
-        'Notebook',
-        'Toolbook',
-        'Treebook',
-        ]),
-
-    ('Custom Controls', [
-        'AnalogClock',
-        'ColourSelect',
-        'ComboTreeBox',
-        'Editor',
-        'GenericButtons',
-        'GenericDirCtrl',
-        'ItemsPicker',
-        'LEDNumberCtrl',
-        'MultiSash',
-        'PlateButton',
-        'PopupControl',
-        'PyColourChooser',
-        'TreeListCtrl',
-    ]),
-
-    # controls coming from other libraries
-    ('More Windows/Controls', [
-        'ActiveX_FlashWindow',
-        'ActiveX_IEHtmlWindow',
-        'ActiveX_PDFWindow',
-        'BitmapComboBox',
-        'Calendar',
-        'CalendarCtrl',
-        'CheckListCtrlMixin',
-        'CollapsiblePane',
-        'ComboCtrl',
-        'ContextHelp',
-        'DatePickerCtrl',
-        'DynamicSashWindow',
-        'EditableListBox',
-        'ExpandoTextCtrl',
-        'FancyText',
-        'FileBrowseButton',
-        'FloatBar',  
-        'FloatCanvas',
-        'HtmlWindow',
-        'HTML2_WebView',
-        'InfoBar',
-        'IntCtrl',
-        'MVCTree',   
-        'MaskedEditControls',
-        'MaskedNumCtrl',
-        'MediaCtrl',
-        'MultiSplitterWindow',
-        'OwnerDrawnComboBox',
-        'Pickers',
-        'PropertyGrid',
-        'PyCrust',
-        'PyPlot',
-        'PyShell',
-        'ResizeWidget',
-        'RichTextCtrl',
-        'ScrolledPanel',
-        'SplitTree',
-        'StyledTextCtrl_1',
-        'StyledTextCtrl_2',
-        'TablePrint',
-        'Throbber',
-        'Ticker',
-        'TimeCtrl',
-        'TreeMixin',
-        'VListBox',
-        ]),
-    
-    # How to lay out the controls in a frame/dialog
-    ('Window Layout', [
-        'GridBagSizer',
-        'LayoutAnchors',
-        'LayoutConstraints',
-        'Layoutf',
-        'RowColSizer',
-        'ScrolledPanel',
-        'SizedControls',
-        'Sizers',
-        'WrapSizer',
-        'XmlResource',
-        'XmlResourceHandler',
-        'XmlResourceSubclass',
-        ]),
-
-    # ditto
-    ('Process and Events', [
-        'DelayedResult',
-        'EventManager',
-        'KeyEvents',
-        'Process',
-        'PythonEvents',
-        'Threads',
-        'Timer',
-        ##'infoframe',    # needs better explanation and some fixing
-        ]),
-
-    # Clipboard and DnD
-    ('Clipboard and DnD', [
-        'CustomDragAndDrop',
-        'DragAndDrop',
-        'URLDragAndDrop',
-        ]),
-
-    # Images
-    ('Using Images', [
-        'AdjustChannels',
-        'AlphaDrawing',
-        'AnimateCtrl',
-        'ArtProvider',
-        'BitmapFromBuffer',
-        'Cursor',
-        'DragImage',
-        'Image',
-        'ImageAlpha',
-        'ImageFromStream',
-        'Img2PyArtProvider',
-        'Mask',
-        'RawBitmapAccess',
-        'Throbber',
-        ]),
-
-    # Other stuff
-    ('Miscellaneous', [
-        'AlphaDrawing',
-        'Cairo',
-        'Cairo_Snippets',
-        'ColourDB',
-        ##'DialogUnits',   # needs more explanations
-        'DragScroller',
-        'DrawXXXList',
-        'FileHistory',
-        'FontEnumerator',
-        'GraphicsContext',
-        'GraphicsGradient',
-        'GLCanvas',
-        'I18N',        
-        'Joystick',
-        'MimeTypesManager',
-        'MouseGestures',
-        'OGL',
-        'PDFViewer',
-        'PenAndBrushStyles',
-        'PrintFramework',
-        'PseudoDC',
-        'RendererNative',
-        'ShapedWindow',
-        'Sound',
-        'StandardPaths',
-        'SystemSettings',
-        'UIActionSimulator',
-        'Unicode',
-        ]),
+ 
 
 
     ('Check out the samples dir too', [] ),
@@ -1488,20 +1236,20 @@ class DemoErrorPanel(wx.Panel):
        
         # Set up the traceback list
         # This one automatically resizes last column to take up remaining space
-        from ListCtrl import TestListCtrl
-        self.list = TestListCtrl(self, -1, style=wx.LC_REPORT  | wx.SUNKEN_BORDER)
-        self.list.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
-        self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
-        self.list.InsertColumn(0, "Filename")
-        self.list.InsertColumn(1, "Line", wx.LIST_FORMAT_RIGHT)
-        self.list.InsertColumn(2, "Function")
-        self.list.InsertColumn(3, "Code")
-        self.InsertTraceback(self.list, demoError.traceback)
-        self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+#         from ListCtrl import TestListCtrl
+#         self.list = TestListCtrl(self, -1, style=wx.LC_REPORT  | wx.SUNKEN_BORDER)
+#         self.list.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
+#         self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
+#         self.list.InsertColumn(0, "Filename")
+#         self.list.InsertColumn(1, "Line", wx.LIST_FORMAT_RIGHT)
+#         self.list.InsertColumn(2, "Function")
+#         self.list.InsertColumn(3, "Code")
+#         self.InsertTraceback(self.list, demoError.traceback)
+#         self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+#         self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
         self.box.Add(wx.StaticText(self, -1, "Traceback:")
                      , 0, wx.ALIGN_CENTER | wx.TOP, 5)
-        self.box.Add(self.list, 1, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
+#         self.box.Add(self.list, 1, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
         self.box.Add(wx.StaticText(self, -1, "Entries from the demo module are shown in blue\n"
                                            + "Double-click on them to go to the offending line")
                      , 0, wx.ALIGN_CENTER | wx.BOTTOM, 5)
@@ -1699,7 +1447,7 @@ class wxPythonDemo(wx.Frame):
         self.statusBar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusBar.SetStatusWidths([-2, -1])
 
-        statusText = "Welcome to wxPython "
+        statusText = "Opal version 0.1"
         self.statusBar.SetStatusText(statusText, 0)
         
         self.downloadGauge = wx.Gauge(self.statusBar, -1, 50)
@@ -1812,7 +1560,7 @@ class wxPythonDemo(wx.Frame):
         # add the windows to the splitter and split it.
         leftBox = wx.BoxSizer(wx.VERTICAL)
         leftBox.Add(self.tree, 1, wx.EXPAND)
-        leftBox.Add(wx.StaticText(leftPanel, label = "Filter Demos:"), 0, wx.TOP|wx.LEFT, 5)
+        leftBox.Add(wx.StaticText(leftPanel, label = "Type filter search text:"), 0, wx.TOP|wx.LEFT, 5)
         leftBox.Add(self.filter, 0, wx.EXPAND|wx.ALL, 5)
         if 'wxMac' in wx.PlatformInfo:
             leftBox.Add((5,5))  # Make sure there is room for the focus ring
@@ -1843,9 +1591,9 @@ class wxPythonDemo(wx.Frame):
                          Left().Layer(2).BestSize((240, -1)).
                          MinSize((240, -1)).
                          Floatable(self.allowAuiFloating).FloatingSize((240, 700)).
-                         Caption("wxPython Demos").
+                         Caption("Opal Preferences").
                          CloseButton(False).
-                         Name("DemoTree"))
+                         Name("preferencesTree"))
         self.mgr.AddPane(self.log,
                          wx.aui.AuiPaneInfo().
                          Bottom().BestSize((-1, 150)).
@@ -2060,7 +1808,7 @@ class wxPythonDemo(wx.Frame):
                     
         self.tree.Freeze()
         self.tree.DeleteAllItems()
-        self.root = self.tree.AddRoot("wxPython Overview")
+        self.root = self.tree.AddRoot("Opal Preferences")
         self.tree.SetItemImage(self.root, 0)
         self.tree.SetItemPyData(self.root, 0)
 

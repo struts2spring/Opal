@@ -6,13 +6,13 @@ from wx.lib.expando import ExpandoTextCtrl
 class Window(wx.App):
     def __init__(self, book=None):
         wx.App.__init__(self)
-        self.init_ui(book=book)
+        self.init_ui()
         self.mainWindow.Show()
 
-    def init_ui(self, book=None):
+    def init_ui(self):
         self.mainWindow = wx.Frame(None)
         self.mainWindow.SetSize((800, 510))
-        panel = GeneralPreferencePanel(self.mainWindow, book)
+        panel = GeneralPreferencePanel(self.mainWindow)
         
 class GeneralPreferencePanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
@@ -101,12 +101,14 @@ class GeneralPreference1Panel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(vBox)
         self.SetSizer(sizer)
+ 
+
 if __name__ == "__main__":
-    books = FindingBook().findAllBooks()
-    book = None
-    for b in books:
-        book = b
-        break
-    print book
-    app = Window(book=book)
+#     books = FindingBook().findAllBooks()
+#     book = None
+#     for b in books:
+#         book = b
+#         break
+#     print book
+    app = Window()
     app.MainLoop()

@@ -6,7 +6,7 @@ Created on 14-Nov-2015
 import os
 from src.static.constant import Workspace
 from src.ui.view.SizeReportCtrl import SizeReportCtrl
-from src.ui.view.preference.GeneralProperty import GeneralPreferencePanel
+from src.ui.view.preference.General import GeneralPreferencePanel
 from src.ui.view.preference.PreferenceTree import PreferenceTreeCtrlPanel
 import wx.aui
 import wx.html
