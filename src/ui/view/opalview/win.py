@@ -22,7 +22,7 @@ from src.ui.view.opalview.property import BookPropertyFrame
 import subprocess
 import thread
 from src.selenium_download.fullcircleMagazine import FullCircleMagazine
-from src.ui.view.preference.OpalPreference import OpalPreferenceFrame
+from src.ui.view.preference.OpalPreferences import MyApp
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
@@ -341,7 +341,8 @@ class MainFrame(wx.Frame):
 
     def OnPreferences(self, event):
         print 'OnPreferences'
-        frame1 = OpalPreferenceFrame(None)
+        #frame1 = OpalPreferenceFrames(None)
+	frame1=MyApp(False)
 
     def OnRestView(self, event):
         print 'OnResetView'

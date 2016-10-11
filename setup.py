@@ -15,7 +15,7 @@ setup(
               ,'src.dao', 'src.dao.online', 'src.logic', 'src.logic.online', 'src.ui.view.online.thumb', 
               'src.metadata', 'src.selenium_download', 'src.static', 'src.ui', 'src.util',
               'src.ui.view', 'src.ui.view.epub', 'src.ui.view.kivy', 'src.ui.view.metadata', 'src.ui.view.metadata.review',
-              'src.ui.view.online', 'src.ui.view.opalview', 'src.images', 'src.ui.view.thumb'],
+              'src.ui.view.online', 'src.ui.view.opalview', 'src.images', 'src.ui.view.thumb','src.ui.view.preference'],
     py_modules=['src'],
     zip_safe=False,
     platforms='any',

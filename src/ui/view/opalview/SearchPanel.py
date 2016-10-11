@@ -4,9 +4,13 @@ import wx
 import wx.lib.agw.genericmessagedialog as GMD
 from src.logic.search_book import FindingBook
 import os
-from kivy.logger import Logger
+try:
+	from kivy.logger import Logger
+	from src.ui.view.kivy.main import PicturesApp, Picture
+except Exception as e:
+	print 'kivi not install'
 from random import randint
-from src.ui.view.kivy.main import PicturesApp, Picture
+
 # from seleniumx.calling_db import DAO
 
 
