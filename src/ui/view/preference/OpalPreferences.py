@@ -63,6 +63,7 @@ from wx.lib.msgpanel import MessagePanel
 
 import wx.lib.mixins.inspection
 from src.ui.view.preference.images import  WXPdemo, catalog
+from src.ui.view.preference.General import GeneralPreferencePanel
 
 # import version
 
@@ -2118,7 +2119,10 @@ class wxPythonDemo(wx.Frame):
 
 #         UpdatePage(self.codePage, "Demo Code")
         UpdatePage(self.demoPage, "Demo")
-
+#         nb.InsertPage(1,GeneralPreferencePanel(),'',1)
+#         self.nb.AddPage
+        self.nb.DeletePage(0)
+        self.nb.InsertPage(0,GeneralPreferencePanel(self.nb), 'general', imageId=0)
         if select >= 0 and select < nb.GetPageCount():
             nb.SetSelection(select)
 
