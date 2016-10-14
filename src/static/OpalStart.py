@@ -2,21 +2,21 @@
 import json
 import os
 import sys
-import datetime
+from datetime import datetime
 
 
-# class workspace(dict):
-#     __getattr__ = dict.__getitem__
-#     __setattr__ = dict.__setitem__
 
 
 class Preference():
     def __init__(self):
         print 'init'
-
+        self.recordPerPage = 50
+        self.isPaginationEnable = True
+    def __str__(self):
+        rep = self.recordPerPage + self.isPaginationEnable
+        return rep
 class workspace(json.JSONEncoder):
-    def __init__(self):
-        pass
+
     def default(self, obj):
         print 'workspace.default() called'
         if isinstance(obj, datetime):
@@ -29,18 +29,24 @@ class workspace(json.JSONEncoder):
         encode method gets an original object and returns result string. 
         obj argument will be the object that is passed to json.dumps function
         """
-        obj['platform'] = str(obj['platform'])
-        obj['image'] = str(obj['image'])
-        obj['searched'] = str(obj['searched'])
-        obj['library'] = str(obj['library'])
-        obj['path'] = list(obj['path'])
-#         obj['user'] = obj['user']._asdict()
+        if obj.has_key('platform'):
+            obj['platform'] = str(obj['platform'])
+        if obj.has_key('image'):
+            obj['image'] = str(obj['image'])
+        if obj.has_key('searched'):
+            obj['searched'] = str(obj['searched'])
+        if obj.has_key('library'):
+            obj['library'] = str(obj['library'])
+        if obj.has_key('path'):
+            obj['path'] = list(obj['path'])
+        if obj.has_key('user'):
+            obj['user'] = obj['user']._asdict()
+        if obj.has_key('createdOn'):
+            obj['createdOn'] = obj['createdOn']
 
         return super(workspace, self).encode(obj)   
 
 class OpalStart():
-#     __getattr__ = dict.__getitem__
-#     __setattr__ = dict.__setitem__
 
     def __init__(self, platform=None, path=None, workspace=None):
         '''
@@ -55,20 +61,29 @@ class OpalStart():
             workspace['library'] = 'library'
             workspace['path'] = lst
             workspaceList.append(workspace)
+            self.workspace = workspaceList
         else:
             print 'init', workspace
-        self.workspace = workspaceList
+            self.workspace = workspace
 
-    def objToJson(self):
-        print 'to_json', self.__dict__
-        return json.dumps(self.__dict__, cls=workspace)
+    def objToDictionary(self, obj):
+        '''
+        converting to dictionary object.
+        '''
+        workspaces = {}
+        workspaceList = list()
+        for workspaceItem in obj.workspace:
+            workspaceItem['createdOn'] = str(datetime.now())
+            preference = Preference()
+            workspaceItem['Preference'] = preference.__dict__
+            workspaceList.append(workspaceItem)
+        workspaces['workspace'] = workspaceList
+        return workspaces
+        
 
     @classmethod
     def jsonToObject(cls, json_str):
         json_dict = json.loads(json_str)
-        print 'from_json', json_dict
-#         for workspace in json_dict:
-#             print workspace
         val = cls(**json_dict)
         return val
 
@@ -79,28 +94,20 @@ class OpalStart():
 
 
 if __name__ == "__main__":
-#     o = OpalStart(platform=sys.platform, path="/docs/new")
-#     print o.objToJson()
+
     jsonFileStr = ''
     f = open(os.path.dirname(__file__) + os.sep + 'opal_start.json', 'r')
     for x in f:
         jsonFileStr = jsonFileStr + x
     f.close()
-    a = json.dumps(jsonFileStr, default=workspace.default)
-    print a
-#     print jsonFileStr
 
-#     d=json.loads(jsonFileStr)
-#     val=d['workspace']
-#     for v in val:
-#         s=workspace(v)
-#         print s
-# #     f.write(json.dumps(book.__dict__, sort_keys=False, indent=4))
-# #     f.close()
-# #     with open(os.path.dirname(__file__) + os.sep + 'opal_start.json', "r") as jsonFile:
-# #         jsonFileStr=jsonFile
-#     xx=OpalStart.jsonToObject(jsonFileStr)
-#     print xx
-
+    opalStart = OpalStart()
+    startObject = opalStart.jsonToObject(jsonFileStr)
+    print startObject
+    jsonData = opalStart.objToDictionary(startObject)
+    with open('data.json', 'w') as outfile:
+        print jsonData
+        outfile.write(json.dumps(jsonData))
+#         json.dump(str(jsonData), outfile, sort_keys = True, indent = 4)
 
     pass
