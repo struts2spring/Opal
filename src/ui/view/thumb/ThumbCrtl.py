@@ -1,33 +1,4 @@
-# --------------------------------------------------------------------------- #
-# THUMBNAILCTRL Control wxPython IMPLEMENTATION
-# Python Code By:
-#
-# Andrea Gavana And Peter Damoc, @ 12 Dec 2005
-# Latest Revision: 12 Sep 2010, 10.00 GMT
-#
-#
-# TODO List/Caveats
-#
-# 1. Thumbnail Creation/Display May Be Somewhat Improved From The Execution
-#    Speed Point Of View;
-#
-# 2. The Implementation For wx.HORIZONTAL Style Is Still To Be Written;
-#
-# 3. I Have No Idea On How To Implement Thumbnails For Audio, Video And Other Files.
-#
-# 4. Other Ideas?
-#
-#
-# For All Kind Of Problems, Requests Of Enhancements And Bug Reports, Please
-# Write To Me At:
-#
-# andrea.gavana@gmail.com
-# gavana@kpo.kz
-#
-# Or, Obviously, To The wxPython Mailing List!!!
-#
-#
-# End Of Comments
+
 # --------------------------------------------------------------------------- #
 from src.ui.view.opalview.BookInfo import GenerateBookInfo
 import subprocess
@@ -41,7 +12,7 @@ from src.audit.singletonLoggerLogging import Logger
 from src.viewer.cbr.CbrMainFrame import CbrFrame
 
 logger = Logger(__name__)
-
+logger.info('thumb logger init')
 """
 Thumbnailctrl is a widget that can be used to display a series of images in
 a "thumbnail" format.
@@ -2487,7 +2458,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-        print 'thumbcrtl OnLeftMouseDown'
+        logger.info('thumbcrtl OnLeftMouseDown')
+        print 'thumbcrtl --- OnLeftMouseDown'
         
         x = event.GetX()
         y = event.GetY()
@@ -2574,7 +2546,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-        print 'thumbcrtl OnMouseUp'
+        logger.info('thumbcrtl OnMouseUp')
         # get item number to select
         x = event.GetX()
         y = event.GetY()

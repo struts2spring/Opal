@@ -22,8 +22,14 @@ from src.static.constant import Workspace
 import datetime
 from src.static.SessionUtil import SingletonSession
 
+from src.audit.singletonLoggerLogging import Logger
+
+logger = Logger(__name__)
+logger.info('BookDao logger init')
 #  def getSession(self):
-print '3--->', os.getcwd(), os.name, sys.platform
+logger.info('getcwd-->' + os.getcwd())
+logger.info('os.name-->' + os.name)
+logger.info('sys.platform-->' + sys.platform)
 
 if os.path.exists(Workspace().libraryPath):
     os.chdir(Workspace().libraryPath)
@@ -176,17 +182,17 @@ class CreateDatabase():
             raise
 
     def countAllBooks(self):
-        bookCount=self.session.query(Book).count()
+        bookCount = self.session.query(Book).count()
         return bookCount
     
     def findAllBook(self):
 #         bs = self.session.query(Book).all()
-        bs=self.pagination(10, 0)
+        bs = self.pagination(10, 0)
         print 'completed'
         return bs
     
     def pagination(self, limit, offset):
-        query=self.session.query(Book).limit(limit).offset(offset)
+        query = self.session.query(Book).limit(limit).offset(offset)
         bs = query.all()
         print 'completed'
         return bs
@@ -332,7 +338,7 @@ if __name__ == '__main__':
 #         createdb.creatingDatabase()
 #         createdb.addingData()
         x = createdb.getMaxBookID()
-        page=createdb.paginatiion(10, 10)
+        page = createdb.paginatiion(10, 10)
         print page
 #         createdb.findAllBook()
     except:

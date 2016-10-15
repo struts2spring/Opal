@@ -38,6 +38,9 @@ class LoggerManager(Singleton):
     Handles all logging files.
     """
     def init(self, loggername):
+        # define a Handler which writes INFO messages or higher to the sys.stderr
+        self.console = logging.StreamHandler()
+        self.console .setLevel(logging.INFO)
         self.logger = logging.getLogger(loggername)
         rhandler = None
         try:
@@ -50,15 +53,17 @@ class LoggerManager(Singleton):
         except:
             raise IOError("Couldn't create/open file \"" + \
                           LOG_FILENAME + "\". Check permissions.")
-
+        
         self.logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
 #             fmt = '[%(asctime)s] [%(filename)s:%(lineno)d] [%(levelname)-8s] %(message)s',
             fmt='[%(asctime)s] [%(name)s:%(lineno)d] [%(levelname)-8s] %(message)s',
             datefmt='%F %H:%M:%S'
         )
+        self.console.setFormatter(formatter)
         rhandler.setFormatter(formatter)
         self.logger.addHandler(rhandler)
+        self.logger.addHandler(self.console)
 
     def debug(self, loggername, msg):
         self.logger = logging.getLogger(loggername)

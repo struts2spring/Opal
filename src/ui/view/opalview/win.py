@@ -22,7 +22,7 @@ from src.ui.view.opalview.property import BookPropertyFrame
 import subprocess
 import thread
 from src.selenium_download.fullcircleMagazine import FullCircleMagazine
-from src.ui.view.preference.OpalPreferences import MyApp
+from src.ui.view.preference.OpalPreferences import OpalPreference
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
@@ -47,7 +47,7 @@ from src.ui.view.opalview.SearchPanel import SearchPanel
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
 from src.ui.view.online.thumb.searchOnline import SearchFrame
-
+from src.audit.singletonLoggerLogging import Logger
 
 
 
@@ -56,6 +56,10 @@ try:
     import wx.html2
 except:
     print 'error'
+    
+    
+    
+logger = Logger(__name__)    
 #----------------------------------------------------------------------
 global searchedBooks
 searchedBooks = list()
@@ -293,7 +297,7 @@ class MainFrame(wx.Frame):
         self.statusbar.SetStatusWidths([-2, -3])
         self.statusbar.SetStatusText("Opal version 0.1", 0)
 
-        self.statusbar.SetStatusText("books count:" + str(len(self.books)), 1)
+        self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
     def creatingDatabase(self):
         if not os.path.exists(Workspace().libraryPath):
             os.mkdir(Workspace().libraryPath)
@@ -318,12 +322,14 @@ class MainFrame(wx.Frame):
         frame = SearchFrame(parent=None)
         
     def OnClose(self, event):
+        logger.info('win OnClose')
         print 'OnClose'
         self._mgr.UnInit()
         del self._mgr
         self.Destroy()
 
     def OnExit(self, event):
+        logger.info('win OnExit')
         print 'OnExit'
         self.Close()
 
@@ -342,7 +348,7 @@ class MainFrame(wx.Frame):
     def OnPreferences(self, event):
         print 'OnPreferences'
         #frame1 = OpalPreferenceFrames(None)
-	frame1=MyApp(False)
+        frame1=OpalPreference(None, "Opal preferences")
 
     def OnRestView(self, event):
         print 'OnResetView'
