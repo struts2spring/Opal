@@ -8,6 +8,11 @@ import wx
 
 
 from src.ui.view.opalview.win import MainFrame
+from src.audit.singletonLoggerLogging import Logger
+ 
+    
+logger = Logger(__name__)   
+logger.info('Main logger init')
 # 
 global appPath 
 

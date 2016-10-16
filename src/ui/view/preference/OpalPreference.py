@@ -7,7 +7,7 @@ import os
 from src.static.constant import Workspace
 from src.ui.view.SizeReportCtrl import SizeReportCtrl
 from src.ui.view.preference.General import GeneralPreferencePanel
-from src.ui.view.preference.PreferenceTree import PreferenceTreeCtrlPanel
+from src.ui.view.preference.PreferencePanel import PreferenceTreeCtrlPanel
 import wx.aui
 import wx.html
 

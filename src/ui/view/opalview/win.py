@@ -59,7 +59,8 @@ except:
     
     
     
-logger = Logger(__name__)    
+logger = Logger(__name__)   
+logger.info('win logging init') 
 #----------------------------------------------------------------------
 global searchedBooks
 searchedBooks = list()
@@ -329,7 +330,7 @@ class MainFrame(wx.Frame):
         self.Destroy()
 
     def OnExit(self, event):
-        logger.info('win OnExit')
+        logger.info('win OnClose')
         print 'OnExit'
         self.Close()
 

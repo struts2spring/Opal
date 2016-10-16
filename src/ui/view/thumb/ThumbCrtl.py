@@ -8,11 +8,11 @@ from src.logic import search_book
 from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.ReviewMetadataFrame import ReviewFrame
-from src.audit.singletonLoggerLogging import Logger
 from src.viewer.cbr.CbrMainFrame import CbrFrame
-
-logger = Logger(__name__)
-logger.info('thumb logger init')
+# from src.audit.singletonLoggerLogging import Logger
+# 
+# logger = Logger(__name__)
+# logger.info('thumb logger init')
 """
 Thumbnailctrl is a widget that can be used to display a series of images in
 a "thumbnail" format.
@@ -2444,7 +2444,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                         subprocess.call(["xdg-open", file])
                     except:
                         traceback.print_exc()
-                        logger.info('unable to open file')
+#                         logger.info('unable to open file')
                 else:
                     frame = CbrFrame(None, book)
                     pass
@@ -2458,7 +2458,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-        logger.info('thumbcrtl OnLeftMouseDown')
+#         logger.info('thumbcrtl OnLeftMouseDown')
         print 'thumbcrtl --- OnLeftMouseDown'
         
         x = event.GetX()
@@ -2546,7 +2546,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-        logger.info('thumbcrtl OnMouseUp')
+#         logger.info('thumbcrtl OnMouseUp')
         # get item number to select
         x = event.GetX()
         y = event.GetY()

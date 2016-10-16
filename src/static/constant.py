@@ -6,8 +6,12 @@ Created on 02-Dec-2015
 import json
 import sys
 import os
+from src.audit.singletonLoggerLogging import Logger
 
 
+
+logger = Logger(__name__)
+logger.info('Workspace logger init')
 
 
 class Workspace(object):

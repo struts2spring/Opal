@@ -39,10 +39,10 @@ class LoggerManager(Singleton):
     """
     def init(self, loggername):
         # define a Handler which writes INFO messages or higher to the sys.stderr
-        self.console = logging.StreamHandler()
-        self.console .setLevel(logging.INFO)
         self.logger = logging.getLogger(loggername)
         rhandler = None
+        self.console = logging.StreamHandler()
+        self.console .setLevel(logging.INFO)
         try:
             rhandler = RotatingFileHandler(
                     LOG_FILENAME,
@@ -60,9 +60,9 @@ class LoggerManager(Singleton):
             fmt='[%(asctime)s] [%(name)s:%(lineno)d] [%(levelname)-8s] %(message)s',
             datefmt='%F %H:%M:%S'
         )
-        self.console.setFormatter(formatter)
         rhandler.setFormatter(formatter)
         self.logger.addHandler(rhandler)
+        self.console.setFormatter(formatter)
         self.logger.addHandler(self.console)
 
     def debug(self, loggername, msg):

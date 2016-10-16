@@ -6,6 +6,7 @@ from wx.lib.mixins.treemixin import ExpansionState
 from wx import TreeCtrl
 from src.ui.view.preference.General import GeneralPreferencePanel
 from src.audit.singletonLoggerLogging import Logger
+from src.ui.view.preference.PreferencePanel import PreferencePanel
 
 logger = Logger(__name__)
 logger.info('Opal preferences logger init')
@@ -15,12 +16,20 @@ _demoPngs = ["overview", "recent", "frame", "dialog", "moredialog", "core",
      "clipboard", "images", "miscellaneous"]
 _treeList = [
     # new stuff
-    ('General', [
+    (
+     'General', [
         'Appearance',
         'Search',
         'workspace',
-
-        ]),
+        ]
+     ),
+    (
+     'Sharing', [
+        'Email book',
+        'Open cloud',
+        'Configure device',
+        ]
+     ),
 
  
 
@@ -29,7 +38,10 @@ _treeList = [
 
 ]
 
-class wxPythonDemoTree(ExpansionState, TreeCtrl):
+class PrefrencesTree(ExpansionState, TreeCtrl):
+    '''
+    Left navigation tree in opal preferences page
+    '''
     def __init__(self, parent):
         TreeCtrl.__init__(self, parent, style=wx.TR_DEFAULT_STYLE | 
                                wx.TR_HAS_VARIABLE_ROW_HEIGHT)
@@ -62,11 +74,11 @@ class wxPythonDemoTree(ExpansionState, TreeCtrl):
 
     def Freeze(self):
         if 'wxMSW' in wx.PlatformInfo:
-            return super(wxPythonDemoTree, self).Freeze()
+            return super(PrefrencesTree, self).Freeze()
                          
     def Thaw(self):
         if 'wxMSW' in wx.PlatformInfo:
-            return super(wxPythonDemoTree, self).Thaw()
+            return super(PrefrencesTree, self).Thaw()
 #---------------------------------------------------------------------------
 
 class MainPanel(wx.Panel):
@@ -85,11 +97,11 @@ class MainPanel(wx.Panel):
 class OpalPreference(wx.Frame):
 
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, -1, title, size = (970, 720),
+        wx.Frame.__init__(self, parent, -1, title, size=(970, 720),
                           style=wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE)
         self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
-        self.allowAuiFloating=False
-        self.SetMinSize((640,480))
+        self.allowAuiFloating = False
+        self.SetMinSize((640, 480))
         icon = WXPdemo.GetIcon()
 #         icon=wx.EmptyImage(16, 16)
         self.SetIcon(icon)
@@ -116,13 +128,13 @@ class OpalPreference(wx.Frame):
 
         self.nb = wx.Notebook(pnl, -1, style=wx.CLIP_CHILDREN)
         self.nb.AssignImageList(imgList)
-        panel = wx.Panel(self.nb, -1, style=wx.CLIP_CHILDREN)
-        self.nb.AddPage(panel, "1", imageId=0)
+        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN)
+        self.nb.AddPage(self.panel, "Opal Preferences", imageId=0)
         # Create a TreeCtrl
-        leftPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
+        leftPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
         self.treeMap = {}
         self.searchItems = {}
-        self.tree = wxPythonDemoTree(leftPanel)
+        self.tree = PrefrencesTree(leftPanel)
         
         self.filter = wx.SearchCtrl(leftPanel, style=wx.TE_PROCESS_ENTER)
         self.filter.ShowCancelButton(True)
@@ -325,8 +337,8 @@ class OpalPreference(wx.Frame):
         
 #         self.StartDownload()
     #---------------------------------------------
-    def UpdateNotebook(self, select=-1,preferenceName=None):
-        logger.info('UpdateNotebook '+preferenceName)
+    def UpdateNotebook(self, select=-1, preferenceName=None):
+        logger.info('UpdateNotebook ' + preferenceName)
         self.pnl.Freeze()
         self.nb.DeletePage(0)
         self.nb.InsertPage(0, GeneralPreferencePanel(self.nb), 'general', imageId=0)
