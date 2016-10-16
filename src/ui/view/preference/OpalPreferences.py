@@ -6,7 +6,8 @@ from wx.lib.mixins.treemixin import ExpansionState
 from wx import TreeCtrl
 from src.ui.view.preference.General import GeneralPreferencePanel
 from src.audit.singletonLoggerLogging import Logger
-from src.ui.view.preference.PreferencePanel import PreferencePanel
+from src.ui.view.preference.PreferencePanel import PreferencePanel,\
+    WorkspacePanel, SearchPanel
 
 logger = Logger(__name__)
 logger.info('Opal preferences logger init')
@@ -20,7 +21,7 @@ _treeList = [
      'General', [
         'Appearance',
         'Search',
-        'workspace',
+        'Workspace',
         ]
      ),
     (
@@ -125,10 +126,10 @@ class OpalPreference(wx.Frame):
             bmp = catalog[png].GetBitmap()
             imgList.Add(bmp)
             
-
-        self.nb = wx.Notebook(pnl, -1, style=wx.CLIP_CHILDREN)
+        rightPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
+        self.nb = wx.Notebook(rightPanel, -1, style=wx.CLIP_CHILDREN)
         self.nb.AssignImageList(imgList)
-        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN)
+        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN, preferenceName="Opal Preferences")
         self.nb.AddPage(self.panel, "Opal Preferences", imageId=0)
         # Create a TreeCtrl
         leftPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
@@ -164,10 +165,15 @@ class OpalPreference(wx.Frame):
             leftBox.Add((5, 5))  # Make sure there is room for the focus ring
         leftPanel.SetSizer(leftBox)
 
-
+        rightBox=wx.BoxSizer(wx.VERTICAL)
+        rightBox.Add(self.nb, 1, wx.EXPAND)
+        self.buttonBar=ButtonPanel(rightPanel)
+        rightBox.Add(self.buttonBar,  flag=wx.EXPAND | wx.ALIGN_RIGHT)
+        rightPanel.SetSizer(rightBox)
+        
         self.tree.SelectItem(self.root)
         # Use the aui manager to set up everything
-        self.mgr.AddPane(self.nb, aui.AuiPaneInfo().CenterPane().Name("Notebook"))
+        self.mgr.AddPane(rightPanel, aui.AuiPaneInfo().CenterPane().Name("Notebook"))
         self.mgr.AddPane(leftPanel,
                          aui.AuiPaneInfo().
                          Left().Layer(2).BestSize((240, -1)).MinSize((240, -1)).
@@ -339,10 +345,53 @@ class OpalPreference(wx.Frame):
     #---------------------------------------------
     def UpdateNotebook(self, select=-1, preferenceName=None):
         logger.info('UpdateNotebook ' + preferenceName)
+        print 'UpdateNotebook ' + preferenceName
         self.pnl.Freeze()
         self.nb.DeletePage(0)
-        self.nb.InsertPage(0, GeneralPreferencePanel(self.nb), 'general', imageId=0)
+        self.nb.InsertPage(0, self.getPreferencePanelObj(preferenceName), preferenceName, imageId=0)
         self.pnl.Thaw()
+    
+    def getPreferencePanelObj(self, preferenceName='Opal Preferences'):
+        preferencePanelObj = None
+        if preferenceName == 'General':
+            preferencePanelObj = GeneralPreferencePanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Opal Preferences':
+            preferencePanelObj = PreferencePanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Appearance':
+            preferencePanelObj = PreferencePanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Search':
+            preferencePanelObj = SearchPanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Workspace':
+            preferencePanelObj = WorkspacePanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Sharing':
+            preferencePanelObj = PreferencePanel(self.nb,preferenceName=preferenceName)
+        else :
+            preferencePanelObj = GeneralPreferencePanel(self.nb, preferenceName=preferenceName)
+        
+        return preferencePanelObj
+
+class ButtonPanel(wx.Panel):
+    
+    def __init__(self, parent=None, *args, **kw):
+        wx.Panel.__init__(self, parent, id=-1)
+        self.parent = parent
+        
+        vBox = wx.BoxSizer(wx.HORIZONTAL)
+        self.cancelButton=wx.Button(self, 1, 'Cancel', (50, 130))
+        self.okButton=wx.Button(self, 1, 'OK', (50, 130))
+        vBox.Add(self.cancelButton, 0,flag=wx.RIGHT)
+        vBox.Add(self.okButton, 0, flag=wx.RIGHT)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(vBox , 0, flag=wx.EXPAND | wx.ALIGN_RIGHT)
+        self.SetSizer(sizer)
+        
+        vBox = wx.BoxSizer(wx.VERTICAL)
+        self.Bind(wx.EVT_BUTTON, self.onCancelButton, id=wx.ID_ANY)
+        self.Bind(wx.EVT_BUTTON, self.onOkButton, id=wx.ID_ANY)
+    def onCancelButton(self, event):
+        self.Close(True)
+    def onOkButton(self, event):
+        self.Close(True)
 #---------------------------------------------------------------------------
 
 # class MyApp(wx.Frame):
