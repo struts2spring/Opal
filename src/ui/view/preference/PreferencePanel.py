@@ -211,6 +211,14 @@ class AppearancePanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(vBox)
         self.SetSizer(sizer)
+            # When the user selects something, we go here.
+    def EvtComboBox(self, evt):
+        cb = evt.GetEventObject()
+        data = cb.GetClientData(evt.GetSelection())
+        print ('EvtComboBox: %s\nClientData: %s\n' % (evt.GetString(), data))
+
+        if evt.GetString() == 'one':
+            print ("You follow directions well!\n\n")
 class PreferencePanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
         wx.Panel.__init__(self, parent, id=-1)
