@@ -7,7 +7,7 @@ from wx import TreeCtrl
 from src.ui.view.preference.General import GeneralPreferencePanel
 from src.audit.singletonLoggerLogging import Logger
 from src.ui.view.preference.PreferencePanel import PreferencePanel,\
-    WorkspacePanel, SearchPanel, AppearancePanel
+    WorkspacePanel, SearchPanel, AppearancePanel, KeysPanel
 
 logger = Logger(__name__)
 logger.info('Opal preferences logger init')
@@ -22,6 +22,7 @@ _treeList = [
         'Appearance',
         'Search',
         'Workspace',
+        'Keys'
         ]
      ),
     (
@@ -363,6 +364,8 @@ class OpalPreference(wx.Frame):
             preferencePanelObj = SearchPanel(self.nb,preferenceName=preferenceName)
         elif preferenceName == 'Workspace':
             preferencePanelObj = WorkspacePanel(self.nb,preferenceName=preferenceName)
+        elif preferenceName == 'Keys':
+            preferencePanelObj = KeysPanel(self.nb,preferenceName=preferenceName)
         elif preferenceName == 'Sharing':
             preferencePanelObj = PreferencePanel(self.nb,preferenceName=preferenceName)
         else :
