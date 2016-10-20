@@ -130,7 +130,7 @@ class OpalPreference(wx.Frame):
         rightPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
         self.nb = wx.Notebook(rightPanel, -1, style=wx.CLIP_CHILDREN)
         self.nb.AssignImageList(imgList)
-        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN, preferenceName="Opal Preferences")
+        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN, preferenceName="Preferences")
         self.nb.AddPage(self.panel, "Opal Preferences", imageId=0)
         # Create a TreeCtrl
         leftPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
@@ -139,6 +139,7 @@ class OpalPreference(wx.Frame):
         self.tree = PrefrencesTree(leftPanel)
         
         self.filter = wx.SearchCtrl(leftPanel, style=wx.TE_PROCESS_ENTER)
+        self.filter.SetDescriptiveText("Type filter search text")
         self.filter.ShowCancelButton(True)
         self.filter.Bind(wx.EVT_TEXT, self.RecreateTree)
         self.filter.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, lambda e: self.filter.SetValue(''))
@@ -159,9 +160,9 @@ class OpalPreference(wx.Frame):
         self.tree.Bind(wx.EVT_LEFT_DOWN, self.OnTreeLeftDown)
         # add the windows to the splitter and split it.
         leftBox = wx.BoxSizer(wx.VERTICAL)
-        leftBox.Add(self.tree, 1, wx.EXPAND)
-        leftBox.Add(wx.StaticText(leftPanel, label="Type filter search text:"), 0, wx.TOP | wx.LEFT, 5)
         leftBox.Add(self.filter, 0, wx.EXPAND | wx.ALL, 5)
+        leftBox.Add(self.tree, 1, wx.EXPAND)
+#         leftBox.Add(wx.StaticText(leftPanel, label="Type filter search text:"), 0, wx.TOP | wx.LEFT, 5)
         if 'wxMac' in wx.PlatformInfo:
             leftBox.Add((5, 5))  # Make sure there is room for the focus ring
         leftPanel.SetSizer(leftBox)
@@ -179,7 +180,7 @@ class OpalPreference(wx.Frame):
                          aui.AuiPaneInfo().
                          Left().Layer(2).BestSize((240, -1)).MinSize((240, -1)).
                          Floatable(self.allowAuiFloating).FloatingSize((240, 700)).
-                         Caption("Opal Preferences").
+                         Caption("Preferences").
                          CloseButton(False).
                          Name("preferencesTree"))
 
@@ -405,5 +406,5 @@ class ButtonPanel(wx.Panel):
 
 if __name__ == '__main__':
     app = wx.App(0)
-    frame = OpalPreference(None, "Opal preferences")
+    frame = OpalPreference(None, "Preferences")
     app.MainLoop()
