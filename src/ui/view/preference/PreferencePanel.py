@@ -1,5 +1,83 @@
 import wx
 
+class UserPanel(wx.Panel):
+    def __init__(self, parent=None, *args, **kw):
+        wx.Panel.__init__(self, parent, id=-1)
+        self.parent = parent
+        
+        vBox = wx.BoxSizer(wx.VERTICAL)
+        
+        self.st = wx.StaticLine(self, wx.ID_ANY)
+        # Make and layout the controls
+        fs = self.GetFont().GetPointSize()
+        bf = wx.Font(fs + 4, wx.SWISS, wx.NORMAL, wx.BOLD)
+        nf = wx.Font(fs + 2, wx.SWISS, wx.NORMAL, wx.NORMAL)
+
+        self.header = wx.StaticText(self, -1, kw['preferenceName'])
+        self.header.SetFont(bf)
+        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        
+#         self.isPaginationEnableLabel = wx.StaticText(self, -1, "Pagination enable result:") 
+        self.isPaginationCheckBox = wx.CheckBox(self, -1, "Pagination enable result:", style=wx.ALIGN_RIGHT)
+        
+#         bookNameLabel = wx.StaticText(self, -1, "Title:") 
+#         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
+#         
+#         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
+#         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
+
+        self.pageSizeLabel = wx.StaticText(self, -1, "Number of search result per page:")
+        self.pageSizeText = wx.TextCtrl(self, -1, "100", (30, 50), (60, -1))
+        h = self.pageSizeText.GetSize().height
+        w = self.pageSizeText.GetSize().width + self.pageSizeText.GetPosition().x + 2
+        self.spin = wx.SpinButton(self, -1, (w, 50), (h * 2 / 3, h), wx.SP_VERTICAL)
+        self.spin.SetRange(1, 100)
+        self.spin.SetValue(1) 
+#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
+        
+#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
+#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
+        
+        
+        hBox1 = wx.BoxSizer(wx.HORIZONTAL)
+#         hBox1.Add(self.isPaginationEnableLabel , 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        hBox1.Add(self.isPaginationCheckBox , 0, wx.EXPAND | wx.ALL)
+        
+        hBox2 = wx.BoxSizer(wx.HORIZONTAL)
+        hBox2.Add(self.pageSizeLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL,10)
+        hBox2.Add(self.pageSizeText, 0, wx.EXPAND | wx.ALL)
+        hBox2.Add(self.spin , 0, wx.EXPAND | wx.ALL)
+        
+        hBox3 = wx.BoxSizer(wx.HORIZONTAL)
+
+#         hBox3.Add(booShortkNameLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
+        
+#         hBox4 = wx.BoxSizer(wx.HORIZONTAL)
+#         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+        
+        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
+        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+#         vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(vBox)
+        self.SetSizer(sizer)
+        
+        self.Bind(wx.EVT_SPIN, self.OnSpin, self.spin)
+        self.Bind(wx.EVT_CHECKBOX, self.EvtCheckBox, self.isPaginationCheckBox)
+    def OnSpin(self, event):
+        self.pageSizeText.SetValue(str(event.GetPosition()))
+    
+    def EvtCheckBox(self, event):
+        print self.isPaginationCheckBox
+        print ('EvtCheckBox: %d\n' % event.IsChecked())
+        cb = event.GetEventObject()
+        if cb.Is3State():
+            print ("\t3StateValue: %s\n" % cb.Get3StateValue())
 
 class SearchPanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
@@ -237,6 +315,7 @@ class KeysPanel(wx.Panel):
         self.header.SetFont(bf)
         vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
         vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################
         
         self.themeLabel = wx.StaticText(self, -1, "Theme:") 
         # This combobox is created with a preset list of values.

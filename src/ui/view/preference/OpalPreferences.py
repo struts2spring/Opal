@@ -32,6 +32,13 @@ _treeList = [
         'Configure device',
         ]
      ),
+    (
+     'Account', [
+        'Email book',
+        'Open cloud',
+        'Configure device',
+        ]
+     ),
 
  
 
