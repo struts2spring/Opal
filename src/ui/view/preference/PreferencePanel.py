@@ -8,7 +8,13 @@ class UserPanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxBody = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
@@ -17,18 +23,12 @@ class UserPanel(wx.Panel):
 
         self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################
         
-#         self.isPaginationEnableLabel = wx.StaticText(self, -1, "Pagination enable result:") 
         self.isPaginationCheckBox = wx.CheckBox(self, -1, "Pagination enable result:", style=wx.ALIGN_RIGHT)
         
-#         bookNameLabel = wx.StaticText(self, -1, "Title:") 
-#         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
-#         
-#         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
-#         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
-
         self.pageSizeLabel = wx.StaticText(self, -1, "Number of search result per page:")
         self.pageSizeText = wx.TextCtrl(self, -1, "100", (30, 50), (60, -1))
         h = self.pageSizeText.GetSize().height
@@ -36,14 +36,8 @@ class UserPanel(wx.Panel):
         self.spin = wx.SpinButton(self, -1, (w, 50), (h * 2 / 3, h), wx.SP_VERTICAL)
         self.spin.SetRange(1, 100)
         self.spin.SetValue(1) 
-#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
-        
-#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
-        
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
-#         hBox1.Add(self.isPaginationEnableLabel , 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         hBox1.Add(self.isPaginationCheckBox , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -53,20 +47,26 @@ class UserPanel(wx.Panel):
         
         hBox3 = wx.BoxSizer(wx.HORIZONTAL)
 
-#         hBox3.Add(booShortkNameLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-#         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
-#         hBox4 = wx.BoxSizer(wx.HORIZONTAL)
-#         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-#         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
         
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+        ####################################################################        
+        vBoxBody.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
+        vBoxBody.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
 #         vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
         
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxBody, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
         
         self.Bind(wx.EVT_SPIN, self.OnSpin, self.spin)
@@ -87,7 +87,13 @@ class SearchPanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxBody = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
@@ -96,8 +102,9 @@ class SearchPanel(wx.Panel):
 
         self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################
         
 #         self.isPaginationEnableLabel = wx.StaticText(self, -1, "Pagination enable result:") 
         self.isPaginationCheckBox = wx.CheckBox(self, -1, "Pagination enable result:", style=wx.ALIGN_RIGHT)
@@ -115,11 +122,15 @@ class SearchPanel(wx.Panel):
         self.spin = wx.SpinButton(self, -1, (w, 50), (h * 2 / 3, h), wx.SP_VERTICAL)
         self.spin.SetRange(1, 100)
         self.spin.SetValue(1) 
-#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
-#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
         
+        ####################################################################        
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
 #         hBox1.Add(self.isPaginationEnableLabel , 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
@@ -139,13 +150,17 @@ class SearchPanel(wx.Panel):
 #         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
 #         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
         
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
+        vBoxBody.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
 #         vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
         
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxBody, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
         
         self.Bind(wx.EVT_SPIN, self.OnSpin, self.spin)
@@ -166,7 +181,13 @@ class WorkspacePanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxBody = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
@@ -175,8 +196,9 @@ class WorkspacePanel(wx.Panel):
 
         self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################)
         
         self.workspacePathLabel = wx.StaticText(self, -1, "Workspace path:") 
         self.workspacePathText = wx.TextCtrl(self, -1, "/docs/new", size=(150, -1));
@@ -190,20 +212,20 @@ class WorkspacePanel(wx.Panel):
 #         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
 #         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
 
-        authorsLabel = wx.StaticText(self, -1, "Authors:") 
-        authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
-        
-        numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-        numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
-        
+#         authorsLabel = wx.StaticText(self, -1, "Authors:") 
+#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
+#         
+#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
+#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
+#         
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
         hBox1.Add(self.workspacePathLabel , 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         hBox1.Add(self.workspacePathText , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
+#         hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
         
         hBox3 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -211,16 +233,28 @@ class WorkspacePanel(wx.Panel):
 #         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
         
         hBox4 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+#         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
         
+        ####################################################################        
+        vBoxBody.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
+        
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxBody, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
         
 class AppearancePanel(wx.Panel):
@@ -229,7 +263,13 @@ class AppearancePanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxBody = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
@@ -238,8 +278,9 @@ class AppearancePanel(wx.Panel):
 
         self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################
         
         self.themeLabel = wx.StaticText(self, -1, "Theme:") 
         # This combobox is created with a preset list of values.
@@ -259,11 +300,11 @@ class AppearancePanel(wx.Panel):
 #         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
 #         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
 
-        authorsLabel = wx.StaticText(self, -1, "Authors:") 
-        authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
-        
-        numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-        numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
+#         authorsLabel = wx.StaticText(self, -1, "Authors:") 
+#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
+#         
+#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
+#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
         
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -271,8 +312,8 @@ class AppearancePanel(wx.Panel):
         hBox1.Add(self.themeCb , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
+#         hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
         
         hBox3 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -280,16 +321,28 @@ class AppearancePanel(wx.Panel):
 #         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
         
         hBox4 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+#         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
         
+        ####################################################################        
+        vBoxBody.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
+        
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxBody, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
             # When the user selects something, we go here.
     def EvtComboBox(self, evt):
@@ -357,19 +410,24 @@ class PreferencePanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxBody = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
         bf = wx.Font(fs + 4, wx.SWISS, wx.NORMAL, wx.BOLD)
         nf = wx.Font(fs + 2, wx.SWISS, wx.NORMAL, wx.NORMAL)
-        label = ''
-        if kw.has_key('preferenceName'):
-            label = kw['preferenceName']
-        self.header = wx.StaticText(self, -1, label)
+
+        self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        ####################################################################
         
         bookNameLabel = wx.StaticText(self, -1, "Title:") 
         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
@@ -401,18 +459,31 @@ class PreferencePanel(wx.Panel):
         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
         
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
+        
+        ####################################################################        
+        vBoxBody.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox2, 0, wx.EXPAND | wx.ALL, 5)
+        vBoxBody.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
+        vBoxBody.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
+        
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxBody, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox, 1, wx.EXPAND | wx.ALL, 1)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
 
 if __name__ == '__main__':
     app = wx.App(False)
     frame = wx.Frame(None)
-    panel = KeysPanel(frame, preferenceName='asfd')
+    panel = SearchPanel(frame, preferenceName='asfd')
     frame.Show()
     app.MainLoop()

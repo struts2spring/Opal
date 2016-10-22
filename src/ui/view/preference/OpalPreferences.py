@@ -39,6 +39,12 @@ _treeList = [
         'Configure device',
         ]
      ),
+    (
+     'Install/Update', [
+        'Automatic Updates',
+        'Available plugins',
+        ]
+     ),
 
  
 
