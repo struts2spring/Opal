@@ -23,14 +23,14 @@ import os
 musicdata = {
 1 : ("Zoom in", "Ctrl + mouse scroll up", "Edit image","zoom-in.png"),
 2 : ("Zoom out", "Ctrl + mouse scroll down", "Edit image","zoom-out.png"),
-3 : ("George Michael", "Praying For Time", "Rock","zoom-out.png"),
-4 : ("Gloria Estefan", "Here We Are", "Rock","zoom-out.png"),
-5 : ("Linda Ronstadt", "Don't Know Much", "Rock","zoom-out.png"),
-6 : ("Michael Bolton", "How Am I Supposed To Live Without You", "Blues","zoom-out.png"),
-7 : ("Paul Young", "Oh Girl", "Rock","zoom-out.png"),
-8 : ("Paula Abdul", "Opposites Attract", "Rock","zoom-out.png"),
-9 : ("Richard Marx", "Should've Known Better", "Rock","zoom-out.png"),
-10: ("Rod Stewart", "Forever Young", "Rock","zoom-out.png"),
+3 : ("Quit Opal", "Ctrl + Q", "Rock","exit-16.png"),
+4 : ("Search", "Ctrl + F", "Rock","search.png"),
+5 : ("Help", "F1", "Rock","help.png"),
+6 : ("Open selected ebook", "O", "Open","openEbook.png"),
+7 : ("Restart ", "Ctrl + R", "Restart","restart.png"),
+8 : ("Remove selected ebook", "Delete", "delete","delete.png"),
+9 : ("Edit metadata of selected ebook", "E", "Edit metadata","edit.png"),
+10: ("Download metadata and cover of a ebook", "Ctrl + D", "Edit metadata","editMulti.png"),
 }
 
 #---------------------------------------------------------------------------

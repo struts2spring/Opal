@@ -281,7 +281,9 @@ class AppearancePanel(wx.Panel):
         vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
         vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
         ####################################################################
-        
+        '''
+        Body section
+        '''
         self.themeLabel = wx.StaticText(self, -1, "Theme:") 
         # This combobox is created with a preset list of values.
         themeList = ['Classic', 'Dark']
@@ -292,19 +294,20 @@ class AppearancePanel(wx.Panel):
                          # | wx.CB_SORT
                          )
 
-        self.Bind(wx.EVT_COMBOBOX, self.EvtComboBox, self.themeCb)
-        
-#         bookNameLabel = wx.StaticText(self, -1, "Title:") 
-#         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
-#         
-#         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
-#         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
 
-#         authorsLabel = wx.StaticText(self, -1, "Authors:") 
-#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
-#         
-#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
+#         sizer = wx.BoxSizer(wx.HORIZONTAL)
+        toolbarStyleBox = wx.StaticBox(self,-1,"Toolbar styles")
+        boxSizer = wx.StaticBoxSizer(toolbarStyleBox,wx.VERTICAL)
+        self.showToolbarIcons = wx.CheckBox(self,-1,'Show toolbar icons')
+        boxSizer.Add(self.showToolbarIcons)
+        self.showToolbarText = wx.CheckBox(self,-1,'Show toolbar text')
+        boxSizer.Add(self.showToolbarText)
+        self.showToolbar = wx.CheckBox(self,-1,'Show toolbar')
+        boxSizer.Add(self.showToolbar)
+        
+        
+        self.Bind(wx.EVT_COMBOBOX, self.EvtComboBox, self.themeCb)
+
         
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -312,6 +315,7 @@ class AppearancePanel(wx.Panel):
         hBox1.Add(self.themeCb , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
+        hBox2.Add(boxSizer,0,wx.ALL,10)
 #         hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
 #         hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
         
