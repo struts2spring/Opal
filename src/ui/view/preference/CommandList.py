@@ -35,14 +35,14 @@ musicdata = {
 
 #---------------------------------------------------------------------------
 
-class TestListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+class CommandKeyListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=0):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
 
-class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
+class CommandKeyListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
 
@@ -70,7 +70,7 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.sm_up = self.il.Add(images.SmallUpArrow.GetBitmap())
         self.sm_dn = self.il.Add(images.SmallDnArrow.GetBitmap())
 
-        self.list = TestListCtrl(self, tID,
+        self.list = CommandKeyListCtrl(self, tID,
                                  style=wx.LC_REPORT 
                                  #| wx.BORDER_SUNKEN
                                  | wx.BORDER_NONE
@@ -346,7 +346,7 @@ if __name__ == "__main__":
 
     app = wx.App()
     
-    frame = wx.Frame(None, -1, 'Testframe', size=(600,400))
-    win = TestListCtrlPanel(frame)
+    frame = wx.Frame(None, -1, 'CommandKeyListCtrl frame', size=(600,400))
+    win = CommandKeyListCtrlPanel(frame)
     frame.Show()
     app.MainLoop()

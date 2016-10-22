@@ -1,4 +1,6 @@
 import wx
+from src.ui.view.preference.CommandList import CommandKeyListCtrlPanel
+from src.ui.view.preference.ApplyResetBtnPanel import ApplyResetButtonPanel
 
 class UserPanel(wx.Panel):
     def __init__(self, parent=None, *args, **kw):
@@ -45,7 +47,7 @@ class UserPanel(wx.Panel):
         hBox1.Add(self.isPaginationCheckBox , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(self.pageSizeLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL,10)
+        hBox2.Add(self.pageSizeLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
         hBox2.Add(self.pageSizeText, 0, wx.EXPAND | wx.ALL)
         hBox2.Add(self.spin , 0, wx.EXPAND | wx.ALL)
         
@@ -124,7 +126,7 @@ class SearchPanel(wx.Panel):
         hBox1.Add(self.isPaginationCheckBox , 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(self.pageSizeLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL,10)
+        hBox2.Add(self.pageSizeLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
         hBox2.Add(self.pageSizeText, 0, wx.EXPAND | wx.ALL)
         hBox2.Add(self.spin , 0, wx.EXPAND | wx.ALL)
         
@@ -241,12 +243,12 @@ class AppearancePanel(wx.Panel):
         
         self.themeLabel = wx.StaticText(self, -1, "Theme:") 
         # This combobox is created with a preset list of values.
-        themeList=['Classic','Dark']
-        self.themeCb = wx.ComboBox(self, 500, "Classic", (90, 50), 
+        themeList = ['Classic', 'Dark']
+        self.themeCb = wx.ComboBox(self, 500, "Classic", (90, 50),
                          (160, -1), themeList,
                          wx.CB_DROPDOWN
-                         #| wx.TE_PROCESS_ENTER
-                         #| wx.CB_SORT
+                         # | wx.TE_PROCESS_ENTER
+                         # | wx.CB_SORT
                          )
 
         self.Bind(wx.EVT_COMBOBOX, self.EvtComboBox, self.themeCb)
@@ -304,7 +306,12 @@ class KeysPanel(wx.Panel):
         self.parent = parent
         
         vBox = wx.BoxSizer(wx.VERTICAL)
-        
+        vBoxHeader = wx.BoxSizer(wx.VERTICAL)
+        vBoxFooter = wx.BoxSizer(wx.VERTICAL)
+        ####################################################################
+        '''
+        Header section
+        '''
         self.st = wx.StaticLine(self, wx.ID_ANY)
         # Make and layout the controls
         fs = self.GetFont().GetPointSize()
@@ -313,59 +320,27 @@ class KeysPanel(wx.Panel):
 
         self.header = wx.StaticText(self, -1, kw['preferenceName'])
         self.header.SetFont(bf)
-        vBox.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
-        vBox.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.header, 0, wx.ALL | wx.EXPAND, 5)
+        vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
         ####################################################################
         
-        self.themeLabel = wx.StaticText(self, -1, "Theme:") 
-        # This combobox is created with a preset list of values.
-        themeList=['Classic','Dark']
-        self.themeCb = wx.ComboBox(self, 500, "Classic", (90, 50), 
-                         (160, -1), themeList,
-                         wx.CB_DROPDOWN
-                         #| wx.TE_PROCESS_ENTER
-                         #| wx.CB_SORT
-                         )
+        self.commandKeyListCtrlPanel = CommandKeyListCtrlPanel(self) 
 
-        self.Bind(wx.EVT_COMBOBOX, self.EvtComboBox, self.themeCb)
+        ####################################################################
+        '''
+        Footer section
+        '''
+        self.applyResetButtonPanel=ApplyResetButtonPanel(self)
+        vBoxFooter.Add(self.applyResetButtonPanel, 0, wx.EXPAND | wx.ALL, 1)
         
-#         bookNameLabel = wx.StaticText(self, -1, "Title:") 
-#         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
-#         
-#         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
-#         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
+        
+        ####################################################################
+        vBox.Add(vBoxHeader, 1, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(self.commandKeyListCtrlPanel, 99, wx.EXPAND | wx.ALL, 1)
+        vBox.Add(vBoxFooter, 1, wx.EXPAND | wx.ALL, 1)
 
-        authorsLabel = wx.StaticText(self, -1, "Authors:") 
-        authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
-        
-        numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-        numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
-        
-        
-        hBox1 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox1.Add(self.themeLabel , 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox1.Add(self.themeCb , 0, wx.EXPAND | wx.ALL)
-        
-        hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
-        
-        hBox3 = wx.BoxSizer(wx.HORIZONTAL)
-
-#         hBox3.Add(booShortkNameLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-#         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
-        
-        hBox4 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
-        
-        vBox.Add(hBox1, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox2, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox3, 0, wx.EXPAND | wx.ALL, 1)
-        vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
-        
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 0, wx.EXPAND , 1)
         self.SetSizer(sizer)
             # When the user selects something, we go here.
     def EvtComboBox(self, evt):
@@ -432,12 +407,12 @@ class PreferencePanel(wx.Panel):
         vBox.Add(hBox4, 0, wx.EXPAND | wx.ALL, 1)
         
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(vBox)
+        sizer.Add(vBox, 1, wx.EXPAND | wx.ALL, 1)
         self.SetSizer(sizer)
 
 if __name__ == '__main__':
     app = wx.App(False)
     frame = wx.Frame(None)
-    panel = PreferencePanel(frame, preferenceName='asfd')
+    panel = KeysPanel(frame, preferenceName='asfd')
     frame.Show()
     app.MainLoop()
