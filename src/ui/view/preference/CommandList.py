@@ -21,60 +21,16 @@ import os
 #---------------------------------------------------------------------------
 
 musicdata = {
-1 : ("Zoom in", "Ctrl + mouse scroll up", "Edit image"),
-2 : ("Zoom out", "Ctrl + mouse scroll down", "Edit image"),
-3 : ("George Michael", "Praying For Time", "Rock"),
-4 : ("Gloria Estefan", "Here We Are", "Rock"),
-5 : ("Linda Ronstadt", "Don't Know Much", "Rock"),
-6 : ("Michael Bolton", "How Am I Supposed To Live Without You", "Blues"),
-7 : ("Paul Young", "Oh Girl", "Rock"),
-8 : ("Paula Abdul", "Opposites Attract", "Rock"),
-9 : ("Richard Marx", "Should've Known Better", "Rock"),
-10: ("Rod Stewart", "Forever Young", "Rock"),
-11: ("Roxette", "Dangerous", "Rock"),
-12: ("Sheena Easton", "The Lover In Me", "Rock"),
-13: ("Sinead O'Connor", "Nothing Compares 2 U", "Rock"),
-14: ("Stevie B.", "Because I Love You", "Rock"),
-15: ("Taylor Dayne", "Love Will Lead You Back", "Rock"),
-16: ("The Bangles", "Eternal Flame", "Rock"),
-17: ("Wilson Phillips", "Release Me", "Rock"),
-18: ("Billy Joel", "Blonde Over Blue", "Rock"),
-19: ("Billy Joel", "Famous Last Words", "Rock"),
-20: ("Janet Jackson", "State Of The World", "Rock"),
-21: ("Janet Jackson", "The Knowledge", "Rock"),
-22: ("Spyro Gyra", "End of Romanticism", "Jazz"),
-23: ("Spyro Gyra", "Heliopolis", "Jazz"),
-24: ("Spyro Gyra", "Jubilee", "Jazz"),
-25: ("Spyro Gyra", "Little Linda", "Jazz"),
-26: ("Spyro Gyra", "Morning Dance", "Jazz"),
-27: ("Spyro Gyra", "Song for Lorraine", "Jazz"),
-28: ("Yes", "Owner Of A Lonely Heart", "Rock"),
-29: ("Yes", "Rhythm Of Love", "Rock"),
-30: ("Billy Joel", "Lullabye (Goodnight, My Angel)", "Rock"),
-31: ("Billy Joel", "The River Of Dreams", "Rock"),
-32: ("Billy Joel", "Two Thousand Years", "Rock"),
-33: ("Janet Jackson", "Alright", "Rock"),
-34: ("Janet Jackson", "Black Cat", "Rock"),
-35: ("Janet Jackson", "Come Back To Me", "Rock"),
-36: ("Janet Jackson", "Escapade", "Rock"),
-37: ("Janet Jackson", "Love Will Never Do (Without You)", "Rock"),
-38: ("Janet Jackson", "Miss You Much", "Rock"),
-39: ("Janet Jackson", "Rhythm Nation", "Rock"),
-40: ("Cusco", "Dream Catcher", "New Age"),
-41: ("Cusco", "Geronimos Laughter", "New Age"),
-42: ("Cusco", "Ghost Dance", "New Age"),
-43: ("Blue Man Group", "Drumbone", "New Age"),
-44: ("Blue Man Group", "Endless Column", "New Age"),
-45: ("Blue Man Group", "Klein Mandelbrot", "New Age"),
-46: ("Kenny G", "Silhouette", "Jazz"),
-47: ("Sade", "Smooth Operator", "Jazz"),
-48: ("David Arkenstone", "Papillon (On The Wings Of The Butterfly)", "New Age"),
-49: ("David Arkenstone", "Stepping Stars", "New Age"),
-50: ("David Arkenstone", "Carnation Lily Lily Rose", "New Age"),
-51: ("David Lanz", "Behind The Waterfall", "New Age"),
-52: ("David Lanz", "Cristofori's Dream", "New Age"),
-53: ("David Lanz", "Heartsounds", "New Age"),
-54: ("David Lanz", "Leaves on the Seine", "New Age"),
+1 : ("Zoom in", "Ctrl + mouse scroll up", "Edit image","zoom-in.png"),
+2 : ("Zoom out", "Ctrl + mouse scroll down", "Edit image","zoom-out.png"),
+3 : ("George Michael", "Praying For Time", "Rock","zoom-out.png"),
+4 : ("Gloria Estefan", "Here We Are", "Rock","zoom-out.png"),
+5 : ("Linda Ronstadt", "Don't Know Much", "Rock","zoom-out.png"),
+6 : ("Michael Bolton", "How Am I Supposed To Live Without You", "Blues","zoom-out.png"),
+7 : ("Paul Young", "Oh Girl", "Rock","zoom-out.png"),
+8 : ("Paula Abdul", "Opposites Attract", "Rock","zoom-out.png"),
+9 : ("Richard Marx", "Should've Known Better", "Rock","zoom-out.png"),
+10: ("Rod Stewart", "Forever Young", "Rock","zoom-out.png"),
 }
 
 #---------------------------------------------------------------------------
@@ -190,7 +146,8 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 
         items = musicdata.items()
         for key, data in items:
-            index = self.list.InsertImageStringItem(sys.maxint, data[0], self.idx1)
+            image = wx.Image(os.path.join(Workspace().appPath, "images", data[3]), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+            index = self.list.InsertImageStringItem(sys.maxint, data[0], self.il.Add(image))
             self.list.SetStringItem(index, 1, data[1])
             self.list.SetStringItem(index, 2, data[2])
             self.list.SetItemData(index, key)
