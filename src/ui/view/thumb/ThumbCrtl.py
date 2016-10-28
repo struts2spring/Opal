@@ -2334,7 +2334,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU, (16, 16)))
             menu.AppendItem(item)
     
-            item = wx.MenuItem(menu, self.popupID4, "Properties.")
+            item = wx.MenuItem(menu, self.popupID4, "Information")
             item.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU, (16, 16)))
             menu.AppendItem(item)
     

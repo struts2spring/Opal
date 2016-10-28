@@ -54,7 +54,7 @@ class PacktpubCrawl:
         self.baseUrl = "https://www.packtpub.com/"
 
     def findBookUrl(self):
-        directory_name='.'
+        directory_name = '.'
         binary = FirefoxBinary('/docs/python_projects/firefox/firefox')
 
         fp = webdriver.FirefoxProfile()
@@ -77,7 +77,7 @@ class PacktpubCrawl:
         efd_link = driver.find_element_by_css_selector(".login-popup > div:nth-child(1)")
         efd_link.click()
         try:
-            emailEl=driver.find_element_by_css_selector('#packt-user-login-form > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > input:nth-child(1)')
+            emailEl = driver.find_element_by_css_selector('#packt-user-login-form > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > input:nth-child(1)')
 #             emailEl = driver.find_element_by_name("email")
             '''
             Login with user credential
@@ -85,35 +85,62 @@ class PacktpubCrawl:
             emailEl.send_keys('view7677@gmail.com')
             passwordEl = driver.find_element_by_css_selector("#packt-user-login-form > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > input:nth-child(1)")
             passwordEl.send_keys('default')
-            loginEl=driver.find_element_by_css_selector("#packt-user-login-form > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > input:nth-child(1)")
+            loginEl = driver.find_element_by_css_selector("#packt-user-login-form > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > input:nth-child(1)")
             loginEl.click()
             
             if True:
                 '''
                 clicking on My Account
                 '''
-                myAccountEl=driver.find_element_by_css_selector('#account-bar-logged-in > a:nth-child(1) > div:nth-child(1) > strong:nth-child(1)')
+                myAccountEl = driver.find_element_by_css_selector('#account-bar-logged-in > a:nth-child(1) > div:nth-child(1) > strong:nth-child(1)')
                 myAccountEl.click()
                 
                 '''
                 clicking My ebooks
                 '''
-                myEbook=driver.get(self.baseUrl+'account/my-ebooks')
-                productListEls=driver.find_elements_by_css_selector('div.product-line')
+                myEbook = driver.get(self.baseUrl + 'account/my-ebooks')
+                productListEls = driver.find_elements_by_css_selector('div.product-line')
                 print len(productListEls)
+                bookList = list()
                 for productEl in productListEls:
                     print productEl
-                    productEl.click()
-                    readMeEl=productEl.find_element_by_css_selector('.fake-button-text')
-                    readMeEl.click()
-                    print 'new page'
                     
+                    try:
+                        bookName = productEl.find_element_by_css_selector('.title').text
+                        book = self.createBookDetail(bookName)
+                        productEl.click()
+                        readMeEl = productEl.find_element_by_css_selector('.fake-button-text')
+                        print 'new page',
+                        isbnEl = productEl.find_elements_by_css_selector('div > div:nth-child(2) > div:nth-child(1)> a:nth-child(1) > div:nth-child(1)')
+                        book.isbn_13 = isbnEl[0].get_attribute('isbn')
+#                     readMeEl.click()
+                        print 'div.product-line:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1) > div:nth-child(1)',
+#                     readMeEl.find_element_by_css_selector('h2.ng-binding')
+#                     
+#                     readingEl = driver.get('https://www.packtpub.com/mapt/book/All%20Books/' + book.isbn_13)
+#                     bookName1=driver.find_elements_by_css_selector('h2.ng-binding')[0].text
+                    
+                        bookList.append(book)
+                    except Exception as e:
+                        print e
 #                 product_account_list_el=driver.find_elements_by_css_selector('#product-account-list')
             
             driver.get('https://www.packtpub.com/packt/offers/free-learning')
             try:
-                claimFreeEbookEl=driver.find_element_by_css_selector('.book-claim-token-inner > input:nth-child(3)')
-                claimFreeEbookEl.click()
+                '''
+                clicking on Claim your free ebook
+                '''
+                bookNameEl_1 = driver.find_element_by_css_selector('.dotd-title > h2:nth-child(1)')
+                isBookAlreadyAvailable = False
+                bookName_1 = bookNameEl_1.text
+                for book in bookList:
+                    if bookName_1 in book.bookName:
+                        isBookAlreadyAvailable = True
+                        break
+                        
+                if not isBookAlreadyAvailable:
+                    claimFreeEbookEl = driver.find_element_by_css_selector('.book-claim-token-inner > input:nth-child(3)')
+                    claimFreeEbookEl.click()
             except Exception as e:
                 print e
                 
@@ -127,16 +154,19 @@ class PacktpubCrawl:
 
     def createBookDetail(self, bookName=None):
         book = Book()   
-        book.bookName = "Full Circle "+ bookName
+        book.bookName = bookName
         book.bookFormat = 'pdf'
         book.tag = 'Technology'
         book.inLanguage = 'English'
-        book.subTitle = 'Magazine'
-        book.publisher = "Full Circle"
+        book.subTitle = None
+        book.publisher = "Packt Publishing Limited"
         book.bookImgName = bookName + '.jpg'
         book.hasCover = 'Yes'
-        book.hasCode = 'No'
+        book.hasCode = None
+        
         return book
+    
+    
 if __name__ == "__main__":
     PacktpubCrawl().findBookUrl()
     print 'pass'
