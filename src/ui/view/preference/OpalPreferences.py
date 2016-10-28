@@ -143,7 +143,8 @@ class OpalPreference(wx.Frame):
         rightPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
         self.nb = wx.Notebook(rightPanel, -1, style=wx.CLIP_CHILDREN)
         self.nb.AssignImageList(imgList)
-        self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN, preferenceName="Preferences")
+#         self.panel = PreferencePanel(self.nb, -1, style=wx.CLIP_CHILDREN, preferenceName="Preferences")
+        self.panel = self.getPreferencePanelObj(preferenceName="Opal Preferences")
         self.nb.AddPage(self.panel, "Opal Preferences", imageId=0)
         # Create a TreeCtrl
         leftPanel = wx.Panel(pnl, style=wx.TAB_TRAVERSAL | wx.CLIP_CHILDREN)
