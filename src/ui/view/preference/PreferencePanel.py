@@ -433,26 +433,26 @@ class PreferencePanel(wx.Panel):
         vBoxHeader.Add(self.st, 0, wx.ALL | wx.EXPAND, 5)
         ####################################################################
         
-        bookNameLabel = wx.StaticText(self, -1, "Title:") 
-        bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
+#         bookNameLabel = wx.StaticText(self, -1, "Title:") 
+#         bookName = wx.TextCtrl(self, -1, "", size=(150, -1));
         
 #         booShortkNameLabel = wx.StaticText(self, -1, "Short Title:") 
 #         bookShortName = ExpandoTextCtrl(self, -1, "", size=(150, -1));
 
-        authorsLabel = wx.StaticText(self, -1, "Authors:") 
-        authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
+#         authorsLabel = wx.StaticText(self, -1, "Authors:") 
+#         authorName = wx.TextCtrl(self, -1, "", size=(50, -1));
         
-        numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
-        numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
+#         numberOfPagesLabel = wx.StaticText(self, -1, "Number of pages:") 
+#         numberOfPages = wx.TextCtrl(self, -1, "", size=(70, -1));
         
         
         hBox1 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox1.Add(bookNameLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox1.Add(bookName, 0, wx.EXPAND | wx.ALL)
+#         hBox1.Add(bookNameLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox1.Add(bookName, 0, wx.EXPAND | wx.ALL)
         
         hBox2 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
+#         hBox2.Add(authorsLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox2.Add(authorName, 0, wx.EXPAND | wx.ALL)
         
         hBox3 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -460,8 +460,8 @@ class PreferencePanel(wx.Panel):
 #         hBox3.Add(bookShortName, 0, wx.EXPAND|wx.ALL)
         
         hBox4 = wx.BoxSizer(wx.HORIZONTAL)
-        hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
+#         hBox4.Add(numberOfPagesLabel, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+#         hBox4.Add(numberOfPages, 0, wx.EXPAND | wx.ALL)
         
         ####################################################################
         '''

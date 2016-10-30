@@ -23,6 +23,8 @@ import subprocess
 import thread
 from src.selenium_download.fullcircleMagazine import FullCircleMagazine
 from src.ui.view.preference.OpalPreferences import OpalPreference
+from src.static import OpalStartWorkspace
+from src.static.OpalStartWorkspace import OpalStart
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
@@ -114,10 +116,10 @@ class MainFrame(wx.Frame):
 
     def __init__(self, parent):
         title = "Opal"
-        size=wx.DefaultSize
+        size = wx.DefaultSize
         style = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE | wx.SUNKEN_BORDER
 #         wx.Frame.__init__(self, parent, wx.ID_ANY, title, pos, size, style)
-        wx.Frame.__init__(self, parent,wx.ID_ANY, title=title, style=style)
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
         print '1----------------------->'
         image = wx.Image(os.path.join(Workspace().appPath, "images", "Library-icon.png"), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         icon = wx.EmptyIcon()
@@ -253,7 +255,7 @@ class MainFrame(wx.Frame):
         view_menu = wx.Menu()
         view_menu.Append(ID_Rest_view, "Reset view to default")
         windowMenu = wx.Menu()
-        windowMenu.Append(ID_Preferences,"Preference")
+        windowMenu.Append(ID_Preferences, "Preference")
         
         help_menu = wx.Menu()
 
@@ -348,8 +350,8 @@ class MainFrame(wx.Frame):
 
     def OnPreferences(self, event):
         print 'OnPreferences'
-        #frame1 = OpalPreferenceFrames(None)
-        frame1=OpalPreference(None, "Opal preferences")
+        # frame1 = OpalPreferenceFrames(None)
+        frame1 = OpalPreference(None, "Opal preferences")
 
     def OnRestView(self, event):
         print 'OnResetView'
@@ -378,7 +380,7 @@ class MainFrame(wx.Frame):
 #         self._mgr.LoadPerspective(self.perspective_default)
     def startShell(self, a):
 #         books = FindingBook().findAllBooks()
-        self.picture=PicturesApp()
+        self.picture = PicturesApp()
         self.picture.setValue(books=self.books)
         self.picture.run()
 #         PicturesApp(self.books).run()
@@ -471,7 +473,14 @@ class MainFrame(wx.Frame):
         try:
 #             books=FindingBook().searchingBook('flex')
 #             self.LoadingBooks()
-            self.books = FindingBook().findAllBooks()
+
+            opalStart = OpalStart()
+            jsonFileStr = opalStart.readWorkspace()
+            startObject = opalStart.jsonToObject(jsonFileStr)
+            print startObject.workspace[0]['Preference']['recordPerPage']
+            recordPerPage=startObject.workspace[0]['Preference']['recordPerPage']
+            
+            self.books = FindingBook().findAllBooks(pageSize=recordPerPage)
 #             self.books=FindingBook().findAllBooks()
             colnames = ['id', 'bookName', 'bookFormat', 'authors', 'bookPath', 'isbn_13', 'isbn_10', 'inLanguage', 'series', 'rating', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
             data = []

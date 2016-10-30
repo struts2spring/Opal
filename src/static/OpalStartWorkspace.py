@@ -92,7 +92,20 @@ class OpalStart():
         for worker in json_dict:
             print worker
 
-
+    def readWorkspace(self):
+        '''
+        This method will read existing opal_start.json file. 
+        It will set path, image directory, searched  to Workspace object.
+        '''
+        
+        rep = ''
+#             file = open('opal_start.json', 'r')
+        with open(os.path.dirname(__file__) + os.sep + 'opal_start.json', 'r') as f:
+            for line in f:
+                rep = rep + line
+            f.close
+        return rep    
+            
 if __name__ == "__main__":
 
     jsonFileStr = ''

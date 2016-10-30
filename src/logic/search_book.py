@@ -35,13 +35,13 @@ class FindingBook():
     def findBookByPreviousMaxId(self, bookId=None):
         return self.createDatabase.findBookByPreviousMaxId(bookId)
     
-    def findAllBooks(self):
+    def findAllBooks(self, pageSize=20):
         '''
         This method will give all the books list in book library.
         '''
         books = list()
         os.chdir(Workspace().libraryPath)
-        books = self.createDatabase.findAllBook()
+        books = self.createDatabase.findAllBook(pageSize=pageSize)
         return books
 
     def findBookByIsbn(self, isbn_13):
