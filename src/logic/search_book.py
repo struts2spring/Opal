@@ -35,7 +35,7 @@ class FindingBook():
     def findBookByPreviousMaxId(self, bookId=None):
         return self.createDatabase.findBookByPreviousMaxId(bookId)
     
-    def findAllBooks(self, pageSize=20):
+    def findAllBooks(self, pageSize=None):
         '''
         This method will give all the books list in book library.
         '''

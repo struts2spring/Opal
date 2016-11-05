@@ -929,8 +929,8 @@ class ThumbnailCtrl(wx.Panel):
         subsizer.Add((3, 0), 0)
         self._sizer.Add(subsizer, 1, wx.EXPAND)
 #         self._sizer.Add(subsizer, 0, wx.EXPAND | wx.ALL, 3)
-        self._sizer.Add(self._scrolled, 9, wx.EXPAND)
-        self._sizer.Add(self._toolbar, 1, wx.EXPAND | wx.ALL, 3)
+        self._sizer.Add(self._scrolled, 1, wx.EXPAND)
+        self._sizer.Add(self._toolbar, 0, wx.EXPAND | wx.ALL, 3)
 #         self._sizer.Add(self._toolbar, 0, wx.EXPAND| wx.ALL, 3)
         self.SetSizer(self._sizer)
 

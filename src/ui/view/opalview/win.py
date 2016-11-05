@@ -299,8 +299,10 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
         self.statusbar.SetStatusText("Opal version 0.1", 0)
-
-        self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
+        findingBook=FindingBook()
+        totalBookCount=findingBook.countAllBooks()
+        self.statusbar.SetStatusText("selected : "+str(len(self.books))+ " of "+ str(totalBookCount), 1)
+#         self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
     def creatingDatabase(self):
         if not os.path.exists(Workspace().libraryPath):
             os.mkdir(Workspace().libraryPath)
