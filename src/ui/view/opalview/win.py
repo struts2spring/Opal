@@ -192,22 +192,22 @@ class MainFrame(wx.Frame):
         self._mgr.AddPane(tb1, aui.AuiPaneInfo().Name("tb1").Caption("Big Toolbar").ToolbarPane().Top().LeftDockable(True).RightDockable(False))
 
         # add a bunch of panes
-        bookInfoPan = aui.AuiPaneInfo().Name("bookInfo").Caption("Text Pane").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True)
+        bookInfoPan = aui.AuiPaneInfo().Name("bookInfo").Caption("Text Pane").Right().Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MinimizeButton(True).PaneBorder(True)
         self._mgr.AddPane(self.CreateTextCtrl(), bookInfoPan)
 #         self._mgr.AddPane(SettingsPanel(self, self), wx.aui.AuiPaneInfo().Name("settings").Caption("Dock Manager Settings").Dockable(True).Float().Hide().CloseButton(True).MaximizeButton(True))
 
         self._mgr.AddPane(self.searchCtrl(), aui.AuiPaneInfo().Name("searchCtrl").Top().CaptionVisible(False).CloseButton(False).Show())
 #         self._mgr.AddPane(self.CreateGrid(), wx.aui.AuiPaneInfo().Name("grid_content").CenterPane().CloseButton(True).Show())
-        self._mgr.AddPane(self.CreateGrid(), aui.AuiPaneInfo().Name("grid_content").Caption("Grid").Center().CloseButton(True).MaximizeButton(True).LeftDockable(True).MinimizeButton(True))
+        self._mgr.AddPane(self.CreateGrid(), aui.AuiPaneInfo().Name("grid_content").Caption("Grid").Center().CloseButton(True).MaximizeButton(True).LeftDockable(True).MinimizeButton(True).PaneBorder(True))
         
-        thumbInfo = aui.AuiPaneInfo().Name("test1").Caption("Thumb book").Center().Dockable(True).Movable(True).MaximizeButton(True).MinimizeButton(True).PinButton(True).CloseButton(True).Position(0)
+        thumbInfo = aui.AuiPaneInfo().Name("test1").Caption("Thumb book").Center().Dockable(True).Movable(True).MaximizeButton(True).MinimizeButton(True).PinButton(True).CloseButton(True).Position(0).PaneBorder(True)
         self._mgr.AddPane(self.CreateThumbCtrl(), thumbInfo)
 #         self._mgr.AddPane(self.CreateTreeCtrl(), wx.aui.AuiPaneInfo().Name("tree_content").CenterPane().Hide())
 
 #         self._mgr.AddPane(self.CreateSizeReportCtrl(), wx.aui.AuiPaneInfo().Name("sizereport_content").CenterPane().Show())
 
 #         self._mgr.AddPane(self.CreateTextCtrl(), wx.aui.AuiPaneInfo().Name("text_content").CenterPane().Show())
-        html_content = aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().Dockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MaximizeButton(True)
+        html_content = aui.AuiPaneInfo().Caption("Book Information").Name("html_content").Right().Dockable(True).Layer(1).Position(1).CloseButton(True).MaximizeButton(True).MinimizeButton(True)
         self._mgr.AddPane(self.CreateHTMLCtrl(), html_content)
 
 #         perspective_all = self._mgr.SavePerspective()

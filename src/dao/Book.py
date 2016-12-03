@@ -26,8 +26,8 @@ class Book(Base):
     editionNo = Column('edition_no', String)  # editionNo
     publisher = Column(UnicodeText)  # publisher
     bookFormat = Column("book_format", String)  # bookFormat
-    fileSize = Column('file_size', String)  # fileSize
-    numberOfPages = Column('number_of_pages', Integer)  # numberOfPages
+#     fileSize = Column('file_size', String)  # fileSize
+#     numberOfPages = Column('number_of_pages', Integer)  # numberOfPages
     inLanguage = Column('in_language', String)  # inLanguage
     publishedOn = Column('published_on', DateTime)
     hasCover = Column('has_cover', String)  # hasCover
