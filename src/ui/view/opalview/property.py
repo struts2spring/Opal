@@ -735,10 +735,10 @@ class PropertyPhotoPanel(wx.Panel):
             print("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
-	try:
-		self.changeBitmapWorker()
-	except Exception as e:
-		print e
+        try:
+            self.changeBitmapWorker()
+        except Exception as e:
+            print e
         print 'onsize'
 
     def OnPaint(self, evt):
@@ -779,16 +779,16 @@ class BookPropertyPanel(wx.Panel):
         
         self.photoPanel = PropertyPhotoPanel(self, book=self.currentBook)
 #         self.rt = wx.richtext.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER)
-        self.rt=RichTextPanel(self,book)
+        self.rt = RichTextPanel(self, book)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         print '-------------->', self.GetParent().GetSize()
-	try:
-        	img1 = self.scale_bitmap()
-	except Exception as e:
-		print e
-
+        try:
+            img1 = self.scale_bitmap()
+        except Exception as e:
+            print e
         img = wx.EmptyImage(240, 240)
+
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1, name="anotherEmptyImage")
 #         self.imageCtrl.Bind(wx.EVT_LEFT_DOWN, self.onImageClick)
@@ -798,7 +798,7 @@ class BookPropertyPanel(wx.Panel):
         hBox = wx.BoxSizer(wx.HORIZONTAL)
         self.pg = self.createPropetyGrid(self.currentBook)
         
-        vBox= wx.BoxSizer(wx.VERTICAL)
+        vBox = wx.BoxSizer(wx.VERTICAL)
         vBox.Add(self.pg, 1, wx.EXPAND, 2)
         vBox.Add(self.rt, 1, wx.EXPAND, 1)
         hBox.Add(vBox, 3, wx.EXPAND, 5)

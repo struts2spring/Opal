@@ -4,6 +4,7 @@ import wx.richtext as rt
 import images
 import os
 from StringIO import StringIO
+from src.logic.search_book import FindingBook
 # import lxml
 # import lxml.html
 #----------------------------------------------------------------------
@@ -17,7 +18,13 @@ class Window(wx.App):
         self.mainWindow = wx.Frame(None)
         self.mainWindow.SetSize((800, 510))
 #         self.vbox1 = wx.BoxSizer(wx.VERTICAL)
-        panel = RichTextPanel(self.mainWindow)
+        books = FindingBook().findAllBooks()
+        book = None
+        for b in books:
+            book = b
+            break
+        print book
+        panel = RichTextPanel(self.mainWindow, book)
 #         panel.SetSizer(self.vbox1)
 #         panel.SetSizer(sizer)
 #         panel.Layout()
@@ -55,17 +62,18 @@ class RichTextPanel(wx.Panel):
 #         self.rtc.Thaw()
         
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.tbar, 1, wx.EXPAND | wx.ALL, 1)
-        sizer.Add(self.rtc, 9, wx.EXPAND | wx.ALL, 1)
+        sizer.Add(self.tbar, 0, wx.EXPAND | wx.ALL, 1)
+        sizer.Add(self.rtc, 1, wx.EXPAND | wx.ALL, 1)
 #         sizer.Add(save_button, 1, wx.EXPAND | wx.ALL, 1)
  
         self.SetSizer(sizer)
-        self.book=args[0]
+        if len(args) > 0:
+            self.book = args[0]
         self.loadFile()
 #         self.Show()
     
     def loadFile(self):
-        path=os.path.join('/docs/github/Opal/src/ui/view/opalview','bookInfo.html')
+        path = os.path.join('/docs/github/Opal/src/ui/view/opalview', 'bookInfo.html')
 
 
 
@@ -78,37 +86,38 @@ class RichTextPanel(wx.Panel):
         print 'cansave:', htmlhandler.CanSave()
         print 'CanHandle', htmlhandler.CanHandle('bookInfo.html')
         rt.RichTextBuffer.AddHandler(htmlhandler)
-#         buffer.AddHandler(htmlhandler)
-        out.write(self.book.bookDescription)
-        out.seek(0)
+        buffer.AddHandler(htmlhandler)
+#         buffer.LoadStream(stream, rt.RICHTEXT_TYPE_HTML)
+#         out.write(self.book.bookDescription)
+#         out.seek(0)
 #         htmlhandler.LoadStream(buffer, out)
 #         htmlhandler.LoadFile(path,'text')
-        if self.book.bookDescription !=None:
+        if self.book.bookDescription != None:
             self.rtc.AppendText(self.book.bookDescription)
 #         htmlhandler.LoadStream(buffer, out.getvalue())
-        self.rtc.Refresh()
+#         self.rtc.Refresh()
 #         buffer = self.rtc.GetBuffer()
         # you have to specify the type of data to load and the control
         # must already have an instance of the handler to parse it
-#         buffer.LoadStream(stream, rt.RICHTEXT_TYPE_HTML)
+#        c
         
-#         self.rtc.Refresh()
+        self.rtc.Refresh()
 #         self.rtc.LoadFile(path,  type=1)
             
     def OnFileSave(self, evt):
 #         self.loadFile()
-        self.GetParent().save()
+#         self.GetParent().save()
         
-#         handler = rt.RichTextHTMLHandler()
-#         handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
-#         handler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
-# 
-#         import cStringIO
-#         stream = cStringIO.StringIO()
-#         if not handler.SaveStream(self.rtc.GetBuffer(), stream):
-#             return
-#         html_content = stream.getvalue()
-#         print html_content
+        handler = rt.RichTextHTMLHandler()
+        handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
+        handler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
+ 
+        import cStringIO
+        stream = cStringIO.StringIO()
+        if not handler.SaveStream(self.rtc.GetBuffer(), stream):
+            return
+        html_content = stream.getvalue()
+        print html_content
 
     def SetFontStyle(self, fontColor=None, fontBgColor=None, fontFace=None, fontSize=None,
                      fontBold=None, fontItalic=None, fontUnderline=None):

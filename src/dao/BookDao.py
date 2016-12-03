@@ -90,7 +90,15 @@ class CreateDatabase():
 
         directory_name = Workspace().libraryPath
         os.chdir(directory_name)
-        listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
+        listOfDir=list()
+#         listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
+        for name in os.listdir(directory_name):
+            if os.path.isdir(os.path.join(directory_name, name)) :
+                try:
+                    if int(name):
+                        listOfDir.append(name)
+                except Exception as e:
+                    pass
         if listOfDir:
             listOfDir.sort(key=int)
         one = ''
