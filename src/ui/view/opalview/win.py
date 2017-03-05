@@ -301,7 +301,13 @@ class MainFrame(wx.Frame):
         self.statusbar.SetStatusText("Opal version 0.1", 0)
         findingBook=FindingBook()
         totalBookCount=findingBook.countAllBooks()
-        self.statusbar.SetStatusText("selected : "+str(len(self.books))+ " of "+ str(totalBookCount), 1)
+        selectedBooks='0'
+        if self.books:
+            selectedBooks=str(len(self.books))
+        if not totalBookCount:
+            totalBookCount=0
+        
+        self.statusbar.SetStatusText("selected : "+selectedBooks+ " of "+ str(totalBookCount), 1)
 #         self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
     def creatingDatabase(self):
         if not os.path.exists(Workspace().libraryPath):
@@ -486,15 +492,16 @@ class MainFrame(wx.Frame):
 #             self.books=FindingBook().findAllBooks()
             colnames = ['id', 'bookName', 'bookFormat', 'authors', 'bookPath', 'isbn_13', 'isbn_10', 'inLanguage', 'series', 'rating', 'subTitle', 'uuid', 'publishedOn', 'editionNo', 'numberOfPages', 'hasCover', 'fileSize', 'publisher', 'hasCode', 'createdOn', 'dimension', 'bookDescription', 'customerReview']
             data = []
-            noOfBooks = len(self.books)
             bookId_rowNo_dict = {}
             
-            print 'CreateGrid: noOfBooks:', noOfBooks
-            for i in range(noOfBooks):
-                d = {}
-                
-                data.append((str(i), self.dicForGrid(self.books[i])))
-                bookId_rowNo_dict[self.books[i].id] = i
+            if self.books:
+                noOfBooks = len(self.books)
+                print 'CreateGrid: noOfBooks:', noOfBooks
+                for i in range(noOfBooks):
+                    d = {}
+                    
+                    data.append((str(i), self.dicForGrid(self.books[i])))
+                    bookId_rowNo_dict[self.books[i].id] = i
             self.grid = MegaGrid(self, data, colnames)
             self.grid.bookId_rowNo_dict = bookId_rowNo_dict
             self.grid.Reset()

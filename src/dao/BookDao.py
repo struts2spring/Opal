@@ -190,7 +190,11 @@ class CreateDatabase():
             raise
 
     def countAllBooks(self):
-        bookCount = self.session.query(Book).count()
+        bookCount = 0
+        try:
+            self.session.query(Book).count()
+        except:
+            pass
         return bookCount
     
     def findAllBook(self, pageSize=None):
@@ -204,8 +208,11 @@ class CreateDatabase():
             query = self.session.query(Book).limit(limit).offset(offset)
         else:
             query = self.session.query(Book)
-            
-        bs = query.all()
+        bs=None
+        try:    
+            bs = query.all()
+        except:
+            pass
         print 'completed'
         return bs
     
