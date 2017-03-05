@@ -299,15 +299,15 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
         self.statusbar.SetStatusText("Opal version 0.1", 0)
-        findingBook=FindingBook()
-        totalBookCount=findingBook.countAllBooks()
-        selectedBooks='0'
+        findingBook = FindingBook()
+        totalBookCount = findingBook.countAllBooks()
+        selectedBooks = '0'
         if self.books:
-            selectedBooks=str(len(self.books))
-        if not totalBookCount:
-            totalBookCount=0
+            selectedBooks = str(len(self.books))
+#         if  totalBookCount == None :
+#             totalBookCount = 0
         
-        self.statusbar.SetStatusText("selected : "+selectedBooks+ " of "+ str(totalBookCount), 1)
+        self.statusbar.SetStatusText("selected : " + selectedBooks + " of " + str(totalBookCount), 1)
 #         self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
     def creatingDatabase(self):
         if not os.path.exists(Workspace().libraryPath):
@@ -486,7 +486,7 @@ class MainFrame(wx.Frame):
             jsonFileStr = opalStart.readWorkspace()
             startObject = opalStart.jsonToObject(jsonFileStr)
             print startObject.workspace[0]['Preference']['recordPerPage']
-            recordPerPage=startObject.workspace[0]['Preference']['recordPerPage']
+            recordPerPage = startObject.workspace[0]['Preference']['recordPerPage']
             
             self.books = FindingBook().findAllBooks(pageSize=recordPerPage)
 #             self.books=FindingBook().findAllBooks()

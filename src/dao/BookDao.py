@@ -90,7 +90,7 @@ class CreateDatabase():
 
         directory_name = Workspace().libraryPath
         os.chdir(directory_name)
-        listOfDir=list()
+        listOfDir = list()
 #         listOfDir = [ name for name in os.listdir(directory_name) if os.path.isdir(os.path.join(directory_name, name)) ]
         for name in os.listdir(directory_name):
             if os.path.isdir(os.path.join(directory_name, name)) :
@@ -192,7 +192,7 @@ class CreateDatabase():
     def countAllBooks(self):
         bookCount = 0
         try:
-            self.session.query(Book).count()
+            bookCount = self.session.query(Book).count()
         except:
             pass
         return bookCount
@@ -208,7 +208,7 @@ class CreateDatabase():
             query = self.session.query(Book).limit(limit).offset(offset)
         else:
             query = self.session.query(Book)
-        bs=None
+        bs = None
         try:    
             bs = query.all()
         except:
