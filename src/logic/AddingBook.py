@@ -169,6 +169,7 @@ class AddBook():
             
             author = Author()
             author.authorName = authorName
+            author.aboutAuthor = 'aboutAuthor'
             authorList.append(author)
         self.book.authors = authorList
         
@@ -270,12 +271,12 @@ if __name__ == '__main__':
 #     sys.set
 #     sourcePath = '/home/vijay/Downloads/1389095365492.pdf'
 #     AddBook().addingBookToWorkspace(sourcePath)
-    path = "/home/vijay/Downloads/Software in 30 Days How Agile Managers Beat the Odds, Delight Their Customers, And Leave Competitors In the Dust.pdf"
+    path = "/home/vijay/Downloads/9781784398224-FUNCTIONAL_PROGRAMMING_IN_JAVASCRIPT.pdf"
     addBook = AddBook()
 #     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/English Grammar - A function-based introduction/English Grammar - A function-based introduction. Volume I.pdf"
 #     path = "/media/vijay/Seagate Backup Plus Drive/vijay/books/Apress.Venture.Capitalists.at.Work.Nov.2011/Apress.Venture.Capitalists.at.Work.Nov.2011.pdf"
      
     addBook.getPdfMetadata(path)
-    newDirPath = '/docs/new/1'
+    newDirPath = '/docs/new/library/1'
     addBook.writeBookJson(newDirPath, addBook.book)
     pass

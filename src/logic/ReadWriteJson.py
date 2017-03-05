@@ -28,8 +28,7 @@ class Book(json.JSONEncoder):
         self.publishedOn = datePublished
         self.numberOfPages = numberOfPages
         self.inLanguage = inLanguage
-        self.fileSize = fileSize
-        self.bookFormat = bookFormat
+        self.bookFormat = list()
         self.subTitle = bookSubTitle
         self.itEbookUrlNumber = None
 
@@ -41,11 +40,12 @@ class Author(json.JSONEncoder):
     '''
     This class has been used to write json object of author of book.
     '''
-    def __init__(self, authorName='unknown'):
+    def __init__(self, authorName='unknown', aboutAuthor=None):
         '''
         Constructor
         '''
         self.authorName = authorName
+        self.aboutAuthor = aboutAuthor
         
     def __str__(self):
         rep = self.authorName 
