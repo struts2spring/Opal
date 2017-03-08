@@ -1,0 +1,42 @@
+{
+    "workspace": 
+    [
+        {
+            "image": "image",
+            "library": "library",
+            "platform": "win32",
+            "Preference": 
+            {
+                "recordPerPage": 100,
+                "isPaginationEnable": true
+            },
+
+            "searched": "searched",
+            "path": 
+            [
+                "E:\\docs\\new"
+            ],
+
+            "createdOn": "2016-10-30 08:53:40.093133"
+        },
+
+        {
+            "image": "image",
+            "library": "library",
+            "platform": "linux2",
+            "Preference": 
+            {
+                "recordPerPage": 50,
+                "isPaginationEnable": true
+            },
+
+            "searched": "searched",
+            "path": 
+            [
+                "/docs/new"
+            ],
+
+            "createdOn": "2016-10-30 08:53:40.093189"
+        }
+    ]
+}
