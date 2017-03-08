@@ -1,6 +1,0 @@
--1. Check if database present in workspace. There is possibility of a new workspace.
-0. Check if book already present in workspace.
-1. Create a folder with max_book_id+1 . 
-2. Copy the book file in the directory.
-3. Create metadata i.e. (book.json)
-4. Make an entry in database.
