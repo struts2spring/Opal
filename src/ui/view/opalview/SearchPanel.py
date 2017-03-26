@@ -134,7 +134,7 @@ class SearchPanel(wx.Panel):
         grid.Reset()
 #         grid.books=searchedBooks
 #         grid.loadBooks()
-        self.GetParent().statusbar.SetStatusText("selected : "+str(len(books))+ " of "+ str(totalBookCount), 1)
+        self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
 
 #         self.listbox.Clear()
 #         employees = DAO().findByName(name)

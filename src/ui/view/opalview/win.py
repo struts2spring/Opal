@@ -454,6 +454,7 @@ class MainFrame(wx.Frame):
 #         print 'CreateThumbCtrl', len(self.books)
         try:
             self.thumbnail.ShowDir(self.books)
+            self.thumbnail.setPagination(self.books)
         except:
             traceback.print_exc()
         return self.thumbnail

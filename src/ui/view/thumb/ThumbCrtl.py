@@ -9,6 +9,7 @@ from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.ReviewMetadataFrame import ReviewFrame
 from src.viewer.cbr.CbrMainFrame import CbrFrame
+from src.static.constant import Workspace
 # from src.audit.singletonLoggerLogging import Logger
 # 
 # logger = Logger(__name__)
@@ -894,6 +895,7 @@ class ThumbnailCtrl(wx.Panel):
                                            thumbfilter=thumbfilter, imagehandler=imagehandler)
         
         pageNumber = [ "1", "2", "3" ]
+        self.totalNoOfPages=0
         self._toolbar = wx.ToolBar(self, style=(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT))
         first_1 = self._toolbar.AddLabelTool(10, 'Left', wx.ArtProvider.GetBitmap(wx.ART_GOTO_FIRST, wx.ART_TOOLBAR, (16, 16)), shortHelp="First", longHelp="Long help for 'New'" )
         back = self._toolbar.AddLabelTool(20, '', wx.ArtProvider.GetBitmap(wx.ART_GO_BACK, wx.ART_TOOLBAR, (16, 16)), shortHelp="Previous")
@@ -902,7 +904,7 @@ class ThumbnailCtrl(wx.Panel):
         page = wx.StaticText(self._toolbar, 40, label="Page", style=wx.ALIGN_CENTER)
         self._toolbar.AddControl(page)
         self._toolbar.AddControl(choice)
-        ofText = wx.StaticText(self._toolbar, 50, label=" of 1", style=wx.ALIGN_CENTER)
+        ofText = wx.StaticText(self._toolbar, 50, label=" of     "+str(self.totalNoOfPages), style=wx.ALIGN_CENTER)
         self._toolbar.AddControl(ofText)
         forword = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, (16, 16)), shortHelp="Next")
         last = self._toolbar.AddLabelTool(wx.ID_ANY, '', wx.ArtProvider.GetBitmap(wx.ART_GOTO_LAST, wx.ART_TOOLBAR, (16, 16)), shortHelp="Last")
@@ -957,6 +959,26 @@ class ThumbnailCtrl(wx.Panel):
 
         self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
         self.storeValSequence = [0, 0]
+    def setPagination(self, books):
+        isPaginationEnable=Workspace().preference['isPaginationEnable']
+        if isPaginationEnable:
+            recordPerPage=Workspace().preference['recordPerPage']
+            print("setPagination.total books count:"+str(len(books)))
+            totalNoOfPages=len(books)/int(recordPerPage) +1
+            pageCounter=[str(count+1) for count in range(totalNoOfPages)]
+        for child in self._toolbar.GetChildren():
+            if type(child)==wx._controls.Choice:
+                if isPaginationEnable:
+                    child.SetItems(pageCounter)
+                    child.SetSelection(0)
+                print('choice')
+            elif type(child)==wx.StaticText:
+                if child.GetLabel()=='Page':
+                    pass
+                else:
+                    child.SetLabel(' of '+str(totalNoOfPages))
+                print('static text')
+            print(type(child))
     def OnSliderScroll(self, e):
         obj = e.GetEventObject()
         val = obj.GetValue()
@@ -975,9 +997,35 @@ class ThumbnailCtrl(wx.Panel):
 
     def onFirst(self, event):
         print 'onFirst'
+        isPaginationEnable=Workspace().preference['isPaginationEnable']
+        if isPaginationEnable:
+            for child in self._toolbar.GetChildren():
+                if type(child)==wx._controls.Choice:
+                        selection=child.GetSelection()
+                        child.SetSelection(0)
         pass
     def onBack(self, event):
         print 'onBack'
+        isPaginationEnable=Workspace().preference['isPaginationEnable']
+        if isPaginationEnable:
+            for child in self._toolbar.GetChildren():
+                if type(child)==wx._controls.Choice:
+                        selection=child.GetSelection()
+                        if child.GetCount()>selection>0:
+                            itemList=child.GetItems()
+                            child.SetSelection(selection-1)
+                        else:
+                            pass
+#                             child.SetSelection(0)
+                elif type(child)==wx.StaticText:
+                    if child.GetLabel()=='Page':
+                        pass
+                    else:
+                        pass
+#                         child.SetLabel(' of '+str(totalNoOfPages))
+                    print('static text')
+                print(type(child))
+#         self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
         pass
     def onChoice(self, event):
         print 'onChoice'
@@ -985,10 +1033,35 @@ class ThumbnailCtrl(wx.Panel):
         pass
     def onForword(self, event):
         print 'onForword'
+        isPaginationEnable=Workspace().preference['isPaginationEnable']
+        if isPaginationEnable:
+            for child in self._toolbar.GetChildren():
+                if type(child)==wx._controls.Choice:
+                        selection=child.GetSelection()
+                        if child.GetCount()>child.GetSelection()+1:
+                            itemList=child.GetItems()
+                            child.SetSelection(selection+1)
+                        else:
+                            pass
+#                             child.SetSelection(0)
+                elif type(child)==wx.StaticText:
+                    if child.GetLabel()=='Page':
+                        pass
+                    else:
+                        pass
+#                         child.SetLabel(' of '+str(totalNoOfPages))
+                    print('static text')
+                print(type(child))
+#         self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
         pass
     def onLast(self, event):
         print 'onLast'
-        pass
+        isPaginationEnable=Workspace().preference['isPaginationEnable']
+        if isPaginationEnable:
+            for child in self._toolbar.GetChildren():
+                if type(child)==wx._controls.Choice:
+                        selection=child.GetSelection()
+                        child.SetSelection(child.GetCount()-1)
         
         
     def ShowComboBox(self, show=True):

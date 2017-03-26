@@ -42,6 +42,7 @@ class Workspace(object):
             for workspace in opal_start['workspace']:
 #                 x=OpalStart(workspace)
                 print workspace['platform']
+                self.preference=workspace["Preference"]
                 if sys.platform == workspace['platform']:
                     self.appPath = os.path.join(os.path.dirname(__file__),"..")
                     self.path = str(workspace['path'][0])
@@ -56,6 +57,7 @@ class Workspace(object):
                     self.searchedPath = os.path.join(str(workspace['path'][0]), workspace['searched'])
                     if not os.path.exists(self.searchedPath):
                         os.mkdir(self.searchedPath)
+                    
             print self.path
 
         def writeWorkspace(self, newPath=None):
