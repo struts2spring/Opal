@@ -760,7 +760,7 @@ class PropertyPhotoPanel(wx.Panel):
             img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
             img = img.Scale(NewW, NewH)
             self.bitmap = wx.BitmapFromImage(img)
-            self.Refresh()
+#             self.Refresh()
         
         
 #     def getImgFileName(self, relevant_path=None):
@@ -1235,7 +1235,13 @@ class BookPropertyPanel(wx.Panel):
             print('Iterating \'%s\'\n' % (prop.GetName()))
 
 #---------------------------------------------------------------------------
-
+class MainNotebook(wx.Notebook):
+    ### For this demo, we don't need to subclass
+    ### Notebook at all.
+    def __init__(self,parent, book):
+        wx.Notebook.__init__(self,parent=parent)
+        self.AddPage(BookPropertyPanel(self, book), 'book')
+#         self.AddPage(RedPanel(self),"Red")
 
 class MemoDialog(wx.Dialog):
     """\
@@ -1286,7 +1292,9 @@ some custom property classes.
 class BookPropertyFrame(wx.Frame):
     def __init__(self, parent, book):
         wx.Frame.__init__(self, parent, -1, title='Edit Book Metadata', size=(1100, 650))
-        self.panel = BookPropertyPanel(self, book)
+        self.Notebook = MainNotebook(self, book)
+        
+#         self.panel = BookPropertyPanel(self, book)
         self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 #         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Show()
