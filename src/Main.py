@@ -8,7 +8,38 @@ import wx
 
 
 from src.ui.view.opalview.win import MainFrame
-from src.audit.singletonLoggerLogging import Logger
+from src.audit.singl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+etonLoggerLogging import Logger
  
     
 logger = Logger(__name__)   
