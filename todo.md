@@ -13,3 +13,10 @@ List of todo items.
 10. merging two workspace of Opal.
 11. Creating viewer for mobi , chm, epub.
 12. Opal provide support for audio and video ebook.
+
+
+
+This branch has follwing things to be fixed
+1. code management.
+2. author information management.
+3. ebook format available management.

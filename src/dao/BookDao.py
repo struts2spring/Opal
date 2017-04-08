@@ -205,7 +205,7 @@ class CreateDatabase():
     
     def pagination(self, limit, offset):
         if limit:
-            query = self.session.query(Book).limit(limit).offset(offset)
+            query = self.session.query(Book).order_by(Book.createdOn.desc()).limit(limit).offset(offset)
         else:
             query = self.session.query(Book)
         bs = None

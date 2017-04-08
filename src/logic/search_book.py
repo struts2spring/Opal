@@ -41,6 +41,7 @@ class FindingBook():
         '''
         books = list()
         os.chdir(Workspace().libraryPath)
+        pageSize=Workspace().preference['recordPerPage']
         books = self.createDatabase.findAllBook(pageSize=pageSize)
         return books
 
