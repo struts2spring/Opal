@@ -30,7 +30,8 @@ setup(
     	'beautifulsoup4==4.4.1',
         'PyPDF2',
         'lxml',
-	'rarfile',
+        'rarfile',
+        'beautifulsoup4==4.5.3'
 #         'python-djvulibre >= 0.7.2'
     ],
     classifiers=[

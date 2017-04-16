@@ -66,6 +66,7 @@ class AddBook():
             self.book.bookFormat = splited_name[-1:][0]
             splited_name.remove(self.book.bookFormat)
             book_file_name = '.'.join(splited_name)
+#             book_file_name=self.replaceUnderbarWithSpace(book_file_name)
             self.book.bookName = book_file_name
             self.book.wishListed = 'No'
             
@@ -95,6 +96,8 @@ class AddBook():
                 self.writeBookJson(self.book.bookPath, book_copy1)
                 self.addingBookInfoInDatabase(self.book)
 
+    def replaceUnderbarWithSpace(self, stringValue):
+        return stringValue.replace('_',' ')
     def findingSameBook(self):
         '''
         This method will allow you to find the same book available in workspace already.
@@ -114,7 +117,7 @@ class AddBook():
         '''
         This method will add new book info in database.
         '''
-        self.createDatabase.saveBook(book)
+        self.createDatabase.updateBook(book)
 
 
 

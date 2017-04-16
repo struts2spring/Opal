@@ -5,7 +5,11 @@ Created on 12-Dec-2015
 '''
 
 from yattag import Doc
-from bs4 import BeautifulSoup
+import traceback
+try:
+    from bs4 import BeautifulSoup
+except:
+    traceback.print_exc()
 from src.logic.search_book import FindingBook
 import os
 import wx.html

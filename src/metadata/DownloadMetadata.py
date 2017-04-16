@@ -3,11 +3,15 @@ Created on 17-Apr-2016
 
 @author: vijay
 '''
+import traceback
 import requests
 import os
 import urllib2
 from src.metadata.book import Book, VolumeInfo
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except:
+    traceback.print_exc()
 import uuid
 import traceback
 from src.static.constant import Workspace

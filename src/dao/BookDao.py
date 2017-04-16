@@ -181,6 +181,52 @@ class CreateDatabase():
         self.session.add(authorBookLink)
         self.session.commit()
 
+    def updateBook(self, book):
+#         databaseBook=Book.query.filter_by(id= book.id).first()
+#                        self.session.query(Book).filter(Book.id == book.id)
+        print('updating : ',book.id)
+        databaseBook = self.session.query(Book).filter(Book.id == book.id).first()
+#         books = query.all()
+#         print(databaseBook)
+        updateBook = self.copyBookProperty(srcBook=book, targetBook=databaseBook)
+        updateBook=self.session.merge(updateBook)
+        self.session.add(updateBook)
+        try:
+            self.session.commit()
+        except:
+            self.session.rollback()
+            raise        
+    def copyBookProperty(self, srcBook=None, targetBook=None):   
+        targetBook.bookName = srcBook.bookName
+        targetBook.subTitle = srcBook.subTitle
+#         targetBook.isbn_10 = srcBook.isbn_10
+        targetBook.isbn_13 = srcBook.isbn_13
+#         targetBook.series = srcBook.series
+#         targetBook.dimension = srcBook.dimension
+#         targetBook.customerReview = srcBook.customerReview
+        targetBook.bookDescription = srcBook.bookDescription
+#         targetBook.editionNo = srcBook.editionNo
+        targetBook.publisher = srcBook.publisher
+        targetBook.bookFormat = srcBook.bookFormat
+        targetBook.fileSize = srcBook.fileSize
+        targetBook.numberOfPages = srcBook.numberOfPages
+        targetBook.inLanguage = srcBook.inLanguage
+#         targetBook.publishedOn = srcBook.publishedOn
+#         targetBook.hasCover = srcBook.hasCover
+#         targetBook.hasCode = srcBook.hasCode
+#         targetBook.bookPath = srcBook.bookPath
+        targetBook.rating = srcBook.rating
+#         targetBook.uuid = srcBook.uuid
+#         targetBook.tag = srcBook.tag
+#         targetBook.bookFileName = srcBook.bookFileName
+#         targetBook.wishListed = srcBook.wishListed
+#         targetBook.itEbookUrlNumber = srcBook.itEbookUrlNumber
+#         targetBook.createdOn = srcBook.createdOn
+        for aa in targetBook.authors:
+            for a in srcBook.authors:
+                aa.authorName=a['authorName']
+        return targetBook
+          
     def saveBook(self, book):
         self.session.add(book)
         try:

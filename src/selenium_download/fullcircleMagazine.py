@@ -10,7 +10,10 @@ import traceback
 import datetime
 from src.static.constant import Workspace
 from src.dao.BookDao import CreateDatabase
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except:
+    traceback.print_exc()
 
 
 class Book(json.JSONEncoder):

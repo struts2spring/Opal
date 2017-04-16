@@ -9,6 +9,7 @@ from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 import threading
 from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
+from src.logic.AddingBook import AddBook
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -887,15 +888,17 @@ class BookPropertyPanel(wx.Panel):
         print 'onOk'
 #         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.save()
-        self.GetParent().OnCloseFrame(event)
+        self.GetTopLevelParent().OnCloseFrame(event)
 #         self.GetParent().OnCloseFrame(event)
 #         print props['Book name']
     def save(self):
         props = self.pg.GetPropertyValues(inc_attributes=True)
-        self.setValuesToBookFromPropertyGrid(props)
+        book=self.setValuesToBookFromPropertyGrid(props)
+        book.id=self.currentBook.id
+        self.updateDataIntoDatabase(book)
     def onCancel(self, event):
         print 'onCancel'    
-        self.GetParent().OnCloseFrame(event)
+        self.GetTopLevelParent().OnCloseFrame(event)
     
     def onDownloadMetadata(self, event):
         print 'onDownloadMetadata'  
@@ -970,8 +973,10 @@ class BookPropertyPanel(wx.Panel):
         book.publishedOn = self.currentBook.publishedOn
         book.inLanguage = props['Language']
         ReadWriteJsonInfo().writeJsonToDir(self.currentBook.bookPath, book)
+        return book
         
-        
+    def updateDataIntoDatabase(self, book):
+        AddBook().addingBookInfoInDatabase(book)
         
     def onImageClick(self, event):
         """"""
