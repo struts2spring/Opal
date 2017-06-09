@@ -75,7 +75,6 @@ ID_search = wx.NewId()
 ID_editMetadata = wx.NewId()
 ID_cover_flow = wx.NewId()
 ID_FullCircle = wx.NewId()
-print '------other id --------', ID_otherWorkspace
 
 # Define File Drop Target class
 class FileDropTarget(wx.FileDropTarget):

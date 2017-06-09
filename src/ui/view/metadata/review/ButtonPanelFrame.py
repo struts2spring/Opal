@@ -1,7 +1,7 @@
-import wx
-import os
-import sys
+import wx, os, sys, logging
 
+
+logger = logging.getLogger('extensive')
 try:
     dirName = os.path.dirname(os.path.abspath(__file__))
 except:
@@ -30,7 +30,6 @@ ID_SelectionPen = wx.NewId()
 ID_SeparatorColour = wx.NewId()
 
 
-#----------------------------------------------------------------------
 
 class SettingsPanel(wx.MiniFrame):
 

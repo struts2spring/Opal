@@ -10,7 +10,9 @@ import wx
 import wx.richtext
 from src.logic.search_book import FindingBook
 from src.ui.view.bookinfo.BookDescriptionPanel import RichTextPanel
+import logging
 
+logger = logging.getLogger('extensive')
 
 class PropertyPhotoPanel(wx.Panel):
 

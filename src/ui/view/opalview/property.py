@@ -12,6 +12,9 @@ from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
+import logging
+
+logger = logging.getLogger('extensive')
 
 
 ############################################################################

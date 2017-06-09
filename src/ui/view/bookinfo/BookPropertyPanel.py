@@ -1,7 +1,9 @@
 from src.logic.search_book import FindingBook
 import wx
 from wx.lib.expando import ExpandoTextCtrl
+import logging
 
+logger = logging.getLogger('extensive')
 
 class Window(wx.App):
     def __init__(self, book=None):

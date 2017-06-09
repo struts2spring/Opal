@@ -2,7 +2,9 @@ import wx
 import os
 from src.logic.search_book import FindingBook
 import traceback
+import logging
 
+logger = logging.getLogger('extensive')
 
 class PropertyPhotoPanel(wx.Panel):
 
@@ -17,11 +19,11 @@ class PropertyPhotoPanel(wx.Panel):
         self.imagePath = imagePath
         
     def OnRightClick(self, event):
-        print("PropertyPhotoPanel.OnRightClick()\n")
+        logger.debug("OnRightClick")
         self.createMenu()
         
     def OnContextMenu(self, event):
-        print("OnContextMenu\n")
+        logger.debug("OnContextMenu\n")
 
         # only do this part the first time so the events are only bound once
         #
@@ -60,27 +62,27 @@ class PropertyPhotoPanel(wx.Panel):
         menu.Destroy()
         
     def downloadCover(self, event):
-        print 'downloadCover'
+        logger.debug('downloadCover')
     def generateCover(self, event):
-        print 'generateCover'
+        logger.debug('generateCover')
     def openBook(self, event):
-        print 'openBook'        
+        logger.debug('openBook')
         
     def OnCopyToClipboard(self, event):
-        print 'OnCopyToClipboard'
+        logger.debug('OnCopyToClipboard')
 
         d = wx.BitmapDataObject(self.bitmap)
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(d)
             wx.TheClipboard.Flush()
             wx.TheClipboard.Close()
-            print("Image copied to cliboard.\n")
+            logger.debug("Image copied to cliboard.\n")
         else:
-            print("Couldn't open clipboard!\n")  
+            logger.debug("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
         self.changeBitmapWorker()
-        print 'onsize'
+        logger.debug('OnSize')
 
     def OnPaint(self, evt):
         if self.bitmap != None:
@@ -101,16 +103,16 @@ class PropertyPhotoPanel(wx.Panel):
     #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
     #         imgFilePath="cat.bmp"
             if self.imagePath !=None:
-                print '---------->', self.GetSize()
+                logger.debug('size: %s', self.GetSize())
                 NewW, NewH = self.GetSize()
                 newSize = self.GetSize()
                 if  NewW > 0 and NewH > 0:
                     img = wx.Image(self.imagePath, wx.BITMAP_TYPE_ANY)
                     originalsize = (img.GetWidth(), img.GetHeight())
-                    print '-originalsize--------->', originalsize, originalsize[0] / float(originalsize[1])
+                    logger.debug( 'original size : %s', originalsize)
                     originalRatio = originalsize[0] / float(originalsize[1])
-                    print '-new--------->', min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1])
                     minWidthHeight = min(min(newSize[0], originalsize[0]), min(newSize[1], originalsize[1]))
+                    logger.debug('new size %s', minWidthHeight)
                     if minWidthHeight == min(newSize[0], originalsize[0]):
                         height = minWidthHeight / originalRatio
                         width = minWidthHeight
@@ -122,8 +124,9 @@ class PropertyPhotoPanel(wx.Panel):
     #                 img = img.Scale(NewW, NewH)
                     self.bitmap = wx.BitmapFromImage(img)
                     self.Refresh()
-        except:
-            traceback.print_exc()   
+        except Exception as e:
+            logger.error(e, exc_info=True)  
+            
 class ReviewFrame(wx.Frame):
     def __init__(self, parent, imagePath='/docs/github/Opal/src/viewer/cbr/ext/1/All Star Superman 001-000.jpg'):
         wx.Frame.__init__(self, parent, -1, title='Photo', size=(600, 400))

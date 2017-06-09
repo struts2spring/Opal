@@ -1,9 +1,11 @@
 
 import wx
 import wx.richtext as rt
-import images
 import os
 from StringIO import StringIO
+import logging
+
+logger = logging.getLogger('extensive')
 # import lxml
 # import lxml.html
 #----------------------------------------------------------------------

@@ -1,10 +1,13 @@
 import wx
 from wx.html import HtmlWindow
 import sys
+import logging
+
+logger = logging.getLogger('extensive')
+
 aboutText = """<p>Sorry, there is no information about this program. It is
 running on version %(wxpy)s of <b>wxPython</b> and %(python)s of <b>Python</b>.
 See <a href="http://wiki.wxpython.org">wxPython Wiki</a></p>"""
-
 class AboutBox(wx.Dialog):
     def __init__(self):
         wx.Dialog.__init__(self, None, -1, "About <<project>>",

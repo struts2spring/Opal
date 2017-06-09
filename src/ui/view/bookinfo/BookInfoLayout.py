@@ -14,11 +14,12 @@ import datetime
 from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 from src.ui.view.bookinfo.BookDescriptionPanel import RichTextPanel
-import ImagePath
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
+import logging
 
+logger = logging.getLogger('extensive')
 
 ############################################################################
 #
@@ -786,7 +787,7 @@ class BookPropertyPanel(wx.Panel):
         self.rt=RichTextPanel(self,book)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
-        print '-------------->', self.GetParent().GetSize()
+        logger.debug('size: %s', self.GetParent().GetSize())
         img1 = self.scale_bitmap()
         img = wx.EmptyImage(240, 240)
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))

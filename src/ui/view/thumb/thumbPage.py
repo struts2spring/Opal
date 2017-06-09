@@ -7,7 +7,9 @@ import wx.lib.agw.aui as aui
 from src.ui.view.thumb.ThumbCrtl import ThumbnailCtrl, NativeImageHandler
 from src.dao.BookDao import CreateDatabase
 from src.static.constant import Workspace
+import logging
 
+logger = logging.getLogger('extensive')
 
 class MainWindow(wx.Frame):
 

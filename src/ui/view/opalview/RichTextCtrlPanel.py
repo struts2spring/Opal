@@ -5,6 +5,9 @@ import images
 import os
 from StringIO import StringIO
 from src.logic.search_book import FindingBook
+import logging
+
+logger = logging.getLogger('extensive')
 # import lxml
 # import lxml.html
 #----------------------------------------------------------------------

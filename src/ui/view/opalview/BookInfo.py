@@ -12,6 +12,9 @@ import wx.html
 from PIL import Image
 from src.static.constant import Workspace
 import math
+import logging
+
+logger = logging.getLogger('extensive')
 
 class GenerateBookInfo():
 

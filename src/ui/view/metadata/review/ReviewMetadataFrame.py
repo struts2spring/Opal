@@ -17,6 +17,9 @@ from src.logic.ReadWriteJson import ReadWriteJsonInfo
 from src.dao.Author import Author
 import shutil
 import os
+import logging
+
+logger = logging.getLogger('extensive')
 
 class BookMetadata():
     

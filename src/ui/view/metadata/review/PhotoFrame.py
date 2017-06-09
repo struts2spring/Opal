@@ -2,7 +2,9 @@ import wx
 import os
 from src.logic.search_book import FindingBook
 import traceback
+import logging
 
+logger = logging.getLogger('extensive')
 
 class PropertyPhotoPanel(wx.Panel):
 

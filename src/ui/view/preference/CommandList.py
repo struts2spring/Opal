@@ -17,7 +17,9 @@ import  wx.lib.mixins.listctrl  as  listmix
 import  images
 from src.static.constant import Workspace
 import os
+import logging
 
+logger = logging.getLogger('extensive')
 #---------------------------------------------------------------------------
 
 musicdata = {

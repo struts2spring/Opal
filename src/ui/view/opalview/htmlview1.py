@@ -5,7 +5,9 @@ import  sys
 import  wx
 import  wx.html as  html
 import  wx.lib.wxpTag
+import logging
 
+logger = logging.getLogger('extensive')
 
 #----------------------------------------------------------------------
 

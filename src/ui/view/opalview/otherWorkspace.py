@@ -4,6 +4,9 @@ import wx.html
 import  wx.lib.filebrowsebutton as filebrowse
 from src.static.constant import Workspace
 from src.dao.BookDao import CreateDatabase
+import logging
+
+logger = logging.getLogger('extensive')
 #---------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------
