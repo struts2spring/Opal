@@ -38,9 +38,8 @@ class GenerateBookInfo():
             if l.endswith('.jpg') or l.endswith('jpeg'):
                 name = l
                 break
-        print book.bookPath, name
         filepath=os.path.join(path, 'noCover.png')
-        print 'GenerateBookInfo.getHtmlContent--->',filepath
+        logger.debug( 'file path: %s',filepath)
         if name!=None and book.bookName!=None: 
             filepath = os.path.join(book.bookPath, name)
             im = Image.open(filepath)

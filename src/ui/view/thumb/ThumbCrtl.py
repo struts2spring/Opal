@@ -12,6 +12,7 @@ from src.viewer.cbr.CbrMainFrame import CbrFrame
 from src.static.constant import Workspace
 
 import logging
+from sys import exc_info
 
 logger = logging.getLogger('extensive')
 """
@@ -124,7 +125,9 @@ import thread
 from math import pi
 import PIL.Image as Image
 from wx.lib.embeddedimage import PyEmbeddedImage
+import logging
 
+logger = logging.getLogger('extensive')
 #----------------------------------------------------------------------
 # Get Default Icon/Data
 #----------------------------------------------------------------------
@@ -2527,8 +2530,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-#         logger.info('thumbcrtl OnLeftMouseDown')
-        print 'thumbcrtl --- OnLeftMouseDown'
+        logger.info('thumbcrtl OnLeftMouseDown')
         
         x = event.GetX()
         y = event.GetY()
@@ -2584,22 +2586,22 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.ScrollToSelected()
             self.Refresh()
                                                                                   
-            print 'printing all selected', self._selectedarray
+            logger.debug( 'printing all selected: %s', self._selectedarray)
             if len(self._selectedarray) == 1:
                 # checking if it is not an internte searched book.
                 if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
                     name = self._items[self._selected].book.bookName
                     id = self._items[self._selected].book.id
-                    print 'updating info'
+                    logger.debug( 'updating info')
                     try:
                         page = GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
                         if sys.platform == 'win32':
                             self.GetTopLevelParent().browser.SetPage(page, "")
                         else:
                             self.GetTopLevelParent().browser.SetPage(page)
-                    except:
-                        traceback.print_exc()
-                    print 'selecting grid'
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
+                    logger.debug( 'selecting grid')
                     row = self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
                     self.GetTopLevelParent().grid.SelectRow(row=row)
                     self.GetTopLevelParent().grid.MakeCellVisible(row=row, col=1)
@@ -2615,7 +2617,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-#         logger.info('thumbcrtl OnMouseUp')
+        logger.info('thumbcrtl OnMouseUp')
         # get item number to select
         x = event.GetX()
         y = event.GetY()

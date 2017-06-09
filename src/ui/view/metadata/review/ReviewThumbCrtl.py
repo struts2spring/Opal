@@ -38,6 +38,7 @@ from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.PhotoFrame import PropertyPhotoPanel
 import logging
+from sys import exc_info
 
 logger = logging.getLogger('extensive')
 
@@ -151,7 +152,9 @@ import thread
 from math import pi
 import PIL.Image as Image
 from wx.lib.embeddedimage import PyEmbeddedImage
+import logging
 
+logger = logging.getLogger('extensive')
 #----------------------------------------------------------------------
 # Get Default Icon/Data
 #----------------------------------------------------------------------
@@ -2465,13 +2468,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Refresh()
             eventOut = ThumbnailEvent(wxEVT_THUMBNAILS_SEL_CHANGED, self.GetId())
             self.GetEventHandler().ProcessEvent(eventOut)
-            print 'printing all selected', self._selectedarray
+            logger.debug( 'printing all selected: %s', self._selectedarray)
             if len(self._selectedarray) == 1:
                 # checking if it is not an internte searched book.
                 if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
                     name = self._items[self._selected].book.bookName
                     id = self._items[self._selected].book.id
-                    print 'updating info'
+                    logger.debug( 'updating info')
                     try:
 #                         self.GetTopLevelParent().panel.rowDict
                         lefBookInfo = self.GetTopLevelParent().panel.currentBook
@@ -2493,8 +2496,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 #                             self.GetTopLevelParent().browser.SetPage(page,"")
 #                         else:
 #                             self.GetTopLevelParent().browser.SetPage(page)
-                    except:
-                        traceback.print_exc()
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
 #                     print 'selecting grid'
 #                     row=self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
 #                     self.GetTopLevelParent().grid.SelectRow(row=row)
