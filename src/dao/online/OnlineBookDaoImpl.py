@@ -10,6 +10,12 @@ from sqlalchemy.ext.declarative import  declarative_base
 from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func, \
     Column, Integer, String, Column, Integer, String
 
+import logging
+
+logger = logging.getLogger('extensive')
+
+
+
 Base = declarative_base()
 databaseFileName = '_opal_online.sqlite'
 onlineDatabaseUrl = 'sqlite:///' + Workspace().searchedPath + os.sep + databaseFileName
@@ -21,6 +27,7 @@ class OnlineDatabase():
         '''
         Creating database for library.
         '''
+        logger.debug('OnlineDatabase')
         self.engine = create_engine(onlineDatabaseUrl, echo=True)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = OnlineSingletonSession().session
@@ -31,28 +38,32 @@ class OnlineDatabase():
         
 
     def creatingDatabase(self):
+        logger.debug('creatingDatabase')
         os.chdir(Workspace().libraryPath)
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
 
     def addingData(self, listOfBook=None):
+        logger.debug('addingData')
         try:
             for b in listOfBook:
                 
                 book = OnlineBook()
                 book = self.copyBookProperty(b, book)
-                print 'source:', b
-                print 'destination:', book
+                logger.debug('source:', b)
+                logger.debug('destination:', book)
                 databaseBook = self.session.query(OnlineBook).filter(OnlineBook.isbn_13 == book.isbn_13).first()
                 if databaseBook is None:
                     self.session.add(book)
-        except:
+        except Exception as e:
             self.session.flush()
+            logger.error(e, exc_info=True)
             traceback.print_exc()
         self.session.commit()
 
     def copyBookProperty(self, source, destination):
+        logger.debug('copyBookProperty')
         for sKey, sValue in source.__dict__.iteritems():
             print sKey, sValue
             if sKey == 'rating':

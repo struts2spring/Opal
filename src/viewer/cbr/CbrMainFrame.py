@@ -1,13 +1,14 @@
 from wx.lib.agw import aui
 import wx.html
-from src.audit.singletonLoggerLogging import Logger
 from src.viewer.cbr.PhotoFrame import PropertyPhotoPanel
 from src.viewer.cbr.ThumbCrtl import ThumbnailCtrl, NativeImageHandler
 from src.viewer.cbr.imgUtil import ImageUtil
 from src.viewer.cbr.ExtractImage import Extractor
 import os
 
-logger = Logger('cbr')
+import logging
+
+logger = logging.getLogger('extensive')
 
 
 # -- SizeReportCtrl --

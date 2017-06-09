@@ -10,10 +10,10 @@ from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.ReviewMetadataFrame import ReviewFrame
 from src.viewer.cbr.CbrMainFrame import CbrFrame
 from src.static.constant import Workspace
-# from src.audit.singletonLoggerLogging import Logger
-# 
-# logger = Logger(__name__)
-# logger.info('thumb logger init')
+
+import logging
+
+logger = logging.getLogger('extensive')
 """
 Thumbnailctrl is a widget that can be used to display a series of images in
 a "thumbnail" format.
@@ -960,10 +960,11 @@ class ThumbnailCtrl(wx.Panel):
         self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
         self.storeValSequence = [0, 0]
     def setPagination(self, books):
+        logger.debug('setPagination total books count: %s',str(len(books)))
+
         isPaginationEnable=Workspace().preference['isPaginationEnable']
         if isPaginationEnable:
             recordPerPage=Workspace().preference['recordPerPage']
-            print("setPagination.total books count:"+str(len(books)))
             totalNoOfPages=len(books)/int(recordPerPage) +1
             pageCounter=[str(count+1) for count in range(totalNoOfPages)]
         for child in self._toolbar.GetChildren():
@@ -971,15 +972,14 @@ class ThumbnailCtrl(wx.Panel):
                 if isPaginationEnable:
                     child.SetItems(pageCounter)
                     child.SetSelection(0)
-                print('choice')
             elif type(child)==wx.StaticText:
                 if child.GetLabel()=='Page':
                     pass
                 else:
                     child.SetLabel(' of '+str(totalNoOfPages))
-                print('static text')
-            print(type(child))
+                    
     def OnSliderScroll(self, e):
+        logger.debug('OnSliderScroll')
         obj = e.GetEventObject()
         val = obj.GetValue()
 
@@ -987,25 +987,22 @@ class ThumbnailCtrl(wx.Panel):
         self.storeValSequence[1] = val
         
         if self.storeValSequence[1] - self.storeValSequence[0] > 0:
-            print '++'
             self.ZoomIn()
         elif self.storeValSequence[1] - self.storeValSequence[0] < 0:
-            print '--'
             self.ZoomOut()
         
-        print self.storeValSequence
+        logger.debug('self.storeValSequence %s',self.storeValSequence)
 
     def onFirst(self, event):
-        print 'onFirst'
+        logger.debug('onFirst')
         isPaginationEnable=Workspace().preference['isPaginationEnable']
         if isPaginationEnable:
             for child in self._toolbar.GetChildren():
                 if type(child)==wx._controls.Choice:
                         selection=child.GetSelection()
                         child.SetSelection(0)
-        pass
     def onBack(self, event):
-        print 'onBack'
+        logger.debug('onBack')
         isPaginationEnable=Workspace().preference['isPaginationEnable']
         if isPaginationEnable:
             for child in self._toolbar.GetChildren():
@@ -2477,8 +2474,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("delete book\n")
 
     def OnOpenFolderPath(self, event):
-        print ("OnOpenFolderPath \n")
-        print self._selected
+        logger.debug("OnOpenFolderPath %s",self._selected)
         if self._selected != None:
             book = self._items[self._selected].book
             print self._selected
@@ -2492,7 +2488,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("OnPopupThree \n")
 
     def showBookProperties(self, event):
-        print ("showBookProperties \n")
+        logger.debug("showBookProperties \n")
         if self._selected != None:
             book = self._items[self._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
@@ -2500,7 +2496,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         
 
     def OpenBook(self, event):
-        print self._selected
+        logger.debug( '_selected : %s',self._selected)
         if self._selected != None:
             book = self._items[self._selected].book
             print self._selected
@@ -2515,15 +2511,15 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 if book.bookFormat != None and  book.bookFormat.lower() != 'cbr':
                     try:
                         subprocess.call(["xdg-open", file])
-                    except:
-                        traceback.print_exc()
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
 #                         logger.info('unable to open file')
                 else:
                     frame = CbrFrame(None, book)
                     pass
             elif sys.platform == 'win32':
                 os.startfile(file)
-        print ("OpenBook \n")
+        logger.debug("OpenBook \n")
 
     def OnLeftMouseDown(self, event):
         """
@@ -2736,7 +2732,6 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-#         print '------------------------------------>OnMouseLeave'
         if self._pointed != -1:
 
             self._pointed = -1

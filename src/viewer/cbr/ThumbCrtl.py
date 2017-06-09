@@ -29,7 +29,10 @@
 #
 # End Of Comments
 # --------------------------------------------------------------------------- #
-from src.audit.singletonLoggerLogging import Logger
+
+import logging
+
+logger = logging.getLogger('extensive')
 
 
 """
@@ -172,7 +175,10 @@ from math import pi
 
 from wx.lib.embeddedimage import PyEmbeddedImage
 
-logger = Logger(__name__)
+
+import logging
+
+logger = logging.getLogger('extensive')
 #----------------------------------------------------------------------
 # Get Default Icon/Data
 #----------------------------------------------------------------------

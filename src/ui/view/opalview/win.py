@@ -8,6 +8,9 @@ __version__ = "1.0"
 
 
 # from PIL import Image
+import logging
+
+logger = logging.getLogger('extensive')
 import cStringIO
 import os
 import sys
@@ -25,18 +28,19 @@ from src.selenium_download.fullcircleMagazine import FullCircleMagazine
 from src.ui.view.preference.OpalPreferences import OpalPreference
 from src.static import OpalStartWorkspace
 from src.static.OpalStartWorkspace import OpalStart
+from sys import exc_info
 # from kivy.app import App
 # from kivy.uix.gridlayout import GridLayout
 # from kivy.uix.label import Label
 # from kivy.uix.textinput import TextInput
 try:
     from src.ui.view.kivy.main import PicturesApp
-except:
-    print 'error in loading kivy'
+except Exception as e:
+    logger.error(e , exc_info=True)
 try:
     from src.dao.BookDao import CreateDatabase
-except:
-    print 'creating database error.'
+except Exception as e:
+    logger.error(e , exc_info=True)
 from src.logic.AddingBook import AddBook
 from src.logic.search_book import FindingBook
 from src.static.constant import Workspace
@@ -49,20 +53,13 @@ from src.ui.view.opalview.SearchPanel import SearchPanel
 from src.ui.view.opalview.otherWorkspace import WorkspacePanel, WorkspaceFrame
 from src.ui.view.thumb.ThumbCrtl import NativeImageHandler, ThumbnailCtrl
 from src.ui.view.online.thumb.searchOnline import SearchFrame
-from src.audit.singletonLoggerLogging import Logger
-
-
 
 
 try:
     import wx.html2
-except:
-    print 'error'
-    
-    
-    
-logger = Logger(__name__)   
-logger.info('win logging init') 
+except Exception as e:
+    logger.error(e, exc_info=True)
+
 #----------------------------------------------------------------------
 global searchedBooks
 searchedBooks = list()
@@ -115,12 +112,12 @@ class FileDropTarget(wx.FileDropTarget):
 class MainFrame(wx.Frame):
 
     def __init__(self, parent):
+        
         title = "Opal"
         size = wx.DefaultSize
         style = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE | wx.SUNKEN_BORDER
 #         wx.Frame.__init__(self, parent, wx.ID_ANY, title, pos, size, style)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=title, style=style)
-        print '1----------------------->'
         image = wx.Image(os.path.join(Workspace().appPath, "images", "Library-icon.png"), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(image)
@@ -154,10 +151,8 @@ class MainFrame(wx.Frame):
         self._custom_tab_buttons = False
         self._pane_icons = False
         self._veto_tree = self._veto_text = False  
-        print '1----------------------->', os.getcwd()
+        logger.debug('MainFrame : %s', os.getcwd())
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        
-
 
         self.BuildPanes()
         self.CreateMenuBar()
@@ -497,7 +492,7 @@ class MainFrame(wx.Frame):
             
             if self.books:
                 noOfBooks = len(self.books)
-                print 'CreateGrid: noOfBooks:', noOfBooks
+                logger.debug('CreateGrid: noOfBooks: %s', noOfBooks)
                 for i in range(noOfBooks):
                     d = {}
                     
@@ -506,9 +501,8 @@ class MainFrame(wx.Frame):
             self.grid = MegaGrid(self, data, colnames)
             self.grid.bookId_rowNo_dict = bookId_rowNo_dict
             self.grid.Reset()
-        except:
-            print 'error in grid', traceback.print_exc()
-#         self.grid.books=self.books
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
         self.grid.SetDropTarget(self.fileDropTarget)
         return self.grid
@@ -527,13 +521,10 @@ class MainFrame(wx.Frame):
         return dicForBook
         
     def GetIntroText(self):
-
-
-
         return overview
 
     def onReLoadDatabaseToWorkspace(self, event):
-        print 'onReLoadDatabaseToWorkspace'
+        logger.debug('onReLoadDatabaseToWorkspace')
         self.reloadingDatabase()
         
     def reloadingDatabase(self):
@@ -543,11 +534,11 @@ class MainFrame(wx.Frame):
         self.searchCtrlPanel.doSearch(text)
 
     def onDeleteBookToWorkspace(self, event):
-        print 'onDeleteBookToWorkspace'
+        logger.debug( 'onDeleteBookToWorkspace')
         pass
     def onAddBookToWorkspace(self, event):
-        print 'onAddBookToWorkspace'
-        print ("CWD: %s\n" % os.getcwd())
+        logger.debug( 'onAddBookToWorkspace')
+        logger.debug( ("CWD: %s ",os.getcwd()))
 
         # Create the dialog. In this case the current directory is forced as the starting
         # directory for the dialog, and no default file name is forced. This can easilly
@@ -587,12 +578,13 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def onOtherWorkspace(self, event):
+        
         '''
         This method need to be called in following scenario.
         1. if there is no opal_start.json.
         2. if file present and no valid path.
         '''
-        print 'onOtherWorkspace'
+        logger.debug( 'onOtherWorkspace')
 #         panel = WorkspacePanel(self)
         win = WorkspaceFrame(self, -1, "Workspace Launcher", size=(470, 290), style=wx.DEFAULT_FRAME_STYLE)
         win.Show(True)

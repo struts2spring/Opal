@@ -13,7 +13,9 @@ import os
 import sys
 from src.logic.search_book import FindingBook
 import random
+import logging
 
+logger = logging.getLogger('extensive')
 
 
 #---------------------------------------------------------------------------
@@ -22,6 +24,7 @@ class MegaTable(gridlib.PyGridTableBase):
     """
     A custom wx.Grid Table using user supplied data
     """
+    logger.debug('MegaTable')
     def __init__(self, data, colnames, plugins):
         """data is a list of the form
         [(rowname, dictionary),
@@ -198,6 +201,7 @@ class MegaTable(gridlib.PyGridTableBase):
 
 class OpalGrid(wx.grid.Grid):
     def __init__(self, parent):
+        logger.debug('OpalGrid')
         wx.grid.Grid.__init__(self, parent, -1)
         self.books = list()
 #         self.grid = wx.grid.Grid(self)
@@ -206,13 +210,13 @@ class OpalGrid(wx.grid.Grid):
 
 
     def loadBooks(self):
-        print 'loadBooks'
+        logger.debug('loadBooks')
 #         self.books = list()
 #         self.books=FindingBook().findAllBooks()
         numOfRows = 0
         if self.books:
             numOfRows = len(self.books)
-            print 'numOfRows:', numOfRows
+            logger.debug('numOfRows: %s', numOfRows)
         self.CreateGrid(numOfRows, 10)
 
         # Enable Column moving
@@ -259,6 +263,7 @@ class OpalGrid(wx.grid.Grid):
         """
         Create and display a popup menu on right-click event
         """
+        logger.debug('showPopupMenu')
         self.rowSelected = event.Row
         if not hasattr(self, "popupID1"):
             self.popupID1 = wx.NewId()
@@ -308,6 +313,7 @@ class OpalGrid(wx.grid.Grid):
 
         # Event method called when a column move needs to take place
     def OnColMove(self,evt):
+        logger.debug('OnColMove')
         frm = evt.GetMoveColumn()       # Column being moved
         to = evt.GetBeforeColumn()      # Before which column to insert
 
@@ -346,7 +352,7 @@ class OpalGrid(wx.grid.Grid):
             grid.EndBatch()
 
     def OnPopupOne(self, event):
-#         logger.info("Popup one\n")
+        logger.debug('OnPopupOne')
         tabTitle = self.Parent.grid.GetCellValue(self.rowSelected, 0)
         path = self.Parent.grid.GetCellValue(self.rowSelected, 6)
         listOfDirPath = [ name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
@@ -391,7 +397,7 @@ class OpalGrid(wx.grid.Grid):
 #         self.Parent.Parent.AddPage(self.tabTwo, tabTitle)
 
     def OpenBook(self, event):
-#         logger.info("OpenBook\n")
+        logger.info("OpenBook\n")
         print self.rowSelected
 #         self.grid=self.mainBookTab.tabOne.grid
         print 'directory_name:', self.directory_name
@@ -402,7 +408,7 @@ class OpalGrid(wx.grid.Grid):
 
     def OnOpen(self, event):
 
-#         logger.info("Popup two\n")
+        logger.info("OnOpen")
         if sys.platform == 'win32':
             pass
 #         import _winreg

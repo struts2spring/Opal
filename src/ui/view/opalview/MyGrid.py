@@ -11,7 +11,9 @@ import sys
 import subprocess
 import traceback
 from src.static.constant import Workspace
+import logging
 
+logger = logging.getLogger('extensive')
 #---------------------------------------------------------------------------
 
 class MegaTable(Grid.PyGridTableBase):
@@ -53,13 +55,14 @@ class MegaTable(Grid.PyGridTableBase):
         value = None
         try:
             value = str(self.data[row][1].get(self.GetColLabelValue(col), ""))
-        except:
+        except Exception as e:
+            logger.error(e, exc_info=True)
             try:
                 value=self.data[row][1].get(self.GetColLabelValue(col), "").encode('utf-8')
-            except:
+            except Exception as ee:
+                logger.error(ee, exc_info=True)
                 pass
             pass
-#             print '------------------------------------------------>',self.data[row][1]
         if 'authors' == self.GetColLabelValue(col):
             authorsName=list()
             for a in self.data[row][1].get(self.GetColLabelValue(col), ""):
@@ -507,11 +510,10 @@ class MegaGrid(Grid.Grid):
         print ("delete Book\n")
 
     def OnOpenFolderPath(self, event):
-        print ("OnOpenFolderPath \n")
+        logger.debug("OnOpenFolderPath \n")
         print self.rowSelected
         if self.rowSelected != None:
             book = self._table.data[self.rowSelected][1]
-            print self.rowSelected
             file = book['bookPath']
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", file])
@@ -541,7 +543,7 @@ class MegaGrid(Grid.Grid):
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':
             os.startfile(file)
-        print ("OpenBook \n")
+        logger.debug("OpenBook \n")
 
 class MegaFontRendererFactory:
     def __init__(self, color, font, fontsize):

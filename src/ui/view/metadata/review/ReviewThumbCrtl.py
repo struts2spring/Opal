@@ -37,7 +37,9 @@ from src.logic import search_book
 from src.logic.search_book import FindingBook
 from src.ui.view.opalview.property import BookPropertyFrame
 from src.ui.view.metadata.review.PhotoFrame import PropertyPhotoPanel
+import logging
 
+logger = logging.getLogger('extensive')
 
 """
 Thumbnailctrl is a widget that can be used to display a series of images in
@@ -2359,7 +2361,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         print ("delete book\n")
 
     def OnOpenFolderPath(self, event):
-        print ("OnOpenFolderPath \n")
+        logger.debug("OnOpenFolderPath \n")
         print self._selected
         if self._selected != None:
             book = self._items[self._selected].book
@@ -2626,7 +2628,6 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-#         print '------------------------------------>OnMouseLeave'
         if self._pointed != -1:
 
             self._pointed = -1

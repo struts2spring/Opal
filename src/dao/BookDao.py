@@ -22,14 +22,10 @@ from src.static.constant import Workspace
 import datetime
 from src.static.SessionUtil import SingletonSession
 
-from src.audit.singletonLoggerLogging import Logger
+import logging
+from sys import exc_info
 
-logger = Logger(__name__)
-logger.info('BookDao logger init')
-#  def getSession(self):
-logger.info('getcwd-->' + os.getcwd())
-logger.info('os.name-->' + os.name)
-logger.info('sys.platform-->' + sys.platform)
+logger = logging.getLogger('extensive')
 
 if os.path.exists(Workspace().libraryPath):
     os.chdir(Workspace().libraryPath)
@@ -42,6 +38,7 @@ class CreateDatabase():
         '''
         Creating database for library.
         '''
+        logger.debug('CreateDatabase')
         self.engine = create_engine('sqlite:///' + Workspace().libraryPath + os.sep + '_opal.sqlite', echo=False)
         Session = sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
         self.session = SingletonSession().session
@@ -52,6 +49,7 @@ class CreateDatabase():
         
 
     def creatingDatabase(self):
+        logger.debug('creatingDatabase')
         os.chdir(Workspace().libraryPath)
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
@@ -60,6 +58,7 @@ class CreateDatabase():
         '''
         Using this method you can update single book info into database.
         '''
+        logger.debug('addSingleBookData')
         try:
             single = {}
             duplicate = {}
@@ -81,13 +80,13 @@ class CreateDatabase():
             if addDatabase:
                 self.session.add(book)
             self.session.commit()
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
             self.session.rollback();
             
             
     def addingData(self):
-
+        logger.debug('addingData')
         directory_name = Workspace().libraryPath
         os.chdir(directory_name)
         listOfDir = list()
@@ -120,19 +119,18 @@ class CreateDatabase():
                         duplicate[book.isbn_13] = book
                         addDatabase = False
                         self.duplicateBooks.append(duplicate)
-#                 print single
                 if addDatabase:
                     self.session.add(book)
             self.session.commit()
-            print self.duplicateBooks
+            logger.debug('duplicateBooks: %s',self.duplicateBooks)
     
-        except:
-#             print duplicate
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
             self.session.rollback();
-        print 'data loaded'
+        logger.debug('data loaded') 
     
     def createBookFromJson(self, bookJson=None):
+        logger.debug('createBookFromJson') 
         book = Book()
         for k in bookJson:
             if not isinstance(bookJson[k], list):
@@ -153,6 +151,7 @@ class CreateDatabase():
         return book
     
     def readJsonFile(self, dirName=None):
+        logger.debug('readJsonFile') 
 #         print 'readJsonFile----->', os.path.join(Workspace().libraryPath, dirName , 'book.json')
         try:
             if os.path.exists(os.path.join(Workspace().libraryPath, dirName , 'book.json')):
@@ -160,8 +159,8 @@ class CreateDatabase():
             else:
                 os.removedirs(os.path.join(Workspace().libraryPath, dirName)) 
         except Exception as e:
-            print e
-            print os.path.join(Workspace().libraryPath, dirName)
+            logger.debug(os.path.join(Workspace().libraryPath, dirName))
+            logger.error(e, exc_info=True)
             
             
         
@@ -172,12 +171,13 @@ class CreateDatabase():
         b = None
         try:
             b = json.loads(rep)
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
 #             print rep
         return b
 
     def saveAuthorBookLink(self, authorBookLink):
+        logger.debug('saveAuthorBookLink') 
         self.session.add(authorBookLink)
         self.session.commit()
 
@@ -185,25 +185,27 @@ class CreateDatabase():
         self.session.add(book)
         try:
             self.session.commit()
-        except:
+        except Exception as e:
+            logger.error(e, exc_info=True)
             self.session.rollback()
             raise
 
     def countAllBooks(self):
+        logger.debug('countAllBooks')
         bookCount = 0
         try:
             bookCount = self.session.query(Book).count()
-        except:
-            pass
+        except Exception as e:
+            logger.error(e, exc_info=True)
         return bookCount
     
     def findAllBook(self, pageSize=None):
-#         bs = self.session.query(Book).all()
+        logger.debug('findAllBook pageSize: %s',pageSize)
         bs = self.pagination(pageSize, 0)
-        print 'completed'
         return bs
     
     def pagination(self, limit, offset):
+        logger.debug('pagination limit : %s , offset: %s', limit, offset)
         if limit:
             query = self.session.query(Book).limit(limit).offset(offset)
         else:
@@ -211,21 +213,21 @@ class CreateDatabase():
         bs = None
         try:    
             bs = query.all()
-        except:
-            pass
-        print 'completed'
+        except Exception as e:
+            logger.error(e, exc_info=True)
         return bs
     
     def findBookByIsbn(self, isbn_13):
+        logger.debug('findBookByIsbn : %s',isbn_13)
         bs = self.session.query(Book).filter(Book.isbn_13 == isbn_13).first()
         return bs
     def findBookByNextMaxId(self, bookId):
+        logger.debug('findBookByNextMaxId bookId: %s',bookId)
         bs = self.session.query(Book).filter(Book.id > bookId).order_by(Book.id.asc()).first()
-        print 'completed'
         return bs
     def findBookByPreviousMaxId(self, bookId):           
+        logger.debug('findBookByPreviousMaxId bookId: %s',bookId)
         bs = self.session.query(Book).filter(Book.id < bookId).order_by(Book.id.desc()).first()
-        print 'completed'
         return bs      
       
     def removeBook(self, book=None):

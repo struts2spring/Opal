@@ -1,14 +1,16 @@
 
-
 import wx
 import wx.lib.agw.genericmessagedialog as GMD
 from src.logic.search_book import FindingBook
 import os
+import logging
+
+logger = logging.getLogger('extensive')
 try:
 	from kivy.logger import Logger
 	from src.ui.view.kivy.main import PicturesApp, Picture
 except Exception as e:
-	print 'kivi not install'
+    logger.error(e, exc_info=True)
 from random import randint
 
 # from seleniumx.calling_db import DAO

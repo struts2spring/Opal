@@ -2,11 +2,12 @@ import os
 import subprocess
 import sys
 from src.ui.view.epub.opal_epub_worker import EpubBook
-from src.audit.singletonLoggerLogging import Logger
 import traceback
 import rarfile
 
-logger = Logger(__name__)
+import logging
+
+logger = logging.getLogger('extensive')
 
 class BookImage():
 

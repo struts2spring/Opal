@@ -5,12 +5,13 @@ from src.ui.view.preference.images import catalog, WXPdemo
 from wx.lib.mixins.treemixin import ExpansionState
 from wx import TreeCtrl
 from src.ui.view.preference.General import GeneralPreferencePanel
-from src.audit.singletonLoggerLogging import Logger
+
 from src.ui.view.preference.PreferencePanel import PreferencePanel,\
     WorkspacePanel, SearchPanel, AppearancePanel, KeysPanel
 
-logger = Logger(__name__)
-logger.info('Opal preferences logger init')
+import logging
+
+logger = logging.getLogger('extensive')
 
 _demoPngs = ["overview", "recent", "frame", "dialog", "moredialog", "core",
      "book", "customcontrol", "morecontrols", "layout", "process",
