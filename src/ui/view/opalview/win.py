@@ -94,14 +94,13 @@ class FileDropTarget(wx.FileDropTarget):
         logger.debug('OnDropFiles')
 #         self.obj.SetInsertionPointEnd()
         # append a list of the file names dropped
-        logger.debug ("%d file(s) dropped at %d, %d:\n" ,(len(filenames), x, y))
+        logger.debug ("%d file(s) dropped at %d, %d:\n" , (len(filenames), x, y))
         for file in filenames:
             self.selectedFilePath = file
-            print ('           %s\n' % file)
+            logger.debug ('file: %s' , file)
             if file:
                 AddBook().addingBookToWorkspace(file)
-            print self
-        logger.debug( 'drop book completed.')
+        logger.debug('drop book completed.')
         text = self.obj.searchCtrlPanel.searchCtrl.GetValue()
         self.obj.searchCtrlPanel.doSearch(text)
 #         self.obj.WriteText('\n')
@@ -311,19 +310,19 @@ class MainFrame(wx.Frame):
         isDatabase = False
         for sName in listOfDir:
             if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().libraryPath + os.sep + '_opal.sqlite').st_size != 0):
-                logger.debug( sName)
+                logger.debug(sName)
                 isDatabase = True
         if not  isDatabase:
             self.createDatabase .addingData()
      
     def onEditMetadata(self, event):
-        logger.debug( 'onEditMetadata')
+        logger.debug('onEditMetadata')
         if self.thumbnail._scrolled._selected != None:
             book = self.thumbnail._scrolled._items[self.thumbnail._scrolled._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
             frame = BookPropertyFrame(None, book)
     def onSearch(self, event):
-        logger.debug( 'onSearch')
+        logger.debug('onSearch')
         frame = SearchFrame(parent=None)
         
     def OnClose(self, event):
@@ -358,7 +357,7 @@ class MainFrame(wx.Frame):
         self._mgr.LoadPerspective(self.perspective_default)
         
     def OnFullCircle(self, event):
-        logger.debug( 'OnFullCircle')
+        logger.debug('OnFullCircle')
         fullCircleMagazine = FullCircleMagazine()
         fullCircleMagazine.startDownload()
         
@@ -369,7 +368,7 @@ class MainFrame(wx.Frame):
 #             MyApp().run()
         except Exception as e:
             logger.error(e, exc_info=True)
-            print "Error: unable to start thread"
+            logger.error("Error: unable to start thread")
 #         exit_code = call("python3 2.py", shell=True)
 #         exit_code = subprocess.call("python3 2.py", shell=False)
 #         cmd = "python3 2.py"
@@ -422,7 +421,7 @@ class MainFrame(wx.Frame):
     def OnPaneClose(self, event):
         logger.debug('OnPaneClose')
         caption = event.GetPane().caption
-        print caption
+        logger.error('caption: %s', caption)
 
         if caption in ["Tree Pane", "Dock Manager Settings", "Fixed Pane"]:
             msg = "Are You Sure You Want To Close This Pane?"
@@ -453,8 +452,8 @@ class MainFrame(wx.Frame):
         try:
             self.thumbnail.ShowDir(self.books)
             self.thumbnail.setPagination(self.books)
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
         return self.thumbnail
 
     def CreateTextCtrl(self):
@@ -489,7 +488,7 @@ class MainFrame(wx.Frame):
             opalStart = OpalStart()
             jsonFileStr = opalStart.readWorkspace()
             startObject = opalStart.jsonToObject(jsonFileStr)
-            print startObject.workspace[0]['Preference']['recordPerPage']
+            logger.debug('recordPerPage: %s', startObject.workspace[0]['Preference']['recordPerPage'])
             recordPerPage = startObject.workspace[0]['Preference']['recordPerPage']
             
             self.books = FindingBook().findAllBooks(pageSize=recordPerPage)
@@ -569,17 +568,17 @@ class MainFrame(wx.Frame):
             # This returns a Python list of files that were selected.
             paths = dlg.GetPaths()
 
-            print ('You selected %d files:' % len(paths))
+            logger.debug ('You selected %d files:' , len(paths))
 
             for path in paths:
                 self.selectedFilePath = path
-                print ('           %s\n' % path)
+                logger.debug ('path:%s' , path)
                 AddBook().addingBookToWorkspace(path)
                 text = self.searchCtrlPanel.searchCtrl.GetValue()
                 self.searchCtrlPanel.doSearch(text)
 
         # Compare this with the debug above; did we change working dirs?
-        print ("CWD: %s\n" % os.getcwd())
+        logger.debug ("CWD: %s" , os.getcwd())
 
         # Destroy the dialog. Don't do this until you are done with it!
         # BAD things can happen otherwise!

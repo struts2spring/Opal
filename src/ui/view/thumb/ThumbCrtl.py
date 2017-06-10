@@ -1028,11 +1028,11 @@ class ThumbnailCtrl(wx.Panel):
 #         self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
         pass
     def onChoice(self, event):
-        print 'onChoice'
-        print event.GetString()
+        logger.debug( 'onChoice: %s',event.GetString())
         pass
+
     def onForword(self, event):
-        print 'onForword'
+        logger.debug( 'onForword')
         isPaginationEnable=Workspace().preference['isPaginationEnable']
         if isPaginationEnable:
             for child in self._toolbar.GetChildren():
@@ -1050,12 +1050,12 @@ class ThumbnailCtrl(wx.Panel):
                     else:
                         pass
 #                         child.SetLabel(' of '+str(totalNoOfPages))
-                    print('static text')
-                print(type(child))
+                    logger.debug('static text')
+                logger.debug(type(child))
 #         self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
         pass
     def onLast(self, event):
-        print 'onLast'
+        logger.debug( 'onLast')
         isPaginationEnable=Workspace().preference['isPaginationEnable']
         if isPaginationEnable:
             for child in self._toolbar.GetChildren():
@@ -1583,8 +1583,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             fileList = [os.path.normcase(f) for f in os.listdir(directory)]
             fileList = [f for f in fileList \
                         if os.path.splitext(f)[1] in fileExtList]
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
         return fileList
 
 
@@ -2358,7 +2358,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
     def OnRightMouseDown(self, event):
         logger.debug( 'OnRightMouseDown')
 
-        logger.debug( ' previous printing all _selected: %s', self._selected)
+        logger.debug( 'previous printing all _selected: %s', self._selected)
         logger.debug( 'printing all _selectedarray: %s', self._selectedarray)
         x = event.GetX()
         y = event.GetY()
@@ -2376,7 +2376,8 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
             try:
                 page = GenerateBookInfo().getHtmlContent(self._items[self._selected].book)
-            except:
+            except Exception as e:
+                logger.error(e, exc_info=True)
                 traceback.print_exc()
             self.popupID1 = wx.NewId()
             self.popupID2 = wx.NewId()
@@ -2470,10 +2471,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 FindingBook().deleteBook(book)
                 text = self.GetTopLevelParent().searchCtrlPanel.searchCtrl.GetValue()
                 self.GetTopLevelParent().searchCtrlPanel.doSearch(text)
-            except :
-                
-                traceback.print_exc()
-                print selectedBookIndex, len(self._items)
+            except Exception as e :
+                logger.error(e, exc_info=True)
+                logger.error('selectedBookIndex: %s, len: %s', selectedBookIndex, len(self._items))
         logger.debug("delete book\n")
 
     def OnOpenFolderPath(self, event):
@@ -2488,7 +2488,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             os.startfile(file)
 
     def OnPopupThree(self, event):
-        print ("OnPopupThree \n")
+        logger.debug("OnPopupThree \n")
 
     def showBookProperties(self, event):
         logger.debug("showBookProperties \n")

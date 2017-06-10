@@ -266,8 +266,8 @@ class CreateDatabase():
 #                     shutil.rmtree(path)
 #                     print 'deleting path'
                 isBookDeleted = True
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
             self.session.flush()
             self.session.close()
             isBookDeleted = False
@@ -279,36 +279,41 @@ class CreateDatabase():
         '''
         This method provide search of book name IGNORECASE .
         '''
+        logger.debug('findByBookName')
         try:
             if bookName:
                 query = self.session.query(Book).filter(func.lower(Book.bookName) == func.lower(bookName)).order_by(Book.id.desc())
                 books = query.all()
                 return books
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
             
     def findBySimlarBookName(self, bookName=None):
         '''
         This method provide search of book name IGNORECASE and similar result like.
         '''
+        logger.debug('findBySimlarBookName bookName: %s',bookName)
         try:
             if bookName:
                 query = self.session.query(Book).filter(Book.bookName.ilike('%' + bookName + '%')).order_by(Book.id.desc())
                 books = query.all()
                 return books
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
     def findByIsbn_13Name(self, isbn_13=None):
+        logger.debug('findBySimlarBookName isbn_13: %s',isbn_13)
         if isbn_13:
             query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
             books = query.all()
             return books
 
     def findDuplicateBook(self):
+        logger.debug('findDuplicateBook ')
         books = self.session.query(Book).group_by(Book.isbn_13).having(func.count(Book.isbn_13) > 1).order_by(Book.isbn_13.desc())
         return books
     
     def findBookByFileName(self, bookFileName):
+        logger.debug('findBySimlarBookName bookFileName: %s',bookFileName)
         if bookFileName:
             query = self.session.query(Book).filter(Book.bookFileName.ilike('%' + bookFileName + '%'))
             books = query.all()
@@ -320,6 +325,7 @@ class CreateDatabase():
         This method will find the book in database . It will return true.If book present.
 
         '''
+        logger.debug('findBook')
         books = None
         if book.isbn_13:
             query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + book.isbn_13 + '%'))
@@ -337,13 +343,13 @@ class CreateDatabase():
         books = None
 #         maxBookId = self.session.query(func.max(Book.id)).one()
         length = len(Workspace().libraryPath) + 2
-        print length
+        logger.debug('length: %s', length)
         sql = 'select max(substr(book_path,' + str(length) + '), id) from book order by id desc'
-        print 'getMaxBookID----sql: > ', sql
+        logger.debug('getMaxBookID sql: %s ', sql)
         maxBookId = self.session.execute(sql).first()
         if maxBookId == None:
             maxBookId = [0]
-        print int(maxBookId[0])
+        logger.debug('maxBookId: %s', int(maxBookId[0]))
         return int(maxBookId[0])
 
 if __name__ == '__main__':
@@ -360,7 +366,7 @@ if __name__ == '__main__':
 #         createdb.addingData()
         x = createdb.getMaxBookID()
         page = createdb.paginatiion(10, 10)
-        print page
+        logger.debug( page)
 #         createdb.findAllBook()
     except:
         print traceback.print_exc()

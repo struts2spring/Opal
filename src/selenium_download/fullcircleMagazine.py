@@ -3,6 +3,10 @@ Created on 14-Aug-2016
 
 @author: vijay
 '''
+import logging
+from sys import exc_info
+
+logger = logging.getLogger('extensive')
 import os
 import requests
 import json
@@ -10,10 +14,10 @@ import traceback
 import datetime
 from src.static.constant import Workspace
 from src.dao.BookDao import CreateDatabase
-from bs4 import BeautifulSoup
-import logging
-
-logger = logging.getLogger('extensive')
+try:
+    from bs4 import BeautifulSoup
+except Exception as e:
+    logger.error(e, exc_info=True)
 
 class Book(json.JSONEncoder):
     def __init__(self, name=None, publisher=None, authors=None, isbn_13=None, datePublished=None, numberOfPages=None,

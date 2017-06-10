@@ -3,17 +3,23 @@ Created on 17-Apr-2016
 
 @author: vijay
 '''
+import logging
+
+logger = logging.getLogger('extensive')
 import requests
 import os
 import urllib2
 from src.metadata.book import Book, VolumeInfo
-from bs4 import BeautifulSoup
+
 import uuid
 import traceback
 from src.static.constant import Workspace
 from src.logic.online.OnlineBookLogic import OnlineBookInfoLogic
 import random
-
+try:
+    from bs4 import BeautifulSoup
+except Exception as e:
+    logger.error(e, exc_info=True)
 class DownloadMetadataInfo():
     '''
     This class will download metadata from different web url.

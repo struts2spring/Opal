@@ -1080,14 +1080,14 @@ class BookPropertyPanel(wx.Panel):
     def OnPropGridChange(self, event):
         p = event.GetProperty()
         if p:
-            logger.debug('%s changed to "%s"\n' , p.GetName(), p.GetValueAsString())
+            logger.debug('%s changed to %s ', p.GetName(), p.GetValueAsString())
 
     def OnPropGridSelect(self, event):
         p = event.GetProperty()
         if p:
-            logger.debug('%s selected\n' ,event.GetProperty().GetName())
+            logger.debug('%s selected' ,event.GetProperty().GetName())
         else:
-            logger.debug('Nothing selected\n')
+            logger.debug('Nothing selected')
 
     def OnDeleteProperty(self, event):
         p = self.pg.GetSelectedProperty()
@@ -1175,26 +1175,26 @@ class BookPropertyPanel(wx.Panel):
     def OnPropGridRightClick(self, event):
         p = event.GetProperty()
         if p:
-            print('%s right clicked\n' % (event.GetProperty().GetName()))
+            logger.debug('%s right clicked' , event.GetProperty().GetName())
         else:
-            print('Nothing right clicked\n')
+            logger.debug('Nothing right clicked\n')
 
     def OnPropGridPageChange(self, event):
         index = self.pg.GetSelectedPage()
-        print('Page Changed to \'%s\'\n' % (self.pg.GetPageName(index)))
+        logger.debug('Page Changed to :%s' ,self.pg.GetPageName(index))
 
     def RunTests(self, event):
         pg = self.pg
         log = self.log
 
         # Validate client data
-        print('Testing client data set/get')
+        logger.debug('Testing client data set/get')
         pg.SetPropertyClientData("Bool", 1234)
         if pg.GetPropertyClientData("Bool") != 1234:
             raise ValueError("Set/GetPropertyClientData() failed")
 
         # Test setting unicode string
-        print('Testing setting an unicode string value')
+        logger.debug('Testing setting an unicode string value')
         pg.GetPropertyByName("String").SetValue(u"Some Unicode Text")
 
         #
@@ -1210,13 +1210,13 @@ class BookPropertyPanel(wx.Panel):
             logger.error(e, exc_info=True)
 
         # GetPyIterator
-        print('GetPage(0).GetPyIterator()\n')
+        logger.debug('GetPage(0).GetPyIterator()')
         it = pg.GetPage(0).GetPyIterator(wxpg.PG_ITERATE_ALL)
         for prop in it:
-            print('Iterating \'%s\'\n' % (prop.GetName()))
+            logger.debug('Iterating: %s' , prop.GetName())
 
         # VIterator
-        print('GetPyVIterator()\n')
+        logger.debug('GetPyVIterator()')
         it = pg.GetPyVIterator(wxpg.PG_ITERATE_ALL)
         for prop in it:
             print('Iterating \'%s\'\n' % (prop.GetName()))
@@ -1228,7 +1228,7 @@ class BookPropertyPanel(wx.Panel):
             print('Iterating \'%s\'\n' % (prop.GetName()))
 
         # Items
-        print('GetPage(0).Items\n')
+        logger.debug('GetPage(0).Items')
         it = pg.GetPage(0).Items
         for prop in it:
             print('Iterating \'%s\'\n' % (prop.GetName()))

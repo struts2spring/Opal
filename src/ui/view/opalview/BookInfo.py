@@ -5,7 +5,7 @@ Created on 12-Dec-2015
 '''
 
 from yattag import Doc
-from bs4 import BeautifulSoup
+
 from src.logic.search_book import FindingBook
 import os
 import wx.html
@@ -15,7 +15,10 @@ import math
 import logging
 
 logger = logging.getLogger('extensive')
-
+try:
+    from bs4 import BeautifulSoup
+except Exception as e:
+    logger.error(e, exc_info=True)
 class GenerateBookInfo():
 
     def getHtmlContent(self, book=None):

@@ -20,7 +20,9 @@ from src.util.remove import Util
 import traceback
 from src.ui.view.epub.opal_epub_worker import EpubBook
 import uuid
+import logging
 
+logger = logging.getLogger('extensive')
 
 class AddBook():
     '''
@@ -102,9 +104,10 @@ class AddBook():
         2. check for isbn.
         
         '''
+        logger.debug('findingSameBook')
         isSameBookPresent = False
         books = self.createDatabase.findBookByFileName(self.book.bookFileName)
-        print 'findingSameBook--->', len(books)
+        logger.debug('len(books): %s', len(books))
         if len(books) > 0:
             isSameBookPresent = True
         return isSameBookPresent
@@ -114,15 +117,14 @@ class AddBook():
         '''
         This method will add new book info in database.
         '''
+        logger.debug('addingBookInfoInDatabase')
         self.createDatabase.saveBook(book)
-
-
-
 
     def writeBookJson(self, newDirPath=None, book=None):
         '''
         This function will write book.json (metadata) of the newly added book in workspace.
         '''
+        logger.debug('writeBookJson newDirPath: %s', newDirPath)
         f = open(os.path.join(newDirPath , 'book.json'), 'w')
         row2dict = book.__dict__
         authors = []
@@ -157,6 +159,7 @@ class AddBook():
         f.close()
 
     def getEpubMetadata(self, path=None):
+        logger.debug('getEpubMetadata')
         os.chdir(self.book.bookPath)
         file_name = self.book.bookName + '.epub'
         epubBook = EpubBook()
@@ -181,28 +184,27 @@ class AddBook():
         '''
         This method will get the pdf metadata and return book object.
         '''
-
-        print path
+        logger.debug('getPdfMetadata path: %s', path)
 
         if path:
             try:
                 input = PdfFileReader(open(path, "rb"))
-                print 'getPdfMetadata', input.getIsEncrypted()
-            except:
-                pass
+                logger.debug('getIsEncrypted : %s ', input.getIsEncrypted())
+            except Exception as e:
+                logger.error(e, exc_info=True)
             pdf_info = None
             try:
                 pdf_toread = PdfFileReader(open(path, "rb"))
                 if pdf_toread.isEncrypted:
                     try:
                         pdf_toread.decrypt('')
-                    except:
-                        traceback.print_exc()
-            except:
-                pass
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
+            except Exception as e:
+                logger.error(e, exc_info=True)
             try:
                 pdf_info = pdf_toread.getDocumentInfo()
-                print 'Pages:', pdf_toread.getNumPages()
+                logger.debug('NumPages:%s', pdf_toread.getNumPages())
                 self.book.numberOfPages = pdf_toread.getNumPages()
                 #             value = pdf_info.subject
                 if type(pdf_info.subject) == str:
@@ -219,29 +221,29 @@ class AddBook():
                     self.book.tag = value
                 else:
                     self.book.tag = self.book.tag + '' + value
-            except:
-                traceback.print_exc()
+            except Exception as e:
+                logger.error(e, exc_info=True)
             try:
                 if pdf_info.title != None and pdf_info.title.strip() != '':
                     self.book.bookName = str(pdf_info.title)
-            except:
-                print 'unable to set bookName', traceback.print_exc()
+            except Exception as e:
+                logger.error(e, exc_info=True)
             
             try:
                 if pdf_info.creator:
                     self.book.publisher = str(pdf_info.creator.encode('utf-8'))
-            except:
-                pass
+            except Exception as e:
+                logger.error(e, exc_info=True)
             self.book.createdOn = datetime.now()
             try:
                 print str(pdf_info['/CreationDate'])[2:10]
                 date = datetime.strptime(str(pdf_info['/CreationDate'])[2:10] , '%Y%m%d')
                 self.book.publishedOn = date
-            except:
-                print 'CreationDate not found'
+            except Exception as e:
+                logger.error(e, exc_info=True)
+                logger.error('CreationDate not found')
             
-            print path
-            print Util().convert_bytes(os.path.getsize(path))
+            logger.debug( Util().convert_bytes(os.path.getsize(path)))
             self.book.fileSize = Util().convert_bytes(os.path.getsize(path))
             
 
@@ -253,11 +255,11 @@ class AddBook():
             author = Author()
             val = 'Unknown'
             try:
-                if pdf_info.author !=None and pdf_info.author.strip()!='':
+                if pdf_info.author != None and pdf_info.author.strip() != '':
                     val = pdf_info.author
                     val = val.encode("utf8", "ignore")
-            except:
-                pass
+            except Exception as e:
+                logger.error(e, exc_info=True)
             author.authorName = val
             
 

@@ -27,7 +27,7 @@ setup(
 #     	'Kivy==1.9.0',
     	'Pillow',
     	'yattag==1.5.3',
-    	'beautifulsoup4==4.4.1',
+    	'beautifulsoup4>=4.6.0',
         'PyPDF2',
         'lxml',
 	    'rarfile',

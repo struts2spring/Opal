@@ -4,6 +4,7 @@ import wx.lib.agw.genericmessagedialog as GMD
 from src.logic.search_book import FindingBook
 import os
 import logging
+from sys import exc_info
 
 logger = logging.getLogger('extensive')
 try:
@@ -63,7 +64,7 @@ class SearchPanel(wx.Panel):
 
         self.vertical.Add(searchCaption, 0, wx.EXPAND | wx.ALL, 5)
         self.vertical.Add(self.cb, 0, wx.EXPAND | wx.ALL, 5)
-        self.horizental.Add(self.searchCtrl,proportion=3, flag=wx.CENTER)
+        self.horizental.Add(self.searchCtrl, proportion=3, flag=wx.CENTER)
         self.horizental.Add(search_btn, flag=wx.EXPAND)
 #         sizer.Add(matchingItem, 0, wx.EXPAND | wx.ALL, 1)
 #         sizer.Add(self.listbox, 1, wx.EXPAND | wx.ALL, 5)
@@ -78,42 +79,44 @@ class SearchPanel(wx.Panel):
         self.SetSizer(self.vertical)
     
     def checkboxDefaultClicked(self, event):
-        print 'checkboxDefaultClicked',self.cb.GetValue()
+        logger.debug('checkboxDefaultClicked: %s', self.cb.GetValue())
             
     def OnTextEntered(self, event):
+        logger.debug('OnTextEntered')
 #         keyCode= event.GetRawKeyCode()
 #         print keyCode
         text = self.searchCtrl.GetValue()
-        if text != None and text.strip() !='':
+        if text != None and text.strip() != '':
             self.doSearch(text.strip())
 
     def doSearch(self, text):
+        logger.debug('doSearch text: %s', text)
         global searchedBooks
         name = text
 #         print 'doSearch', text
-        findingBook=FindingBook()
-        totalBookCount=findingBook.countAllBooks()
-        books=findingBook.searchingBook(text, self.cb.GetValue())
-        searchedBooks=books
-        print 'doSearch', text,len(searchedBooks)
-        self.GetParent().books=books
+        findingBook = FindingBook()
+        totalBookCount = findingBook.countAllBooks()
+        books = findingBook.searchingBook(text, self.cb.GetValue())
+        searchedBooks = books
+        logger.debug('text: %s , result count:%s', text, len(searchedBooks))
+        self.GetParent().books = books
         self.GetParent().CreateThumbCtrl()
-        grid=self.GetParent().grid
+        grid = self.GetParent().grid
 
         data = []
-        noOfBooks=len(searchedBooks)
-        bookId_rowNo_dict={}
+        noOfBooks = len(searchedBooks)
+        bookId_rowNo_dict = {}
         for i in range(noOfBooks):
             d = {}
             data.append((str(i), self.GetParent().books[i].__dict__))
-            bookId_rowNo_dict[self.GetParent().books[i].id]=i
+            bookId_rowNo_dict[self.GetParent().books[i].id] = i
 
-        grid._table.data=data
-        self.GetParent().grid.bookId_rowNo_dict=bookId_rowNo_dict
+        grid._table.data = data
+        self.GetParent().grid.bookId_rowNo_dict = bookId_rowNo_dict
         try:
             self.GetParent().picture.root.clear_widgets()
         except Exception as e:
-            print e
+            logger.error(e, exc_info=True)
 #         for child in self.GetParent().picture.root..clear_widgets()vchildren:
 #             if type(child) == type(Picture):
 #                 self.GetParent().picture.root.children.remove(child)
@@ -136,7 +139,7 @@ class SearchPanel(wx.Panel):
         grid.Reset()
 #         grid.books=searchedBooks
 #         grid.loadBooks()
-        self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
+        self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of " + str(len(books)) + ". Total Books : " + str(totalBookCount), 1)
 
 #         self.listbox.Clear()
 #         employees = DAO().findByName(name)
@@ -150,56 +153,54 @@ class SearchPanel(wx.Panel):
 #         if self.listbox.GetCount() !=0:
 #             self.listbox.SetSelection(0)
     def OnSearch(self, evt):
-        print "OnSearch"
+        logger.debug("OnSearch")
     def OnCancel(self, evt):
-        print "OnCancel"
-        text= self.searchCtrl.GetValue()
+        logger.debug("OnCancel")
+        text = self.searchCtrl.GetValue()
         self.doSearch(text)
 #         self.TopLevelParent.LayoutAll()
 #         searchCtrlBook = self.TopLevelParent.FindWindowByName('searchCtrl')
         
     def onSelection(self, event):
-        selectedItem=event.GetClientData()
+        selectedItem = event.GetClientData()
 #         tree.Expand(root)
-        treeNodeBook=self.TopLevelParent.FindWindowByName('TreeNode')
+        treeNodeBook = self.TopLevelParent.FindWindowByName('TreeNode')
 
 
 
-        print 'onSelection---->',selectedItem
+        logger.debug('onSelection: %s', selectedItem)
         detailNoteBook = self.TopLevelParent.FindWindowByName('personDetail')
 
-        aui_tabs=None
+        aui_tabs = None
         if detailNoteBook:
-            aui_tabs=detailNoteBook._tabs
-            active_page=aui_tabs.GetActivePage()
-        personalDetailPanel=aui_tabs._pages[active_page].window
+            aui_tabs = detailNoteBook._tabs
+            active_page = aui_tabs.GetActivePage()
+        personalDetailPanel = aui_tabs._pages[active_page].window
 #             pages1=detailNoteBook._tabs._pages
 #             personalDetailPanel=detailNoteBook._tabs._pages[len(pages1)-1].window
         if personalDetailPanel:
             personalDetailPanel.removeImage()
         if selectedItem:
-            active_page=aui_tabs.GetActivePage()
-            page=aui_tabs._pages[active_page]
-            aui_tabs._pages[active_page].name=selectedItem.name
-            personalDetailPanel.name=selectedItem.name
+            active_page = aui_tabs.GetActivePage()
+            page = aui_tabs._pages[active_page]
+            aui_tabs._pages[active_page].name = selectedItem.name
+            personalDetailPanel.name = selectedItem.name
             personalDetailPanel.layoutSizer(selectedItem)
             personalDetailPanel.Layout()
 
         personalDetailPan = detailNoteBook.GetChildren()[1]
 #         selectedItem=self.rowDict[currentItemIndex]
-        print selectedItem
-        pass
-    def doubleclick(self, event):
-        selectedItem=event.GetClientData()
+        logger.debug(selectedItem)
 
-        print 'i---->',selectedItem
+    def doubleclick(self, event):
+        selectedItem = event.GetClientData()
+
+        logger.debug('selectedItem:%s', selectedItem)
 #         selectedItem=self.rowDict[currentItemIndex]
-        print selectedItem
-        pass
 
     def searchBtn(self, event):
-        print 'searchBtn'
-        pass
+        logger.debug( 'searchBtn')
+
     def cancelBtn(self, event):
         self.Parent.Destroy()
 
