@@ -9,6 +9,7 @@ from src.static.imgUtil import ImageUtil
 from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 import threading
 from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
+from sys import exc_info
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -741,8 +742,7 @@ class PropertyPhotoPanel(wx.Panel):
         try:
             self.changeBitmapWorker()
         except Exception as e:
-            print e
-        print 'onsize'
+            logger.error(e, exc_info=True)
 
     def OnPaint(self, evt):
         if self.bitmap != None:
@@ -757,7 +757,7 @@ class PropertyPhotoPanel(wx.Panel):
 #         imgFilePath=os.path.join(relevant_path,imgFileName[0] )
         imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
 #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
-        print '---------->', self.GetSize()
+        logger.debug('size: %s', self.GetSize())
         NewW, NewH = self.GetSize()
         if  NewW > 0 and NewH > 0:
             img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
@@ -785,11 +785,11 @@ class BookPropertyPanel(wx.Panel):
         self.rt = RichTextPanel(self, book)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
-        print '-------------->', self.GetParent().GetSize()
+        logger.debug('BookPropertyPanel size: %s', self.GetParent().GetSize())
         try:
             img1 = self.scale_bitmap()
         except Exception as e:
-            print e
+            logger.error(e, exc_info=True)
         img = wx.EmptyImage(240, 240)
 
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, wx.BitmapFromImage(img))
@@ -860,7 +860,7 @@ class BookPropertyPanel(wx.Panel):
         return result
     
     def onNext(self, event):
-        print 'onNext'
+        logger.debug('onNext')
         bookId = self.currentBook.id
         self.previousBook = self.currentBook
         b = FindingBook().findBookByNextMaxId(bookId)
@@ -874,7 +874,7 @@ class BookPropertyPanel(wx.Panel):
         
         
     def onPrevious(self, event):
-        print 'onPrevious'
+        logger.debug('onPrevious')
         bookId = self.currentBook.id
         self.previousBook = self.currentBook
         b = FindingBook().findBookByPreviousMaxId(bookId)
@@ -887,7 +887,7 @@ class BookPropertyPanel(wx.Panel):
                 self.rt.rtc.ChangeValue(b.bookDescription)
         
     def onOk(self, event):
-        print 'onOk'
+        logger.debug('onOk')
 #         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.save()
         self.GetParent().OnCloseFrame(event)
@@ -897,17 +897,17 @@ class BookPropertyPanel(wx.Panel):
         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.setValuesToBookFromPropertyGrid(props)
     def onCancel(self, event):
-        print 'onCancel'    
+        logger.debug('onCancel')   
         self.GetParent().OnCloseFrame(event)
     
     def onDownloadMetadata(self, event):
-        print 'onDownloadMetadata'  
+        logger.debug('onDownloadMetadata') 
           
     def onDownloadCover(self, event):
-        print 'onDownloadCover'    
+        logger.debug('onDownloadCover')
     
     def onGenerateCover(self, event):
-        print 'onGenerateCover'        
+        logger.debug('onGenerateCover')    
     
     def setValuesToPropetyGrid(self):
         '''
@@ -1080,14 +1080,14 @@ class BookPropertyPanel(wx.Panel):
     def OnPropGridChange(self, event):
         p = event.GetProperty()
         if p:
-            print('%s changed to "%s"\n' % (p.GetName(), p.GetValueAsString()))
+            logger.debug('%s changed to "%s"\n' , p.GetName(), p.GetValueAsString())
 
     def OnPropGridSelect(self, event):
         p = event.GetProperty()
         if p:
-            print('%s selected\n' % (event.GetProperty().GetName()))
+            logger.debug('%s selected\n' ,event.GetProperty().GetName())
         else:
-            print('Nothing selected\n')
+            logger.debug('Nothing selected\n')
 
     def OnDeleteProperty(self, event):
         p = self.pg.GetSelectedProperty()
@@ -1128,9 +1128,8 @@ class BookPropertyPanel(wx.Panel):
                 t_end = time.time()
                 print('SetPropertyValues finished in %.0fms\n' % 
                                ((t_end - t_start) * 1000.0))
-        except:
-            import traceback
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def OnGetPropertyValues(self, event):
         try:
@@ -1143,9 +1142,8 @@ class BookPropertyPanel(wx.Panel):
             dlg = MemoDialog(self, "GetPropertyValues Result",
                              'Contents of resulting dictionary:\n\n' + '\n'.join(ss))
             dlg.ShowModal()
-        except:
-            import traceback
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def OnGetPropertyValues2(self, event):
         try:
@@ -1158,9 +1156,8 @@ class BookPropertyPanel(wx.Panel):
             dlg = MemoDialog(self, "GetPropertyValues Result",
                              'Contents of resulting dictionary:\n\n' + '\n'.join(ss))
             dlg.ShowModal()
-        except:
-            import traceback
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def OnAutoFill(self, event):
         try:
@@ -1172,9 +1169,8 @@ class BookPropertyPanel(wx.Panel):
                 self.pg.AutoFill(sandbox['object'])
                 t_end = time.time()
 
-        except:
-            import traceback
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def OnPropGridRightClick(self, event):
         p = event.GetProperty()
@@ -1210,8 +1206,8 @@ class BookPropertyPanel(wx.Panel):
                 pg.EnableProperty("NotAtAllRealProperty", False)
                 pg.SetPropertyHelpString("AgaintNotARealProperty",
                                          "Dummy Help String")
-        except:
-            pass
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
         # GetPyIterator
         print('GetPage(0).GetPyIterator()\n')
@@ -1239,10 +1235,10 @@ class BookPropertyPanel(wx.Panel):
 
 #---------------------------------------------------------------------------
 class MainNotebook(wx.Notebook):
-    ### For this demo, we don't need to subclass
-    ### Notebook at all.
-    def __init__(self,parent, book):
-        wx.Notebook.__init__(self,parent=parent)
+    # ## For this demo, we don't need to subclass
+    # ## Notebook at all.
+    def __init__(self, parent, book):
+        wx.Notebook.__init__(self, parent=parent)
         self.AddPage(BookPropertyPanel(self, book), 'book')
 #         self.AddPage(RedPanel(self),"Red")
 

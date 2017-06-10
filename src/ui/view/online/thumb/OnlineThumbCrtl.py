@@ -2319,7 +2319,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             menu.AppendItem(item)
             
             item = wx.MenuItem(menu, self.downloadToLibrary, "Download book to library.")
-            print '------------->', os.getcwd()
+            logger.debug( 'cwd %s', os.getcwd())
 #             item.SetBitmap(wx.Bitmap('download.png'))
             item.SetBitmap(wx.ArtProvider_GetBitmap(wx.ART_FILE_SAVE))
             menu.AppendItem(item)

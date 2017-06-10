@@ -11,7 +11,9 @@ import datetime
 from src.static.constant import Workspace
 from src.dao.BookDao import CreateDatabase
 from bs4 import BeautifulSoup
+import logging
 
+logger = logging.getLogger('extensive')
 
 class Book(json.JSONEncoder):
     def __init__(self, name=None, publisher=None, authors=None, isbn_13=None, datePublished=None, numberOfPages=None,
@@ -82,7 +84,7 @@ class FullCircleMagazine():
             self.writeJsonToDir(directory_name, book)
             self.downloadBookImage(bookImagePath, self.imageUrl)
 #             r = requests.get(bookUrl, headers=self.header_info, timeout=30)
-            print '--------------->', r.url
+            logger.debug( 'downloadFullCircleMagazine url : %', r.url)
             bookPath = os.path.join(directory_name, url.split('/')[-1])
             print bookPath
             with open(bookPath, 'wb') as bookFile:

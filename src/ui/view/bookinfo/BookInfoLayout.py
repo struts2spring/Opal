@@ -440,9 +440,8 @@ class TrivialPropertyEditor(wxpg.PyEditor):
                             (x + w, y),
                             (bw, h), wx.WANTS_CHARS)
             return (tc, btn)
-        except:
-            import traceback
-            print(traceback.print_exc())
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def UpdateControl(self, property, ctrl):
         ctrl.SetValue(property.GetDisplayedString())
@@ -688,7 +687,7 @@ class PropertyPhotoPanel(wx.Panel):
         self.currentBook = book
         
     def OnContextMenu(self, event):
-        print("OnContextMenu\n")
+        logger.debug("OnContextMenu\n")
 
         # only do this part the first time so the events are only bound once
         #
@@ -723,28 +722,28 @@ class PropertyPhotoPanel(wx.Panel):
         self.PopupMenu(menu)
         menu.Destroy()
     def downloadCover(self, event):
-        print 'downloadCover'
+        logger.debug( 'downloadCover')
     def generateCover(self, event):
-        print 'generateCover'
+        logger.debug( 'generateCover')
     def openBook(self, event):
-        print 'openBook'        
+        logger.debug( 'openBook'  )      
         
     def OnCopyToClipboard(self, event):
-        print 'OnCopyToClipboard'
+        logger.debug( 'OnCopyToClipboard')
 
         d = wx.BitmapDataObject(self.bitmap)
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(d)
             wx.TheClipboard.Flush()
             wx.TheClipboard.Close()
-            print("Image copied to cliboard.\n")
+            logger.debug("Image copied to cliboard.\n")
         else:
-            print("Couldn't open clipboard!\n")  
+            logger.debug("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
         if self.currentBook!=None:
             self.changeBitmapWorker()
-        print 'onsize'
+        logger.debug('onsize')
 
     def OnPaint(self, evt):
         if self.bitmap != None:
@@ -759,7 +758,7 @@ class PropertyPhotoPanel(wx.Panel):
 #         imgFilePath=os.path.join(relevant_path,imgFileName[0] )
         imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
 #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
-        print '---------->', self.GetSize()
+        logger.debug( 'GetSize: %s', self.GetSize())
         NewW, NewH = self.GetSize()
         if  NewW > 0 and NewH > 0:
             img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)
@@ -1109,14 +1108,14 @@ class BookPropertyPanel(wx.Panel):
     def OnPropGridChange(self, event):
         p = event.GetProperty()
         if p:
-            print('%s changed to "%s"\n' % (p.GetName(), p.GetValueAsString()))
+            logger.debug('%s changed to "%s"\n' , p.GetName(), p.GetValueAsString())
 
     def OnPropGridSelect(self, event):
         p = event.GetProperty()
         if p:
-            print('%s selected\n' % (event.GetProperty().GetName()))
+            logger.debug('%s selected\n' ,event.GetProperty().GetName())
         else:
-            print('Nothing selected\n')
+            logger.debug('Nothing selected\n')
 
     def OnDeleteProperty(self, event):
         p = self.pg.GetSelectedProperty()
@@ -1155,8 +1154,7 @@ class BookPropertyPanel(wx.Panel):
                 # print(sandbox['obj'].__dict__)
                 self.pg.SetPropertyValues(sandbox['obj'])
                 t_end = time.time()
-                print('SetPropertyValues finished in %.0fms\n' % 
-                               ((t_end - t_start) * 1000.0))
+                logger.debug('SetPropertyValues finished in %.0fms\n' ,((t_end - t_start) * 1000.0))
         except:
             import traceback
             traceback.print_exc()

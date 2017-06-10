@@ -2245,21 +2245,21 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
 
     def OnRightMouseDown(self, event):
-        print 'OnRightMouseDown'
+        logger.debug('OnRightMouseDown')
 
-        print ' previous printing all _selected', self._selected
-        print 'printing all _selectedarray', self._selectedarray
+        logger.debug(' previous printing all _selected : %s', self._selected)
+        logger.debug('printing all _selectedarray: %s', self._selectedarray)
         x = event.GetX()
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
         # get item number to select
         lastselected = self._selected
         self._selected = self.GetItemIndex(x, y)
-        print ' previous printing all _selected', self._selected
+        logger.debug(' previous printing all _selected: %s', self._selected)
         if self._selected != -1:
             name = self._items[self._selected].book.bookName
             id = self._items[self._selected].book.id
-        print 'updating info'
+        logger.debug('updating info')
         menu = wx.Menu()
         # checking if it is not an internte searched book.
         if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
@@ -2323,7 +2323,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             menu.AppendItem(item)
             
             item = wx.MenuItem(menu, self.downloadToLibrary, "Download book to library.")
-            print '------------->', os.getcwd()
+            logger.debug('cwd: %', os.getcwd())
 #             item.SetBitmap(wx.Bitmap('download.png'))
             item.SetBitmap(wx.ArtProvider_GetBitmap(wx.ART_FILE_SAVE))
             menu.AppendItem(item)
@@ -2334,20 +2334,20 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def onAddToLibrary(self, event):
         
-        print 'onAddToLibrary'
+        logger.debug('onAddToLibrary')
         
         
         
     def onDownloadToLibrary(self, event):
-        print 'onDownloadToLibrary'
+        logger.debug('onDownloadToLibrary')
     
     def OnDownloadMetadata(self, event):
-        print ("OnDownloadMetadata\n")
+        logger.debug("OnDownloadMetadata\n")
 
     def onCopy(self, event):
-        print 'copy'
+        logger.debug('copy')
     def deleteBook(self, event):
-        print ("On deleteBook Path \n")
+        logger.debug("On deleteBook Path \n")
         deleteBooks = []
         for selectedBookIndex in self._selectedarray:
             book = self._items[selectedBookIndex].book
@@ -2361,7 +2361,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 
                 traceback.print_exc()
                 print selectedBookIndex, len(self._items)
-        print ("delete book\n")
+        logger.debug("delete book\n")
 
     def OnOpenFolderPath(self, event):
         logger.debug("OnOpenFolderPath \n")
@@ -2376,10 +2376,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             os.startfile(file)
 
     def OnPopupThree(self, event):
-        print ("OnPopupThree \n")
+        logger.debug("OnPopupThree \n")
 
     def showBookProperties(self, event):
-        print ("showBookProperties \n")
+        logger.debug("showBookProperties \n")
         if self._selected != None:
             book = self._items[self._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
@@ -2388,10 +2388,10 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         
 
     def OpenBook(self, event):
-        print self._selected
+        logger.debug( self._selected)
         if self._selected != None:
             book = self._items[self._selected].book
-            print self._selected
+            logger.debug( self._selected)
             bookPath = book.bookPath
             for name in os.listdir(bookPath):
                 if ".pdf" in name:
@@ -2404,7 +2404,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             subprocess.call(["xdg-open", file])
         elif sys.platform == 'win32':
             os.startfile(file)
-        print ("OpenBook \n")
+        logger.debug("OpenBook \n")
 
     def OnLeftMouseDown(self, event):
         """
@@ -2468,13 +2468,13 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             self.Refresh()
             eventOut = ThumbnailEvent(wxEVT_THUMBNAILS_SEL_CHANGED, self.GetId())
             self.GetEventHandler().ProcessEvent(eventOut)
-            logger.debug( 'printing all selected: %s', self._selectedarray)
+            logger.debug('printing all selected: %s', self._selectedarray)
             if len(self._selectedarray) == 1:
                 # checking if it is not an internte searched book.
                 if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
                     name = self._items[self._selected].book.bookName
                     id = self._items[self._selected].book.id
-                    logger.debug( 'updating info')
+                    logger.debug('updating info')
                     try:
 #                         self.GetTopLevelParent().panel.rowDict
                         lefBookInfo = self.GetTopLevelParent().panel.currentBook

@@ -23,7 +23,9 @@ import requests
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 import rarfile
 from selenium.webdriver.common.action_chains import ActionChains
+import logging
 
+logger = logging.getLogger('extensive')
 
 
 
@@ -271,7 +273,7 @@ class ItEbook(object):
         self.writeJsonToDir(directory_name, book)
         
         r = requests.get(bookUrl, headers=self.header_info, timeout=30)
-        print '--------------->', r.url
+        logger.debug( 'downloadEbook url : %s', r.url)
         bookPath = os.path.join(directory_name, bookUrl.split('/')[-1])
         with open(bookPath, 'wb') as bookFile:
             bookFile.write(r.content)
@@ -365,7 +367,7 @@ class ItEbook(object):
         from PIL import Image   
         from StringIO import StringIO
         r = requests.get(imageUrl, headers=self.header_info, timeout=30)
-        print '--------------->', r.url
+        logger.debug( 'downloadBookImage url: %s', r.url)
         with open(bookImagePath, 'wb') as imageFile:
             imageFile.write(r.content)
             

@@ -19,11 +19,11 @@ class PropertyPhotoPanel(wx.Panel):
         self.currentBook = book
         
     def OnRightClick(self, event):
-        print("PropertyPhotoPanel.OnRightClick()\n")
+        logger.debug("PropertyPhotoPanel.OnRightClick()\n")
         self.createMenu()
         
     def OnContextMenu(self, event):
-        print("OnContextMenu\n")
+        logger.debug("OnContextMenu\n")
 
         # only do this part the first time so the events are only bound once
         #
@@ -62,27 +62,27 @@ class PropertyPhotoPanel(wx.Panel):
         menu.Destroy()
         
     def downloadCover(self, event):
-        print 'downloadCover'
+        logger.debug( 'downloadCover')
     def generateCover(self, event):
-        print 'generateCover'
+        logger.debug(  'generateCover')
     def openBook(self, event):
-        print 'openBook'        
+        logger.debug(  'openBook'  )      
         
     def OnCopyToClipboard(self, event):
-        print 'OnCopyToClipboard'
+        logger.debug(  'OnCopyToClipboard')
 
         d = wx.BitmapDataObject(self.bitmap)
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(d)
             wx.TheClipboard.Flush()
             wx.TheClipboard.Close()
-            print("Image copied to cliboard.\n")
+            logger.debug("Image copied to cliboard.\n")
         else:
-            print("Couldn't open clipboard!\n")  
+            logger.debug("Couldn't open clipboard!\n")  
               
     def OnSize(self, event):
         self.changeBitmapWorker()
-        print 'onsize'
+        logger.debug(  'onsize')
 
     def OnPaint(self, evt):
         if self.bitmap != None:
@@ -99,7 +99,7 @@ class PropertyPhotoPanel(wx.Panel):
             imgFilePath = os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName)
     #         img2 =  imgFilePath=os.path.join(relevant_path,imgFileName[1] )
     #         imgFilePath="cat.bmp"
-            print '---------->', self.GetSize()
+            logger.debug(  'PropertyPhotoPanel size: %s', self.GetSize())
             NewW, NewH = self.GetSize()
             if  NewW > 0 and NewH > 0:
                 img = wx.Image(imgFilePath, wx.BITMAP_TYPE_ANY)

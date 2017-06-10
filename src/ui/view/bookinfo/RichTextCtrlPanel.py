@@ -76,9 +76,10 @@ class RichTextPanel(wx.Panel):
         buffer = self.rtc.GetBuffer()
 #         htmlhandler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
         htmlhandler.SetFontSizeMapping([7, 9, 11, 12, 14, 22, 100])
-        print 'canload:', htmlhandler.CanLoad()
-        print 'cansave:', htmlhandler.CanSave()
-        print 'CanHandle', htmlhandler.CanHandle('bookInfo.html')
+        logger.debug( 'canload: %s', htmlhandler.CanLoad())
+        logger.debug( 'cansave: %s', htmlhandler.CanSave())
+        logger.debug( 'CanHandle: %s', htmlhandler.CanHandle('bookInfo.html'))
+
         rt.RichTextBuffer.AddHandler(htmlhandler)
 #         buffer.AddHandler(htmlhandler)
         out.write(self.book.bookDescription)

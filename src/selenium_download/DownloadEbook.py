@@ -19,7 +19,9 @@ from src.dao.BookDao import CreateDatabase
 import thread
 import traceback
 from test.dao.missing import Missing
+import logging
 
+logger = logging.getLogger('extensive')
 
 
 
@@ -343,7 +345,7 @@ class DownloadItEbook(threading.Thread):
         listOfDir=listOfDir[1391:]
         baseUrl = 'http://it-ebooks.info'
         for number in listOfDir:
-            print '------------------->',number
+            logger.debug( 'updating book number: %s',number)
 #             url = self.getUrl(baseUrl, number)
 #             a = urllib2.urlopen(url)
 #             strig = a.geturl()

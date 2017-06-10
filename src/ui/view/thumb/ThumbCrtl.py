@@ -2356,21 +2356,21 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
 
     def OnRightMouseDown(self, event):
-        print 'OnRightMouseDown'
+        logger.debug( 'OnRightMouseDown')
 
-        print ' previous printing all _selected', self._selected
-        print 'printing all _selectedarray', self._selectedarray
+        logger.debug( ' previous printing all _selected: %s', self._selected)
+        logger.debug( 'printing all _selectedarray: %s', self._selectedarray)
         x = event.GetX()
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
         # get item number to select
         lastselected = self._selected
         self._selected = self.GetItemIndex(x, y)
-        print ' previous printing all _selected', self._selected
+        logger.debug('previous printing all _selected:%s', self._selected)
         if self._selected != -1:
             name = self._items[self._selected].book.bookName
             id = self._items[self._selected].book.id
-        print 'updating info'
+        logger.debug( 'updating info')
         menu = wx.Menu()
         # checking if it is not an internte searched book.
         if not type(self._items[self._selected].book).__module__ == 'src.ui.view.online.thumb.book':
@@ -2430,7 +2430,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             menu.AppendItem(item)
             
             item = wx.MenuItem(menu, self.downloadToLibrary, "Download book to library.")
-            print '------------->', os.getcwd()
+            logger.debug( 'cwd: %s', os.getcwd())
 #             item.SetBitmap(wx.Bitmap('download.png'))
             item.SetBitmap(wx.ArtProvider_GetBitmap(wx.ART_FILE_SAVE))
             menu.AppendItem(item)
@@ -2441,15 +2441,15 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def onAddToLibrary(self, event):
         
-        print 'onAddToLibrary'
+        logger.debug( 'onAddToLibrary')
         
         
         
     def onDownloadToLibrary(self, event):
-        print 'onDownloadToLibrary'
+        logger.debug('onDownloadToLibrary')
     
     def OnDownloadMetadata(self, event):
-        print ("OnDownloadMetadata\n")
+        logger.debug("OnDownloadMetadata\n")
         selectedBooks = []
         book = None
         for selectedBookIndex in self._selectedarray:
@@ -2458,9 +2458,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         frame = ReviewFrame(None, book)
 
     def onCopy(self, event):
-        print 'copy'
+        logger.debug( 'copy')
     def deleteBook(self, event):
-        print ("On deleteBook Path \n")
+        logger.debug("On deleteBook Path \n")
         deleteBooks = []
         for selectedBookIndex in self._selectedarray:
             book = self._items[selectedBookIndex].book
@@ -2474,7 +2474,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 
                 traceback.print_exc()
                 print selectedBookIndex, len(self._items)
-        print ("delete book\n")
+        logger.debug("delete book\n")
 
     def OnOpenFolderPath(self, event):
         logger.debug("OnOpenFolderPath %s",self._selected)
@@ -2762,20 +2762,20 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
     def onKeyDown(self, event):
         if event.m_keyCode == 316:
-            print 'right key pressed', self._selected
+            logger.debug( 'right key pressed:%s', self._selected)
             self._selected = self._selected + 1
             self.ScrollToSelected()
             self.Refresh()
             self.SetFocus()
             
         elif event.m_keyCode == 314:
-            print 'left key pressed', self._selected
+            logger.debug( 'left key pressed: %s', self._selected)
             self._selected = self._selected - 1
             self.SetFocus()
         elif event.m_keyCode == 315:
-            print 'Up key pressed'
+            logger.debug( 'Up key pressed')
         elif event.m_keyCode == 317:
-            print 'down key pressed'
+            logger.debug( 'down key pressed')
 
     def OnChar(self, event):
         """
@@ -2947,9 +2947,9 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         w, h, b = self.GetThumbSize()
         zoom = self.GetZoomFactor()
         
-        print 'size', size
-        print 'w, h, b', w, h, b
-        print 'zoom', zoom
+        logger.debug( 'size: %s', size)
+        logger.debug( 'w: %s, h: %s, b: %s', w, h, b)
+        logger.debug( 'zoom: %s', zoom)
 
         if w * zoom + b > size.GetWidth() or h * zoom + b > size.GetHeight():
             if w * zoom + b > size.GetWidth():
@@ -2964,7 +2964,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
             newh = float(h) * zoom
 
         
-        print 'ZoomIn', (int(neww), int(newh))
+        logger.debug( 'ZoomIn: %s, %s', int(neww), int(newh))
         
         self.SetThumbSize(int(neww), int(newh))
         self.OnResize(None)

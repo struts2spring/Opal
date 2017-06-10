@@ -22,6 +22,7 @@ class GenerateBookInfo():
         '''
         This function is going to provide book info html.
         '''
+        logger.debug('getHtmlContent')
 #         os.chdir(book.bookPath)
         path = os.path.join(Workspace().appPath, "images")
 #         path='/home/vijay/Documents/Aptana_Workspace/util/src/ui/view/opalview/images'
@@ -43,7 +44,7 @@ class GenerateBookInfo():
         if name!=None and book.bookName!=None: 
             filepath = os.path.join(book.bookPath, name)
             im = Image.open(filepath)
-            print im.size
+            logger.debug('size :%s', im.size)
 #         book.bookFormat.split(',')
 #         iconPath = iconDict[book.bookFormat.lower()]
 #         ima= im.resize((200, 250), Image.ANTIALIAS)
@@ -82,12 +83,12 @@ class GenerateBookInfo():
                                     originalWidth,originalHeight=img.GetSize()
                                     w,h=300,250
                                     if originalWidth<w :
-                                        print 'increase',str(1+(w-originalWidth)/(float(originalWidth)))
+                                        logger.debug( 'increase: %s',str(1+(w-originalWidth)/(float(originalWidth))))
                                         h=originalHeight * (1+(w-originalWidth)/(float(originalWidth)))
                                     else:
                                         h=(originalHeight/float(originalWidth))*w
-                                        print originalWidth,originalHeight,'decrease',w,int(math.ceil(h))
-                                    print '----------- width,height---------->', w,h
+                                        logger.debug('original:%s ,%s , decreased %s, %s', originalWidth,originalHeight,w,int(math.ceil(h)))
+                                    logger.debug('width :%s, height: %s', w,h)
                                     doc.stag('img', src=filepath, width=int(w) , height=int(math.ceil(h)), border="1")
 #                                     doc.stag('img', src=filepath, width='200' , height='259', border="1")
                             with tag('td'):
@@ -164,7 +165,7 @@ class GenerateBookInfo():
                                     bookFormatList=book.bookFormat.split(',')
                                     for bookFormat in bookFormatList:
                                         imagePath = os.path.join(Workspace().appPath, "images",(str(bookFormat).lower()).strip()+'.png')
-                                        print imagePath
+                                        logger.debug( 'imagePath:%s',imagePath)
                                         doc.stag('img', src=imagePath, border="0")
 
 

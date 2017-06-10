@@ -3,13 +3,15 @@ import json
 import os
 import sys
 from datetime import datetime
+import logging
 
+logger = logging.getLogger('extensive')
 
 
 
 class Preference():
     def __init__(self):
-        print 'init'
+        logger( 'Preference')
         self.recordPerPage = 50
         self.isPaginationEnable = True
     def __str__(self):
@@ -18,7 +20,7 @@ class Preference():
 class workspace(json.JSONEncoder):
 
     def default(self, obj):
-        print 'workspace.default() called'
+        logger.debug( 'workspace.default() called')
         if isinstance(obj, datetime):
             return obj.strftime('dt(%Y-%m-%dT%H:%M:%SZ)')
         elif isinstance(obj, Preference):
@@ -52,6 +54,7 @@ class OpalStart():
         '''
         Constructor
         '''
+        logger.debug('OpalStart')
         if not workspace:
             workspaceList = list()
             workspace = {}
@@ -63,7 +66,7 @@ class OpalStart():
             workspaceList.append(workspace)
             self.workspace = workspaceList
         else:
-            print 'init', workspace
+            logger.debug( workspace)
             self.workspace = workspace
 
     def objToDictionary(self, obj):
@@ -90,7 +93,7 @@ class OpalStart():
     @classmethod
     def _dict_to_obj(cls, json_dict):
         for worker in json_dict:
-            print worker
+            logger.debug( worker)
 
     def readWorkspace(self):
         '''
