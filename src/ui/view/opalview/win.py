@@ -91,18 +91,17 @@ class FileDropTarget(wx.FileDropTarget):
         """ Implement File Drop """
         # For Demo purposes, this function appends a list of the files dropped at the end of the widget's text
         # Move Insertion Point to the end of the widget's text
-        print 'OnDropFiles'
+        logger.debug('OnDropFiles')
 #         self.obj.SetInsertionPointEnd()
         # append a list of the file names dropped
-        print ("%d file(s) dropped at %d, %d:\n" % (len(filenames), x, y))
+        logger.debug ("%d file(s) dropped at %d, %d:\n" ,(len(filenames), x, y))
         for file in filenames:
             self.selectedFilePath = file
             print ('           %s\n' % file)
             if file:
                 AddBook().addingBookToWorkspace(file)
             print self
-        print 'drop book completed.'
-        print self
+        logger.debug( 'drop book completed.')
         text = self.obj.searchCtrlPanel.searchCtrl.GetValue()
         self.obj.searchCtrlPanel.doSearch(text)
 #         self.obj.WriteText('\n')
@@ -304,6 +303,7 @@ class MainFrame(wx.Frame):
         self.statusbar.SetStatusText("selected : " + selectedBooks + " of " + str(totalBookCount), 1)
 #         self.statusbar.SetStatusText("Number of books :" + str(len(self.books)), 1)
     def creatingDatabase(self):
+        logger.debug('creatingDatabase')
         if not os.path.exists(Workspace().libraryPath):
             os.mkdir(Workspace().libraryPath)
         os.chdir(Workspace().libraryPath)
@@ -311,31 +311,29 @@ class MainFrame(wx.Frame):
         isDatabase = False
         for sName in listOfDir:
             if ("_opal.sqlite" in str(sName)) and (os.stat(Workspace().libraryPath + os.sep + '_opal.sqlite').st_size != 0):
-                print sName
+                logger.debug( sName)
                 isDatabase = True
         if not  isDatabase:
             self.createDatabase .addingData()
      
     def onEditMetadata(self, event):
-        print 'onEditMetadata'
+        logger.debug( 'onEditMetadata')
         if self.thumbnail._scrolled._selected != None:
             book = self.thumbnail._scrolled._items[self.thumbnail._scrolled._selected].book
 #             frame = BookPropertyFrame(parent=None,book)
             frame = BookPropertyFrame(None, book)
     def onSearch(self, event):
-        print 'onSearch'
+        logger.debug( 'onSearch')
         frame = SearchFrame(parent=None)
         
     def OnClose(self, event):
         logger.info('win OnClose')
-        print 'OnClose'
         self._mgr.UnInit()
         del self._mgr
         self.Destroy()
 
     def OnExit(self, event):
         logger.info('win OnClose')
-        print 'OnExit'
         self.Close()
 
 
@@ -351,25 +349,26 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def OnPreferences(self, event):
-        print 'OnPreferences'
+        logger.debug('OnPreferences')
         # frame1 = OpalPreferenceFrames(None)
         frame1 = OpalPreference(None, "Opal preferences")
 
     def OnRestView(self, event):
-        print 'OnResetView'
+        logger.debug('OnResetView')
         self._mgr.LoadPerspective(self.perspective_default)
         
     def OnFullCircle(self, event):
-        print 'OnFullCircle'
+        logger.debug( 'OnFullCircle')
         fullCircleMagazine = FullCircleMagazine()
         fullCircleMagazine.startDownload()
         
     def OnCoverFlow(self, event):
-        print 'OnCoverFlow'
+        logger.debug('OnCoverFlow')
         try:
             thread.start_new_thread(self.startShell, (1,))
 #             MyApp().run()
-        except:
+        except Exception as e:
+            logger.error(e, exc_info=True)
             print "Error: unable to start thread"
 #         exit_code = call("python3 2.py", shell=True)
 #         exit_code = subprocess.call("python3 2.py", shell=False)
@@ -381,6 +380,7 @@ class MainFrame(wx.Frame):
 #         MyApp().run()
 #         self._mgr.LoadPerspective(self.perspective_default)
     def startShell(self, a):
+        logger.debug('startShell')
 #         books = FindingBook().findAllBooks()
         self.picture = PicturesApp()
         self.picture.setValue(books=self.books)
@@ -393,6 +393,7 @@ class MainFrame(wx.Frame):
 #         subprocess.call(['./shell.sh']) 
         
     def searchCtrl(self):
+        logger.debug('searchCtrl')
         self.searchCtrlPanel = SearchPanel(self)
 #         self.searchCtrl.SetToolTip(wx.ToolTip('Search'))
 #         self.searchCtrl.Bind(wx.EVT_TEXT, self.OnTextEntered)
@@ -403,6 +404,7 @@ class MainFrame(wx.Frame):
 #         print 'OnTextEntered', text
 
     def GetDockArt(self):
+        logger.debug('GetDockArt')
         return self._mgr.GetArtProvider()
 
 
@@ -418,6 +420,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def OnPaneClose(self, event):
+        logger.debug('OnPaneClose')
         caption = event.GetPane().caption
         print caption
 
@@ -430,6 +433,7 @@ class MainFrame(wx.Frame):
             dlg.Destroy()
 
     def CreateThumbCtrl(self):
+        logger.debug('CreateThumbCtrl')
 #         ctrl = SizeReportCtrl(self, -1, wx.DefaultPosition, wx.Size(width, height), self._mgr)
 #         self.books=FindingBook().findAllBooks()
 
@@ -454,10 +458,12 @@ class MainFrame(wx.Frame):
         return self.thumbnail
 
     def CreateTextCtrl(self):
+        logger.debug('CreateTextCtrl')
         text = ("This is text box %d") % (1)
         return wx.TextCtrl(self, -1, text, wx.Point(0, 0), wx.Size(600, 400), wx.NO_BORDER | wx.TE_MULTILINE)
 
     def CreateHTMLCtrl(self):
+        logger.debug('CreateHTMLCtrl')
 #         self.ctrl = wx.html.HtmlWindow(self, -1, wx.DefaultPosition, wx.Size(600, 400))
 #         if "gtk2" in wx.PlatformInfo or "gtk3" in wx.PlatformInfo:
 #             self.ctrl.SetStandardFonts()
@@ -473,7 +479,10 @@ class MainFrame(wx.Frame):
         return self.browser
 
     def CreateGrid(self):
+        logger.debug('CreateGrid')
+        
         try:
+        
 #             books=FindingBook().searchingBook('flex')
 #             self.LoadingBooks()
 
@@ -533,11 +542,11 @@ class MainFrame(wx.Frame):
         self.searchCtrlPanel.doSearch(text)
 
     def onDeleteBookToWorkspace(self, event):
-        logger.debug( 'onDeleteBookToWorkspace')
+        logger.debug('onDeleteBookToWorkspace')
         pass
     def onAddBookToWorkspace(self, event):
-        logger.debug( 'onAddBookToWorkspace')
-        logger.debug( ("CWD: %s ",os.getcwd()))
+        logger.debug('onAddBookToWorkspace')
+        logger.debug(("CWD: %s ", os.getcwd()))
 
         # Create the dialog. In this case the current directory is forced as the starting
         # directory for the dialog, and no default file name is forced. This can easilly
@@ -583,7 +592,7 @@ class MainFrame(wx.Frame):
         1. if there is no opal_start.json.
         2. if file present and no valid path.
         '''
-        logger.debug( 'onOtherWorkspace')
+        logger.debug('onOtherWorkspace')
 #         panel = WorkspacePanel(self)
         win = WorkspaceFrame(self, -1, "Workspace Launcher", size=(470, 290), style=wx.DEFAULT_FRAME_STYLE)
         win.Show(True)
@@ -645,7 +654,7 @@ class MainFrame(wx.Frame):
 #             print '------------',wx.MessageBox("Wizard was cancelled", "That's all folks!")
 
     def dbbCallback(self, evt):
-        print('DirBrowseButton: %s\n' % evt.GetString())
+        logger.debug('DirBrowseButton: %s\n' , evt.GetString())
         if evt.GetString():  
             Workspace().path = evt.GetString() 
              

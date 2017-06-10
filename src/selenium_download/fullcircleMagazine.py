@@ -69,8 +69,9 @@ class FullCircleMagazine():
     
     def downloadFullCircleMagazine(self, url, book=None, bookUrl=None):
         '''
-        AQGPK3595C
+        downloadFullCircleMagazine
         '''
+        logger.debug('downloadFullCircleMagazine')
 #         url = 'http://dl.fullcirclemagazine.org/issue1_en.pdf'
 #         'http://dl.fullcirclemagazine.org/issue3_en.pdf'
         directory_name = self.createDownloadDir()
@@ -78,8 +79,8 @@ class FullCircleMagazine():
         os.chdir(directory_name)
         r = requests.get(url, headers=self.header_info, timeout=30)
         if r.status_code == 200:
-            print r.status_code, url
-            print '------->', int(r.headers["content-length"]) / 1000000
+            logger.debug('status_code: %s , url: %s', r.status_code, url)
+            logger.debug( 'content-length: %s MB', int(r.headers["content-length"]) / 1000000)
             book.fileSize = str(round(int(r.headers["content-length"]) / 1000000 , 2)) + ' MB'
             self.writeJsonToDir(directory_name, book)
             self.downloadBookImage(bookImagePath, self.imageUrl)
