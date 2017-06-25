@@ -2601,6 +2601,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                             self.GetTopLevelParent().browser.SetPage(page)
                     except Exception as e:
                         logger.error(e, exc_info=True)
+                        logger.error(page)
                     logger.debug( 'selecting grid')
                     row = self.GetTopLevelParent().grid.bookId_rowNo_dict[id]
                     self.GetTopLevelParent().grid.SelectRow(row=row)

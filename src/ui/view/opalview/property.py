@@ -10,6 +10,7 @@ from src.logic.ReadWriteJson import Book, ReadWriteJsonInfo, Author
 import threading
 from src.ui.view.opalview.RichTextCtrlPanel import RichTextPanel
 from sys import exc_info
+from dateutil.tz.tz import tzutc
 
 _ = wx.GetTranslation
 import wx.propgrid as wxpg
@@ -890,15 +891,23 @@ class BookPropertyPanel(wx.Panel):
         logger.debug('onOk')
 #         props = self.pg.GetPropertyValues(inc_attributes=True)
         self.save()
-        self.GetParent().OnCloseFrame(event)
+        try:
+            self.GetParent().OnCloseFrame(event)
+        except:
+            self.GetTopLevelParent().OnCloseFrame(event)
+            pass
 #         self.GetParent().OnCloseFrame(event)
 #         print props['Book name']
     def save(self):
-        props = self.pg.GetPropertyValues(inc_attributes=True)
+        try:
+#             props = self.pg.GetPropertyValues(inc_attributes=True)
+            props = self.pg.GetPropertyValues(as_strings=True, inc_attributes=False)
+        except Exception as e:
+            logger.error(e, exc_info=True)
         self.setValuesToBookFromPropertyGrid(props)
     def onCancel(self, event):
         logger.debug('onCancel')   
-        self.GetParent().OnCloseFrame(event)
+        self.GetTopLevelParent().OnCloseFrame(event)
     
     def onDownloadMetadata(self, event):
         logger.debug('onDownloadMetadata') 
@@ -927,7 +936,7 @@ class BookPropertyPanel(wx.Panel):
             authorName.append(a.authorName)
         props['Author(s) name'] = ','.join(authorName)
         props['Rating'] = str(self.currentBook.rating or 0)
-        props['Tag'] = str(self.currentBook.id or '')
+        props['Tag'] = str(self.currentBook.tag or '')
         props['File location'] = str(self.currentBook.bookPath or '')
         props['File size'] = str(self.currentBook.fileSize or '')
         props['file Format'] = str(self.currentBook.bookFormat or '')
@@ -945,6 +954,11 @@ class BookPropertyPanel(wx.Panel):
         book = Book()
 #         props['id'] = self.currentBook.id
         book.publisher = props['Publisher']
+        book.tag = props['Tag']
+        try:
+            book.publishedOn = self.date(props['Published Date'])
+        except Exception as e:
+            logger.error(e, exc_info=True)
         book.subTitle = self.currentBook.subTitle
         book.bookName = props['Book name']
         book.numberOfPages = props['Number of pages']
@@ -970,7 +984,7 @@ class BookPropertyPanel(wx.Panel):
         else:
             book.isbn_13 = str(props['ISBN'])
         book.itEbookUrlNumber = self.currentBook.itEbookUrlNumber
-        book.publishedOn = self.currentBook.publishedOn
+#         book.publishedOn = self.currentBook.publishedOn
         book.inLanguage = props['Language']
         ReadWriteJsonInfo().writeJsonToDir(self.currentBook.bookPath, book)
         
@@ -1027,23 +1041,29 @@ class BookPropertyPanel(wx.Panel):
             for a in book.authors:
                 authorNames.append(a.authorName)
         
-        self.pg.Append(wxpg.StringProperty("Author(s) name", value=','.join(authorNames)))
+#         self.pg.Append(wxpg.StringProperty("Author(s) name", value=','.join(authorNames)))
+        self.pg.Append(wxpg.ArrayStringProperty("Author(s) name", value=authorNames))
+       
         
         self.pg.Append(wxpg.StringProperty("Number of pages", value=str(book.numberOfPages or '')))
         self.pg.Append(wxpg.IntProperty("Rating", value=long(book.rating or 0)))
         self.pg.SetPropertyEditor("Rating", "SpinCtrl")
-        
-        self.pg.Append(wxpg.EditEnumProperty("Tag", "EditEnumProperty",
-                                         ['Physis', 'B', 'C'],
-                                         [0, 1, 2],
-                                         "Text Not in List"))
+        tags=list()
+        if book.tag:
+            tags=book.tag.split(',')
+        self.pg.Append(wxpg.ArrayStringProperty("Tag", value=tags))
         
 
         
         try:
             self.pg.Append(wxpg.StringProperty("Publisher", value=str(book.publisher or '')))
-        except:
-            pass
+        except Exception as e:
+            logger.error(e, exc_info=True)
+        try:
+#             self.pg.Append(wxpg.DateProperty("Published Date",value=wx.DateTime_Now()))
+            self.pg.Append(wxpg.DateProperty("Published Date", value=self.pydate2wxdate(book.publishedOn)))
+        except Exception as e:
+            logger.error(e, exc_info=True)
         self.pg.Append(wxpg.StringProperty("ISBN", value=str(book.isbn_13 or '')))
         self.pg.Append(wxpg.StringProperty("Language", value=str(book.inLanguage or '')))
         
@@ -1075,7 +1095,23 @@ class BookPropertyPanel(wx.Panel):
             return datetime.date(*ymd)
         else:
             return None
-
+    def date(self, datestr="", dateFormat="%m/%d/%Y"):
+#         datetime.datetime(2005, 6, 1, 13, 33, tzinfo=tzutc())
+        from datetime import datetime
+        if not datestr:
+            return datetime.today()
+        convertedDate=None
+        try:
+            convertedDate=datetime.strptime(datestr, dateFormat)
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            try:
+                dateFormat="%d/%m/%Y"
+                convertedDate=datetime.strptime(datestr, dateFormat)
+            except Exception as e:
+                logger.error(e, exc_info=True)
+        
+        return convertedDate
 
     def OnPropGridChange(self, event):
         p = event.GetProperty()
@@ -1085,7 +1121,7 @@ class BookPropertyPanel(wx.Panel):
     def OnPropGridSelect(self, event):
         p = event.GetProperty()
         if p:
-            logger.debug('%s selected' ,event.GetProperty().GetName())
+            logger.debug('%s selected' , event.GetProperty().GetName())
         else:
             logger.debug('Nothing selected')
 
@@ -1130,6 +1166,8 @@ class BookPropertyPanel(wx.Panel):
                                ((t_end - t_start) * 1000.0))
         except Exception as e:
             logger.error(e, exc_info=True)
+            import traceback
+            traceback.print_exc()
 
     def OnGetPropertyValues(self, event):
         try:
@@ -1144,6 +1182,8 @@ class BookPropertyPanel(wx.Panel):
             dlg.ShowModal()
         except Exception as e:
             logger.error(e, exc_info=True)
+            import traceback
+            traceback.print_exc()
 
     def OnGetPropertyValues2(self, event):
         try:
@@ -1181,7 +1221,7 @@ class BookPropertyPanel(wx.Panel):
 
     def OnPropGridPageChange(self, event):
         index = self.pg.GetSelectedPage()
-        logger.debug('Page Changed to :%s' ,self.pg.GetPageName(index))
+        logger.debug('Page Changed to :%s' , self.pg.GetPageName(index))
 
     def RunTests(self, event):
         pg = self.pg

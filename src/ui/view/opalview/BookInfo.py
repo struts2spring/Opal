@@ -43,11 +43,11 @@ class GenerateBookInfo():
                 name = l
                 break
         filepath=os.path.join(path, 'noCover.png')
-        logger.debug( 'file path: %s',filepath)
+        logger.debug( 'noCover file path: %s',filepath)
         if name!=None and book.bookName!=None: 
             filepath = os.path.join(book.bookPath, name)
             im = Image.open(filepath)
-            logger.debug('size :%s', im.size)
+            logger.debug('book image size :%s', im.size)
 #         book.bookFormat.split(',')
 #         iconPath = iconDict[book.bookFormat.lower()]
 #         ima= im.resize((200, 250), Image.ANTIALIAS)
@@ -57,6 +57,8 @@ class GenerateBookInfo():
         doc, tag, text = Doc().tagtext()
         doc.asis('<!DOCTYPE html>')
         with tag('html'):
+            with tag('meta','http-equiv="Content-Type"',content="text/html; charset=UTF-8"):
+                text('')
             with tag('style'):
                 text('''
                     p.small {
@@ -168,7 +170,7 @@ class GenerateBookInfo():
                                     bookFormatList=book.bookFormat.split(',')
                                     for bookFormat in bookFormatList:
                                         imagePath = os.path.join(Workspace().appPath, "images",(str(bookFormat).lower()).strip()+'.png')
-                                        logger.debug( 'imagePath:%s',imagePath)
+                                        logger.debug( 'book format icon imagePath:%s',imagePath)
                                         doc.stag('img', src=imagePath, border="0")
 
 

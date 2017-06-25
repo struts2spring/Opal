@@ -95,6 +95,9 @@ class ReadWriteJsonInfo(object):
             authors = []
             if row2dict.has_key('publishedOn'):
                 if type(row2dict['publishedOn']) == datetime or type(row2dict['publishedOn']) == datetime.datetime:
+#                     row2dict['publishedOn'] = str(row2dict['publishedOn'])
+                    
+#                     row2dict['publishedOn'] = str("%Y-%m-%d %H:%M:%S".format(row2dict['publishedOn']))
                     row2dict['publishedOn'] = str(row2dict['publishedOn'])
             if row2dict.has_key('createdOn'):
                 if type(row2dict['createdOn']) == datetime or type(row2dict['createdOn']) == datetime.datetime:
@@ -125,7 +128,7 @@ class ReadWriteJsonInfo(object):
                 del row2dict['id']  
                   
             row2dict['authors'] = authors
-            f.write(json.dumps(row2dict, sort_keys=False, indent=4))
+            f.write(json.dumps(row2dict, sort_keys=True, indent=4, default=str))
             f.close()     
         except:
             traceback.print_exc()

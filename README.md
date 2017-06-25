@@ -47,3 +47,6 @@ following are the items that have to be worked.
 |3|Compare book metadata,This page will compare book info side by side.|Not started|
 |4|Grid alternate color.|Not started|
 |5|add multiple books|Not started|
+|6|multiple author handleing|Not started|
+|7|drag n drop image as cover|Not started|
+|8|drag n drop multipe format of ebook|Not started|

@@ -122,7 +122,7 @@ class CreateDatabase():
                 if addDatabase:
                     self.session.add(book)
             self.session.commit()
-            logger.debug('duplicateBooks: %s',self.duplicateBooks)
+            logger.debug('number of duplicateBooks: %s',len(self.duplicateBooks))
     
         except Exception as e:
             logger.error(e, exc_info=True)

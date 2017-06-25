@@ -113,10 +113,10 @@ class SearchPanel(wx.Panel):
 
         grid._table.data = data
         self.GetParent().grid.bookId_rowNo_dict = bookId_rowNo_dict
-        try:
-            self.GetParent().picture.root.clear_widgets()
-        except Exception as e:
-            logger.error(e, exc_info=True)
+#         try:
+#             self.GetParent().picture.root.clear_widgets()
+#         except Exception as e:
+#             logger.error(e, exc_info=True)
 #         for child in self.GetParent().picture.root..clear_widgets()vchildren:
 #             if type(child) == type(Picture):
 #                 self.GetParent().picture.root.children.remove(child)
