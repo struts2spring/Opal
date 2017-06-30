@@ -200,6 +200,7 @@ class SearchPanel(wx.Panel):
 
     def searchBtn(self, event):
         logger.debug( 'searchBtn')
+        self.OnTextEntered(event)
 
     def cancelBtn(self, event):
         self.Parent.Destroy()

@@ -1023,8 +1023,8 @@ class ThumbnailCtrl(wx.Panel):
                     else:
                         pass
 #                         child.SetLabel(' of '+str(totalNoOfPages))
-                    print('static text')
-                print(type(child))
+                    logger.info('static text')
+                logger.info(type(child))
 #         self.GetParent().statusbar.SetStatusText("Filtered : 1 - 50 of "+str(len(books))+ ". Total Books : "+ str(totalBookCount), 1)
         pass
     def onChoice(self, event):
@@ -1992,7 +1992,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         :param `checkSize`: ``True`` to update the items visibility if the window
          size has changed.
         """
-
+        logger.info('UpdateProp')
         width = self.GetClientSize().GetWidth()
         self._cols = (width - self._tBorder) / (self._tWidth + self._tBorder)
 
@@ -2661,7 +2661,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+        logger.info('OnMouseDClick')
         eventOut = ThumbnailEvent(wxEVT_THUMBNAILS_DCLICK, self.GetId())
         self.GetEventHandler().ProcessEvent(eventOut)
 
@@ -2672,7 +2672,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
-
+#         logger.info('OnMouseMove')
         # -- drag & drop --
         if self._dragging and event.Dragging() and len(self._selectedarray) > 0:
 
@@ -2688,18 +2688,22 @@ class ScrolledThumbnail(wx.ScrolledWindow):
         x = event.GetX()
         y = event.GetY()
         x, y = self.CalcUnscrolledPosition(x, y)
-
+#         logger.info('x:%s,y:%s',x,y)
         # get item number
         sel = self.GetItemIndex(x, y)
 
+#         logger.info('self._pointed:%s',self._pointed)
+#         logger.info('sel: %s',sel)
+#         logger.info('self._enabletooltip:%s',self._enabletooltip)
         if sel == self._pointed:
             if self._enabletooltip and sel >= 0:
                 if not hasattr(self, "_tipwindow"):
                     self._tipwindow = wx.ToolTip(self.GetThumbInfo(sel))
-                    self._tipwindow.SetDelay(1000)
+                    self._tipwindow.SetDelay(100)
                     self.SetToolTip(self._tipwindow)
+                    
                 else:
-                    self._tipwindow.SetDelay(1000)
+                    self._tipwindow.SetDelay(100)
                     self._tipwindow.SetTip(self.GetThumbInfo(sel))
 
             event.Skip()
@@ -2710,16 +2714,17 @@ class ScrolledThumbnail(wx.ScrolledWindow):
                 self._tipwindow.Enable(False)
 
         # update thumbnail
+        self.Refresh()
         self._pointed = sel
-
+        
         if self._enabletooltip and sel >= 0:
             if not hasattr(self, "_tipwindow"):
                 self._tipwindow = wx.ToolTip(self.GetThumbInfo(sel))
-                self._tipwindow.SetDelay(1000)
+                self._tipwindow.SetDelay(100)
                 self._tipwindow.Enable(True)
                 self.SetToolTip(self._tipwindow)
             else:
-                self._tipwindow.SetDelay(1000)
+                self._tipwindow.SetDelay(100)
                 self._tipwindow.Enable(True)
                 self._tipwindow.SetTip(self.GetThumbInfo(sel))
 
@@ -2735,6 +2740,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a `wx.MouseEvent` event to be processed.
         """
+#         logger.info('OnMouseLeave')
         if self._pointed != -1:
 
             self._pointed = -1
@@ -2749,7 +2755,7 @@ class ScrolledThumbnail(wx.ScrolledWindow):
 
         :param `event`: a L{ThumbnailEvent} event to be processed.
         """
-
+        logger.info('OnThumbChanged')
         for ii in xrange(len(self._items)):
             if self._items[ii].GetFileName() == event.GetString():
 
