@@ -4,11 +4,12 @@ Created on 12-Apr-2016
 @author: vijay
 '''
 import os
-import traceback
 import json
 import datetime
 from src.static.constant import Workspace
+import logging
 
+logger = logging.getLogger('extensive')
 
 class Book(json.JSONEncoder):
     '''
@@ -35,7 +36,9 @@ class Book(json.JSONEncoder):
     def __str__(self):
         rep = self.name + self.publisher + self.author + self.isbn + self.datePublished + self.numberOfPages + self.inLanguage + self.fileSize + self.bookFormat
         return rep
-
+    def __eq__(self, other):
+        return self.bookName == other.bookName \
+            and self.isbn_13 == other.isbn_13
 class Author(json.JSONEncoder):
     '''
     This class has been used to write json object of author of book.
@@ -50,6 +53,9 @@ class Author(json.JSONEncoder):
     def __str__(self):
         rep = self.authorName 
         return rep
+    
+    def __eq__(self, other):
+        return self.authorName == other.authorName and self.aboutAuthor == other.aboutAuthor
 
 class ReadWriteJsonInfo(object):
     '''
@@ -68,6 +74,7 @@ class ReadWriteJsonInfo(object):
         This method read the json file from workspace and return book object.
         @param dirName: this is directory name.
         '''
+        logger.debug('readJsonFromDir: %s',dirName)
         bookJsonFile = open(os.path.join(Workspace().libraryPath, dirName , 'book.json'), 'r')
 
         rep = ''
@@ -77,10 +84,11 @@ class ReadWriteJsonInfo(object):
         b=None
         try:
             b = json.loads(rep)
-        except:
-            traceback.print_exc()
-            print rep
+        except Exception as e:
+            logger.error(e, exc_info=True)
         return b         
+    
+ 
     
     def writeJsonToDir(self, bookPath=None, book=None):
         '''
@@ -88,6 +96,7 @@ class ReadWriteJsonInfo(object):
         @param bookPath: path of book : Book.
         @param book: book object :Book
         '''
+        logger.info('writeJsonToDir')
         try:
             
             f = open(os.path.join(bookPath, 'book.json'), 'w')
@@ -130,8 +139,8 @@ class ReadWriteJsonInfo(object):
             row2dict['authors'] = authors
             f.write(json.dumps(row2dict, sort_keys=True, indent=4, default=str))
             f.close()     
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error(e, exc_info=True)
             
 if __name__=='__main__':
     pass

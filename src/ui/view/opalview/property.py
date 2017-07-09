@@ -778,12 +778,17 @@ class BookPropertyPanel(wx.Panel):
     def __init__(self, parent, book):
         wx.Panel.__init__(self, parent)
 
+        logger.debug('------------------BookPropertyPanel--------------------------> %s',self.TopLevelParent.GetSize())
+        
         self.panel = wx.Panel(self, wx.ID_ANY)
+        splitter = wx.SplitterWindow(self.panel)
         self.currentBook = book
         
-        self.photoPanel = PropertyPhotoPanel(self, book=self.currentBook)
+        self.photoPanel = PropertyPhotoPanel(splitter, book=self.currentBook)
+        self.propertyPanel=wx.Panel(splitter, wx.ID_ANY )
 #         self.rt = wx.richtext.RichTextCtrl(self, style=wx.VSCROLL | wx.HSCROLL | wx.NO_BORDER)
-        self.rt = RichTextPanel(self, book)
+        self.pg = self.createPropetyGrid(self.currentBook)
+        self.rt = RichTextPanel(self.propertyPanel, book)
 #         img1 = wx.Image(os.path.join(self.currentBook.bookPath, self.currentBook.bookImgName), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 #         img=wx.Bitmap(os.path.join(book.bookPath, book.bookImgName))
         logger.debug('BookPropertyPanel size: %s', self.GetParent().GetSize())
@@ -797,18 +802,34 @@ class BookPropertyPanel(wx.Panel):
 #         self.imageCtrl = wx.StaticBitmap(self.photoPanel, wx.ID_ANY, img1, name="anotherEmptyImage")
 #         self.imageCtrl.Bind(wx.EVT_LEFT_DOWN, self.onImageClick)
         
+#         leftP = LeftPanel(splitter)
+#         rightP = RightPanel(splitter)
+ 
+        # split the window
+#         splitter.SplitVertically(leftP, rightP)
+#         splitter.SetMinimumPaneSize(20)
+        
         
         topsizer = wx.BoxSizer(wx.VERTICAL)
         hBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.pg = self.createPropetyGrid(self.currentBook)
+
         
         vBox = wx.BoxSizer(wx.VERTICAL)
         vBox.Add(self.pg, 1, wx.EXPAND, 2)
         vBox.Add(self.rt, 1, wx.EXPAND, 1)
-        hBox.Add(vBox, 3, wx.EXPAND, 5)
-        hBox.Add(self.photoPanel, 2, wx.EXPAND, 1)
+        self.propertyPanel.SetSizer(vBox)
+#         hBox.Add(vBox, 3, wx.EXPAND, 5)
+        # split the window
+        splitter.SplitVertically(self.propertyPanel, self.photoPanel)
+#         splitter.SetMinimumPaneSize(self.TopLevelParent.GetSize()[0]*2/3)
+        splitter.SetSashPosition(self.TopLevelParent.GetSize()[0]*2/3)
+        logger.debug('BookPropertyPanel splitter.GetSashPosition(): %s', splitter.GetSashPosition())
+        splitter.GetSashPosition()
+#         splitter.SetInitialSize((self.TopLevelParent.GetSize()[0]*2/3, )
+        hBox.Add(splitter, 1, wx.EXPAND)
+#         hBox.Add(self.photoPanel, 2, wx.EXPAND, 1)
         
-        topsizer.Add(hBox, 3, wx.EXPAND)
+        topsizer.Add(hBox, 1, wx.EXPAND)
         rowsizer = wx.BoxSizer(wx.HORIZONTAL)
         
         next = wx.Button(self.panel, -1, "Next")
@@ -841,7 +862,8 @@ class BookPropertyPanel(wx.Panel):
 
         self.panel.SetSizer(topsizer)
         topsizer.SetSizeHints(self.panel)
-
+ 
+        
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(self.panel, 1, wx.EXPAND)
         self.sizer.Fit(self)
@@ -928,6 +950,7 @@ class BookPropertyPanel(wx.Panel):
         
         props['id'] = self.currentBook.id
         props['Book name'] = str(self.currentBook.bookName or '')
+        props['Sub Title'] = str(self.currentBook.subTitle or '')
         props['Book description'] = str(self.currentBook.bookDescription or '')
         props['Number of pages'] = str(self.currentBook.numberOfPages or '')
         
@@ -961,6 +984,7 @@ class BookPropertyPanel(wx.Panel):
             logger.error(e, exc_info=True)
         book.subTitle = self.currentBook.subTitle
         book.bookName = props['Book name']
+        book.subTitle = props['Sub Title']
         book.numberOfPages = props['Number of pages']
         book.bookDescription = self.rt.rtc.GetValue()
         book.authors = list()
@@ -999,7 +1023,7 @@ class BookPropertyPanel(wx.Panel):
     def createPropetyGrid(self, book):
         # Difference between using PropertyGridManager vs PropertyGrid is that
         # the manager supports multiple pages and a description box.
-        self.pg = wxpg.PropertyGridManager(self.panel,
+        self.pg = wxpg.PropertyGridManager(self.propertyPanel,
                         style=wxpg.PG_SPLITTER_AUTO_CENTER | 
 #                               wxpg.PG_AUTO_SORT | 
                               wxpg.PG_TOOLBAR)
@@ -1035,6 +1059,7 @@ class BookPropertyPanel(wx.Panel):
         
         
         self.pg.Append(wxpg.StringProperty("Book name", value=book.bookName))
+        self.pg.Append(wxpg.StringProperty("Sub Title", value=str(book.subTitle or '')))
 #         self.pg.Append(wxpg.StringProperty("Book description", value=str(book.bookDescription or '')))
         authorNames = list()
         if hasattr(book, 'authors'):

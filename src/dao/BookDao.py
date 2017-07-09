@@ -23,7 +23,6 @@ import datetime
 from src.static.SessionUtil import SingletonSession
 
 import logging
-from sys import exc_info
 
 logger = logging.getLogger('extensive')
 
@@ -97,7 +96,7 @@ class CreateDatabase():
                     if int(name):
                         listOfDir.append(name)
                 except Exception as e:
-                    pass
+                    logger.error(e, exc_info=True)
         if listOfDir:
             listOfDir.sort(key=int)
         one = ''
@@ -122,7 +121,7 @@ class CreateDatabase():
                 if addDatabase:
                     self.session.add(book)
             self.session.commit()
-            logger.debug('number of duplicateBooks: %s',len(self.duplicateBooks))
+            logger.debug('number of duplicateBooks: %s', len(self.duplicateBooks))
     
         except Exception as e:
             logger.error(e, exc_info=True)
@@ -200,7 +199,7 @@ class CreateDatabase():
         return bookCount
     
     def findAllBook(self, pageSize=None):
-        logger.debug('findAllBook pageSize: %s',pageSize)
+        logger.debug('findAllBook pageSize: %s', pageSize)
         bs = self.pagination(pageSize, 0)
         return bs
     
@@ -218,15 +217,15 @@ class CreateDatabase():
         return bs
     
     def findBookByIsbn(self, isbn_13):
-        logger.debug('findBookByIsbn : %s',isbn_13)
+        logger.debug('findBookByIsbn : %s', isbn_13)
         bs = self.session.query(Book).filter(Book.isbn_13 == isbn_13).first()
         return bs
     def findBookByNextMaxId(self, bookId):
-        logger.debug('findBookByNextMaxId bookId: %s',bookId)
+        logger.debug('findBookByNextMaxId bookId: %s', bookId)
         bs = self.session.query(Book).filter(Book.id > bookId).order_by(Book.id.asc()).first()
         return bs
     def findBookByPreviousMaxId(self, bookId):           
-        logger.debug('findBookByPreviousMaxId bookId: %s',bookId)
+        logger.debug('findBookByPreviousMaxId bookId: %s', bookId)
         bs = self.session.query(Book).filter(Book.id < bookId).order_by(Book.id.desc()).first()
         return bs      
       
@@ -292,7 +291,7 @@ class CreateDatabase():
         '''
         This method provide search of book name IGNORECASE and similar result like.
         '''
-        logger.debug('findBySimlarBookName bookName: %s',bookName)
+        logger.debug('findBySimlarBookName bookName: %s', bookName)
         try:
             if bookName:
                 query = self.session.query(Book).filter(Book.bookName.ilike('%' + bookName + '%')).order_by(Book.id.desc())
@@ -301,7 +300,7 @@ class CreateDatabase():
         except Exception as e:
             logger.error(e, exc_info=True)
     def findByIsbn_13Name(self, isbn_13=None):
-        logger.debug('findBySimlarBookName isbn_13: %s',isbn_13)
+        logger.debug('findBySimlarBookName isbn_13: %s', isbn_13)
         if isbn_13:
             query = self.session.query(Book).filter(Book.isbn_13.ilike('%' + isbn_13 + '%'))
             books = query.all()
@@ -313,7 +312,7 @@ class CreateDatabase():
         return books
     
     def findBookByFileName(self, bookFileName):
-        logger.debug('findBySimlarBookName bookFileName: %s',bookFileName)
+        logger.debug('findBySimlarBookName bookFileName: %s', bookFileName)
         if bookFileName:
             query = self.session.query(Book).filter(Book.bookFileName.ilike('%' + bookFileName + '%'))
             books = query.all()
@@ -366,7 +365,7 @@ if __name__ == '__main__':
 #         createdb.addingData()
         x = createdb.getMaxBookID()
         page = createdb.paginatiion(10, 10)
-        logger.debug( page)
+        logger.debug(page)
 #         createdb.findAllBook()
     except:
         print traceback.print_exc()
